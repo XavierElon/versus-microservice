@@ -9,9 +9,7 @@ dotenv.config()
 
 const app: Express = express()
 const port: string = process.env.PORT || '1017'
-
-console.log(port)
-console.log(signupRouter)
+const host: string = process.env.HOST || 'http://localhost:'
 
 // Body parsing Middleware
 app.use(express.json())
@@ -25,7 +23,7 @@ app.get('/', async (req: Request, res: Response): Promise<Response> => {
 
 try{
     app.listen(port, (): void => {
-        console.log(`Connected successfully to port ${port}`)
+        console.log(`Connected successfully to ${host}${port}`)
     })
 } catch (error: any) {
     console.error(`Error occurred: ${error.message}`)
