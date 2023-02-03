@@ -1,14 +1,18 @@
 const express = require('express');
+const app = express();
 const router = express.Router();
 const mongoose = require('mongoose');
 
 
 //When server is ready, connect here
-/*
-mongoose.connect('mongodb+srv://Mennato:November2.@atlascluster.pzbj0y5.mongodb.net/test')
+/*mongoose.connect('mongodb+srv://Mennato:November2.@atlascluster.pzbj0y5.mongodb.net/test')
     .then(()=> console.log('Connected to MongoDB...'))
-    .catch(err => console.error('Could not connect to MongoDb...',err))
-    */
+    .catch(err => console.error('Could not connect to MongoDb...',err))*/
+    
+
+//Connect to host here
+/*app.listen(3000, () => console.log('Listening on port 3000...'))*/
+
 
     const userSchema = new mongoose.Schema({
       firstName: String, 
@@ -51,7 +55,7 @@ async function createUser(userData){
     const userData = req.body;
     
     //add user data to database
-    createUser(userData);
+    //createUser(userData);
   
     //return success response
     res.json({
