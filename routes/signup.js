@@ -24,7 +24,7 @@ mongoose.connect('mongodb+srv://Mennato:November2.@atlascluster.pzbj0y5.mongodb.
 //GET
 //this is to test endpoint...
 router.get("/sign-up", (req, res) => {
-  res.send("Hello Worleed");
+  res.send("Hello World");
 });
 
 
