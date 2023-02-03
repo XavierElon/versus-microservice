@@ -17,7 +17,7 @@ console.log(signupRouter)
 app.use(express.json())
 // app.use(express.urlencoded({ extended: true }))
 app.use(cors())
-app.use('/signup', signupRouter)
+app.use(signupRouter)
 
 app.get('/', async (req: Request, res: Response): Promise<Response> => {
     return res.status(200).send({ message: 'Typescript node server running!' })
