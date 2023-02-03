@@ -28,7 +28,7 @@ router.get("/sign-up", (req, res) => {
 });
 
 
-async function createCourse(userData){
+async function createUser(userData){
 
   const user = new User({ 
     firstName: userData.firstName, 
@@ -51,7 +51,7 @@ async function createCourse(userData){
     const userData = req.body;
     
     //add user data to database
-    createCourse(userData);
+    createUser(userData);
   
     //return success response
     res.json({
