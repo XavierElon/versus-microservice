@@ -1,6 +1,8 @@
 import express, { Express, Request, Response } from 'express'
 import dotenv from 'dotenv'
 
+import { connectToDatabase } from './src/connections/mongodb'
+
 dotenv.config()
 
 const app: Express = express()
@@ -22,4 +24,10 @@ try{
     })
 } catch (error: any) {
     console.error(`Error occurred: ${error.message}`)
+}
+
+try {
+    connectToDatabase()
+} catch (error: any) {
+    console.error(`Error occurred connecting to database: ${error.message}`)
 }
