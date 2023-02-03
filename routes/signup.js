@@ -11,7 +11,7 @@ const mongoose = require('mongoose');
     
 
 //Connect to host here
-/*app.listen(3000, () => console.log('Listening on port 3000...'))*/
+//app.listen(1017, () => console.log('Listening on port 1017...'))
 
 
     const userSchema = new mongoose.Schema({
@@ -27,8 +27,9 @@ const mongoose = require('mongoose');
 
 //GET
 //this is to test endpoint...
-router.get("/sign-up", (req, res) => {
-  res.send("Hello World");
+router.get("/", (req, res) => {
+  console.log(req);
+  //res.send("Hello World");
 });
 
 
