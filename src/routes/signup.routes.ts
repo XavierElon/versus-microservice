@@ -1,10 +1,10 @@
 import express, { Express, Request, Response, Router } from 'express'
 import { createUser } from '../services/user.service'
-const app: Express = express()
-// const router: Router = express.Router()
+// const app: Express = express()
+let router: Router = express.Router()
 
 //Create a User
-app.post('/sign-up', (req: Request, res: Response) => {
+router.post('/signup', (req: Request, res: Response) => {
     const userData = req.body
     createUser(userData);
     res.json({
@@ -12,3 +12,9 @@ app.post('/sign-up', (req: Request, res: Response) => {
       data: userData
     })
 })
+
+router.get('/signup', async (req: Request, res: Response): Promise<Response> => {
+    return res.status(200).send({ message: 'Signup page' })
+})
+
+module.exports = router
