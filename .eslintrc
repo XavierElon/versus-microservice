@@ -2,7 +2,8 @@
     "root": true,
     "parser": "@typescript-eslint/parser",
     "plugins": [
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "unused-imports"
     ],
     "extends": [
         "eslint:recommended",
@@ -12,6 +13,8 @@
     "rules": {
         "no-console": 1,
         "quotes": [2, "single", { "avoidEscape": true }],
-        "no-useless-return": 2
+        "no-useless-return": 2,
+        "no-unused-vars": 2,
+        "unused-imports/no-unused-imports": "error",
     }
 }
