@@ -1,16 +1,18 @@
 import express, { Express, Request, Response, Router } from 'express'
-import { createUser } from '../services/user.service'
+import { createUser, checkIfUserExists} from '../services/user.service'
 // const app: Express = express()
 let router: Router = express.Router()
 
 //Create a User
-router.post('/signup', (req: Request, res: Response) => {
+router.post('/signup', async (req: Request, res: Response) => {
     const userData = req.body
-    createUser(userData);
-    res.json({
-      message: 'User created successfully',
-      data: userData
-    })
+    const userExists = await checkIfUserExists(userData.userName);
+    if (userExists) {
+      res.status(400).json({ message: 'User already exists' });
+    }else{
+      createUser(userData);
+      res.status(201).json({ message: 'User created', data: userData});
+    }
 })
 
 router.get('/signup', async (req: Request, res: Response): Promise<Response> => {
