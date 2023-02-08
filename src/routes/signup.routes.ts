@@ -1,5 +1,6 @@
 import express, { Express, Request, Response, Router } from 'express'
-import { createUser, checkIfUserExists, validateUser} from '../services/user.service'
+import { createUser, checkIfUserExists } from '../services/user.service'
+import {validateUser}from '../utils/user.helpers'
 // const app: Express = express()
 let router: Router = express.Router()
 
