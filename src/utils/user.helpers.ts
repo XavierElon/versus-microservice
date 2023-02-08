@@ -7,14 +7,24 @@ import { userSchema } from '../models/user.model'
 
 /*
 SET VALID USER
-This function is used in the validateUser function to set the values of the validUser interface before being returned
+This function returns a Promise that resolves to an object with the shape of validUser. 
+The object contains two properties isValid and errorMessage that correspond to the two arguments passed to the function.
+The function is using the shorthand syntax 
+for object literals to return an object with 
+the properties isValid and errorMessage assigned the values of the respective arguments
 */
 const setValidUser = async (isValid:boolean, errorMessage:string): Promise<validUser> => {
     return {isValid,errorMessage};
    };
 /*
 VALIDATE USER
-This function will validate all the new users account information before creating them in the database
+The function takes one argument User, which is expected to be of type typeof userSchema.
+The function is used to validate the properties of the User object and returns a Promise 
+that resolves to an object with the shape of validUser.
+The function first checks the validity of the User object's properties using a set of 
+validation functions such as isValidPhoneNumber, isValidPassword, isValidEmail, isValidUsername, isValidName. 
+If any of the properties are invalid, the function returns a call to setValidUser with false as the first argument 
+and an error message string as the second argument.
 */
    export const validateUser = async (User: typeof userSchema): Promise<validUser> => {
      
