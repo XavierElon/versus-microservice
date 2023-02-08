@@ -43,11 +43,11 @@ export const checkIfUserExists = async (username: string): Promise<boolean> => {
 
 
 //This is used as a setter and called within the valiatUser function
-const setValidUser = async (isValid:boolean, message:string): Promise<validUser> => {
+const setValidUser = async (isValid:boolean, errorMessage:string): Promise<validUser> => {
   
   const responseToReturn: validUser = {} as validUser;
   responseToReturn.isValid = isValid;
-  responseToReturn.message = message;
+  responseToReturn.errorMessage = errorMessage;
   return responseToReturn;
 
 }
@@ -80,7 +80,7 @@ export const validateUser = async (User: typeof userSchema): Promise<validUser> 
   if(!isValidName(User.firstName)){
     return setValidUser(false, ('Invalid Firstname'));
   }
-
+  
   return setValidUser(true, ('Valid User'));
   
 }

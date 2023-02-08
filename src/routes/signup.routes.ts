@@ -9,7 +9,7 @@ router.post('/signup', async (req: Request, res: Response) => {
     const userExists = await checkIfUserExists(userData.userName);
     const validUser = await validateUser(userData);
     if (!validUser.isValid) {
-      res.status(400).json(validUser.message);
+      res.status(400).json(validUser.errorMessage);
     }else{
       if(userExists){
         res.status(400).json({ message: 'User already exists' });

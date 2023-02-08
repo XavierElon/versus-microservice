@@ -1,5 +1,5 @@
 export interface validUser {
     isValid: boolean;
-    message: string;
+    errorMessage: string;
   }
   
