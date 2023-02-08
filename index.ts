@@ -4,6 +4,7 @@ import cors from 'cors'
 
 import { connectToDatabase } from './src/connections/mongodb'
 const signupRouter = require('./src/routes/signup.routes')
+const loginRouter = require('./src/routes/login.routes')
 
 dotenv.config()
 
@@ -16,6 +17,8 @@ app.use(express.json())
 // app.use(express.urlencoded({ extended: true }))
 app.use(cors())
 app.use(signupRouter)
+app.use(loginRouter)
+
 
 app.get('/', async (req: Request, res: Response): Promise<Response> => {
     return res.status(200).send({ message: 'Typescript node server running!' })

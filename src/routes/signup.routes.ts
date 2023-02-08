@@ -1,5 +1,5 @@
 import express, { Express, Request, Response, Router } from 'express'
-import { createUser, checkIfUserExists} from '../services/user.service'
+import { createUser, checkIfUserExists, validateUser} from '../services/user.service'
 // const app: Express = express()
 let router: Router = express.Router()
 
@@ -7,11 +7,16 @@ let router: Router = express.Router()
 router.post('/signup', async (req: Request, res: Response) => {
     const userData = req.body
     const userExists = await checkIfUserExists(userData.userName);
-    if (userExists) {
-      res.status(400).json({ message: 'User already exists' });
+    const validUser = await validateUser(userData);
+    if (!validUser.isValid) {
+      res.status(400).json(validUser.message);
     }else{
-      createUser(userData);
-      res.status(201).json({ message: 'User created', data: userData});
+      if(userExists){
+        res.status(400).json({ message: 'User already exists' });
+      }else{
+        createUser(userData);
+        res.status(201).json({ message: 'User created', data: userData});
+      }
     }
 })
 
