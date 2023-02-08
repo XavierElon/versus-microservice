@@ -2,7 +2,7 @@ import { validUser } from '../structures/types'
 import {isValidPhoneNumber,
     isValidPassword,isValidEmail,
     isValidUsername,isValidName} from '../utils/verification.helper'
- import { userSchema } from '../models/user.model'
+import { userSchema } from '../models/user.model'
 
 
 /*
@@ -10,10 +10,7 @@ SET VALID USER
 This function is used in the validateUser function to set the values of the validUser interface before being returned
 */
 const setValidUser = async (isValid:boolean, errorMessage:string): Promise<validUser> => {
-  
-    const userToReturn: validUser = {isValid: isValid, errorMessage: errorMessage} as validUser;
-    return userToReturn;
-
+    return {isValid,errorMessage};
    };
 /*
 VALIDATE USER
