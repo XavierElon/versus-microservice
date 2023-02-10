@@ -14,7 +14,7 @@ export const userSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: validateName,
-      message: error.firstname
+      message: error.firstName
     }
   },
   lastName: {
@@ -22,7 +22,7 @@ export const userSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: validateName,
-      message: error.lastname
+      message: error.lastName
     }
   },
   email: {
@@ -38,7 +38,7 @@ export const userSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: validatePhone,
-      message: error.phone
+      message: error.mobileNumber
     }
   },
   userName: {
@@ -46,7 +46,7 @@ export const userSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: validateUsername,
-      message: error.username
+      message: error.userName
     }
   },
   password: {
