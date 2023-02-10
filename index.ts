@@ -10,6 +10,7 @@ dotenv.config()
 const app: Express = express()
 const port: string = process.env.PORT || '1017'
 const host: string = process.env.HOST || 'http://localhost:'
+const dbUri: string = process.env.ATLAS_URI  || 'mongodb+srv://test:toor@cluster0.ojgllcz.mongodb.net/?retryWrites=true&w=majority'
 
 // Body parsing Middleware
 app.use(express.json())
@@ -33,4 +34,4 @@ try{
     /* eslint-enable no-console */
 }
 
-connectToDatabase()
+connectToDatabase(dbUri)

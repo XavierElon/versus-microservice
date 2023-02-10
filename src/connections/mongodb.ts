@@ -1,10 +1,8 @@
 import { Db, MongoClient } from 'mongodb'
-import * as dotenv from 'dotenv'
 
-export const connectToDatabase = async () => {
-  dotenv.config()
+export const connectToDatabase = async (dbUri: string) => {
   /* eslint-disable no-console */
-  const client: MongoClient = new MongoClient(process.env.ATLAS_URI!)
+  const client: MongoClient = new MongoClient(dbUri)
   try {
     await client.connect()
   } catch (error: any) {
