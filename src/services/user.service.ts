@@ -1,33 +1,24 @@
-const mongoose = require('mongoose')
+
 import { userSchema } from '../models/user.model'
-
-const User = mongoose.model('User', userSchema) 
-
-
+import * as mongoose from 'mongoose';
+const User = mongoose.model('User', userSchema);
 
 /*
 CREATE USER
 This function creates a new user using the userSchema and saves it to the database
 */
-export const createUser = async (userData: typeof userSchema) => {
-  const user = new User({
-    firstName: userData.firstName,
-    lastName: userData.lastName,
-    email: userData.email,
-    mobileNumber: userData.mobileNumber,
-    password: userData.password,
-    userName: userData.userName
-  })
-
-  await user.save()
+export const createUser = async (userData: typeof userSchema): Promise<any> => {
+  const user = new User(userData);
+  return user.save()
     .then((result: any) => {
-      console.log('Result:', result)
+      console.log('Result:', result);
+      return Promise.resolve(result);
     })
     .catch((error: any) => {
-      console.log('Error creating user: ', error)
-    })
+      console.log('Error creating user: ', error);
+      return Promise.reject(error);
+    });
 };
-
 
 /*
 VERIFY USER
@@ -37,6 +28,7 @@ export const verifyUser = async (username: string, password: string): Promise<bo
   const user = await User.findOne({ username, password });
   return user !== null;
 };
+
 
 /*
 CHECK IF USER EXISTS 
