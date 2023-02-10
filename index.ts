@@ -1,6 +1,6 @@
-import express, { Express, Request, Response } from 'express'
-import dotenv from 'dotenv'
 import cors from 'cors'
+import dotenv from 'dotenv'
+import express, { Express, Request, Response } from 'express'
 
 import { connectToDatabase } from './src/connections/mongodb'
 const signupRouter = require('./src/routes/signup.routes')
@@ -26,10 +26,12 @@ app.get('/', async (req: Request, res: Response): Promise<Response> => {
 
 try{
     app.listen(port, (): void => {
+        /* eslint-disable no-console */
         console.log(`Connected successfully to ${host}${port}`)
     })
 } catch (error: any) {
     console.error(`Error occurred: ${error.message}`)
+    /* eslint-enable no-console */
 }
 
 // try {
