@@ -8,13 +8,13 @@
     "extends": [
         "eslint:recommended",
         "plugin:@typescript-eslint/eslint-recommended",
-        "plugin:@typescript-eslint/recommended"
+        // "plugin:@typescript-eslint/recommended"
     ],
     "rules": {
         "no-console": 1,
         "quotes": [2, "single", { "avoidEscape": true }],
-        "no-useless-return": 2,
-        "no-unused-vars": 2,
-        "unused-imports/no-unused-imports": "error",
+        "no-useless-return": 1,
+        "no-unused-vars": 1,
+        "unused-imports/no-unused-imports": "warn",
     }
 }

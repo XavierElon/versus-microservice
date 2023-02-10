@@ -1,9 +1,8 @@
 import express, { Express, Request, Response, Router } from 'express'
 import { createUser, checkIfUserExists} from '../services/user.service'
-// const app: Express = express()
-let router: Router = express.Router()
+const router: Router = express.Router()
 
-//Create a User
+// Create a User
 router.post('/signup', async (req: Request, res: Response) => {
     const userData = req.body
     const userExists = await checkIfUserExists(userData.userName);
