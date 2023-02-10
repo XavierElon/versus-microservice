@@ -20,5 +20,3 @@ signupRouter.get(
     return res.status(200).send({ message: 'Signup page' })
   }
 )
-
-
