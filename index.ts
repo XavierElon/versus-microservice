@@ -1,6 +1,7 @@
 import cors from 'cors'
 import dotenv from 'dotenv'
 import express, { Express, Request, Response } from 'express'
+import { connectToDatabase } from './src/connections/mongodb'
 import { loginRouter } from './src/routes/login.routes'
 import { signupRouter } from './src/routes/signup.routes'
 
@@ -31,3 +32,5 @@ try{
     console.error(`Error occurred: ${error.message}`)
     /* eslint-enable no-console */
 }
+
+connectToDatabase()

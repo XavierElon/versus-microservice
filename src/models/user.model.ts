@@ -1,12 +1,14 @@
-import * as mongoose from 'mongoose';
-import { ErrorMessage } from '../structures/types';
+import * as mongoose from 'mongoose'
+import { ErrorMessage } from '../structures/types'
 import {
-  validatePassword, validateEmail,
-  validatePhone, validateUsername,
+  validatePassword,
+  validateEmail,
+  validatePhone,
+  validateUsername,
   validateName
-} from '../utils/verification.helper';
+} from '../utils/verification.helper'
 
-const error = new ErrorMessage();
+const error = new ErrorMessage()
 
 export const userSchema = new mongoose.Schema({
   firstName: {
@@ -57,6 +59,5 @@ export const userSchema = new mongoose.Schema({
       message: error.password
     }
   },
-  date: { type: Date, default: Date.now },
+  date: { type: Date, default: Date.now }
 })
-
