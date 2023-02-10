@@ -1,10 +1,8 @@
 import cors from 'cors'
 import dotenv from 'dotenv'
 import express, { Express, Request, Response } from 'express'
-
-import { connectToDatabase } from './src/connections/mongodb'
-const signupRouter = require('./src/routes/signup.routes')
-const loginRouter = require('./src/routes/login.routes')
+import { loginRouter } from './src/routes/login.routes'
+import { signupRouter } from './src/routes/signup.routes'
 
 dotenv.config()
 
@@ -14,7 +12,7 @@ const host: string = process.env.HOST || 'http://localhost:'
 
 // Body parsing Middleware
 app.use(express.json())
-// app.use(express.urlencoded({ extended: true }))
+app.use(express.urlencoded({ extended: true }))
 app.use(cors())
 app.use(signupRouter)
 app.use(loginRouter)
@@ -33,9 +31,3 @@ try{
     console.error(`Error occurred: ${error.message}`)
     /* eslint-enable no-console */
 }
-
-// try {
-//     connectToDatabase()
-// } catch (error: any) {
-//     console.error(`Error occurred connecting to database: ${error.message}`)
-// }

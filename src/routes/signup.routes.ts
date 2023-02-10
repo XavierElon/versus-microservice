@@ -1,9 +1,14 @@
 import express, { Request, Response, Router } from 'express'
 import { createUser, checkIfUserExists } from '../services/user.service'
-const router: Router = express.Router()
+export const signupRouter: Router = express.Router()
 
-//Create a User
-router.post('/signup', async (req: Request, res: Response) => {
+// GET
+signupRouter.get('/signup', async (req: Request, res: Response): Promise<Response> => {
+  return res.status(200).send({ message: 'Signup page' })
+})
+
+// Create a User
+signupRouter.post('/signup', async (req: Request, res: Response) => {
   const userData = req.body
   const userExists = await checkIfUserExists(userData.userName);
   if (userExists) {
@@ -20,9 +25,3 @@ router.post('/signup', async (req: Request, res: Response) => {
     });
   }
 })
-
-router.get('/signup', async (req: Request, res: Response): Promise<Response> => {
-  return res.status(200).send({ message: 'Signup page' })
-})
-
-module.exports = router
