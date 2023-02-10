@@ -1,11 +1,11 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
 export const userSchema = new mongoose.Schema({
-    firstName: String,
-    lastName: String,
-    email: String,
-    date: { type: Date, default: Date.now },
-    mobileNumber: Number,
-    userName: { type: String, required: true },
-    password: { type: String, required: true }
-  })
+  firstName: String,
+  lastName: String,
+  email: String,
+  date: { type: Date, default: Date.now },
+  mobileNumber: Number,
+  userName: { type: String, required: true },
+  password: { type: String, required: true }
+})

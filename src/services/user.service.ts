@@ -1,8 +1,8 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
 import { userSchema } from '../models/user.model'
 
-const User = mongoose.model('User', userSchema) 
+const User = mongoose.model('User', userSchema)
 
 export const createUser = async (userData: typeof userSchema) => {
   const user = new User({
@@ -14,22 +14,27 @@ export const createUser = async (userData: typeof userSchema) => {
     userName: userData.userName
   })
 
-  await user.save()
+  await user
+    .save()
     .then((result: any) => {
-      console.log('Result:', result)
+      /* eslint-disable no-console */
+      console.info('Result:', result)
     })
     .catch((error: any) => {
-      console.log('Error creating user: ', error)
+      console.error('Error creating user: ', error)
+      /* eslint-enable no-console */
     })
 }
 
-
-export const verifyUser = async (username: string, password: string): Promise<boolean> => {
-  const user = await User.findOne({ username, password });
-  return user !== null;
-};
+export const verifyUser = async (
+  username: string,
+  password: string
+): Promise<boolean> => {
+  const user = await User.findOne({ username, password })
+  return user !== null
+}
 
 export const checkIfUserExists = async (username: string): Promise<boolean> => {
-  const user = await User.findOne({ username });
-  return user !== null;
-};
+  const user = await User.findOne({ username })
+  return user !== null
+}
