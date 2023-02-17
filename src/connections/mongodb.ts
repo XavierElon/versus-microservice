@@ -1,17 +1,19 @@
-import { Db, MongoClient } from 'mongodb'
+import mongoose, { ConnectOptions } from 'mongoose';
 
 export const connectToDatabase = async (dbUri: string) => {
-  /* eslint-disable no-console */
-  const client: MongoClient = new MongoClient(dbUri)
+  const options: ConnectOptions = {
+    connectTimeoutMS: 30000,
+    socketTimeoutMS: 30000,
+    keepAlive: true,
+    keepAliveInitialDelay: 30000,
+  };
   try {
-    await client.connect()
+    await mongoose.connect(dbUri, options);
   } catch (error: any) {
-    throw new Error(`Mongodb connection failed: ${error}`)
+    throw new Error(`Mongodb connection failed: ${error}`);
   }
 
-  const db: Db = client.db(process.env.DB_NAME)
+  const db = mongoose.connection;
 
-  /* eslint-disable no-console */
-  console.log(`Successfully connect to database: ${db.databaseName}`)
-  /* eslint-enable no-console */
-}
+  console.log(`Successfully connected to database: ${db.name}`);
+};

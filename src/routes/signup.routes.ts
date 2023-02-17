@@ -10,7 +10,7 @@ signupRouter.get('/signup', async (req: Request, res: Response): Promise<Respons
 // Create a User
 signupRouter.post('/signup', async (req: Request, res: Response) => {
   const userData = req.body
-  const userExists = await checkIfUserExists(userData.userName)
+  const userExists = await checkIfUserExists(userData.email)
   if (userExists) {
     res.status(400).json({ message: 'User already exists' })
   } else {
@@ -25,3 +25,4 @@ signupRouter.post('/signup', async (req: Request, res: Response) => {
       })
   }
 })
+
