@@ -24,7 +24,7 @@ export const createUser = async (userData: typeof userSchema): Promise<any> => {
 VERIFY USER
 check the username and password against the database to approve login
 */
-export const verifyExists = async (username: string, password: string) => {
+export const verifyUser = async (username: string, password: string) => {
   const existingUser = await User.findOne({ username, password });
   if (existingUser) {
     return true;
