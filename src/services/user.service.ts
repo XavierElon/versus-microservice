@@ -1,12 +1,11 @@
-import { userSchema } from '../models/user.model'
-import * as mongoose from 'mongoose'
-const User = mongoose.model('User', userSchema)
+import { User } from '../models/user.model'
+
 
 /*
 CREATE USER
 This function creates a new user using the userSchema and saves it to the database
 */
-export const createUser = async (userData: typeof userSchema): Promise<any> => {
+export const createUser = async (userData: typeof User): Promise<any> => {
   const user = new User(userData)
   return user
     .save()
@@ -19,6 +18,8 @@ export const createUser = async (userData: typeof userSchema): Promise<any> => {
       return Promise.reject(error)
     })
 }
+
+
 
 /*
 VERIFY USER

@@ -10,7 +10,7 @@ import {
 
 const error = new ErrorMessage()
 
-export const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
   firstName: {
     type: String,
     required: true,
@@ -61,5 +61,7 @@ export const userSchema = new mongoose.Schema({
   },
   date: { type: Date, default: Date.now }
 })
+
+export const User = mongoose.model('User', userSchema);
 
 

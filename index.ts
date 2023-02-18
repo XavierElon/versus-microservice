@@ -11,8 +11,10 @@ const app: Express = express()
 const port: string = process.env.PORT || '1017'
 const host: string = process.env.HOST || 'http://localhost:'
 const dbUri: string = process.env.MONGO_ATLAS_URI || ''
+const dbName: string = process.env.DB_USERS_COLLECTION_USERS || ''
+const UriQueryParam: string = process.env.QUERY_PARAMETERS || ''
 
-console.log(dbUri)
+console.log(dbUri + dbName + UriQueryParam)
 
 // Body parsing Middleware
 app.use(express.json())
@@ -36,4 +38,4 @@ try{
     /* eslint-enable no-console */
 }
 
-connectToDatabase(dbUri)
+connectToDatabase(dbUri + dbName + UriQueryParam)
