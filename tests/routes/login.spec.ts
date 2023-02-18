@@ -1,47 +1,55 @@
-import * as mocha from 'mocha';
-import * as chai from 'chai';
+import express, { Request, Response, NextFunction } from 'express';
+import { expect } from 'chai';
+import sinon from 'sinon';
+import supertest from 'supertest';
+
 import { loginRouter } from '../../src/routes/login.routes'
-import request from 'supertest';
-import * as userServiceModule from '../../src/services/user.service';
-import * as sinon from 'sinon';
+import * as userService from '../../src/services/user.service';
 
-const expect = chai.expect;
+describe('POST /login', () => {
+  let app: express.Application;
+  let verifyUserStub: sinon.SinonStub;
 
-describe('Login Route Test Cases', () => {
-let userServiceStub: sinon.SinonStub;
+  before(() => {
+    // Create a new Express app and use the loginRouter
+    app = express();
+    app.use(express.json());
+    app.use(loginRouter);
 
-beforeEach(() => {
-    userServiceStub = sinon.stub(userServiceModule, 'verifyUser');
-});
+    // Stub the verifyUser function
+    verifyUserStub = sinon.stub(userService, 'verifyUser');
+  });
 
-afterEach(() => {
-    userServiceStub.restore();
-});
+  after(() => {
+    // Restore the verifyUser function
+    verifyUserStub.restore();
+  });
 
-it('returns 200 with a message "Login successful" if login is successful', async () => {
-    userServiceStub.returns(true);
+  it('should return 200 with success message when login is successful', async () => {
+    // Stub the verifyUser function to return true
+    verifyUserStub.resolves(true);
 
-    const response = await request(loginRouter)
-        .post('/login')
-        .send({ username: 'test', password: 'password' });
+    // Make a POST request to /login with valid credentials
+    const response = await supertest(app)
+      .post('/login')
+      .send({ username: 'testuser', password: 'testpassword' });
 
+    // Assert that the response status is 200 and the message is 'Login successful'
     expect(response.status).to.equal(200);
-    expect(response.body).to.have.property('message');
-    expect(response.body.message).to.equal('Login successful');
-}).timeout(5000);  // set a timeout of 5 seconds
+    expect(response.body).to.deep.equal({ message: 'Login successful' });
+  });
 
-it('returns 401 with a message "Incorrect username or password" if login is not successful', async () => {
-    userServiceStub.returns(false);
+  it('should return 401 with error message when login fails', async () => {
+    // Stub the verifyUser function to return false
+    verifyUserStub.resolves(false);
 
-    const response = await request(loginRouter)
-        .post('/login')
-        .send({ username: 'test', password: 'incorrect_password' });
+    // Make a POST request to /login with invalid credentials
+    const response = await supertest(app)
+      .post('/login')
+      .send({ username: 'testuser', password: 'wrongpassword' });
 
+    // Assert that the response status is 401 and the message is 'Incorrect username or password'
     expect(response.status).to.equal(401);
-    expect(response.body).to.have.property('message');
-    expect(response.body.message).to.equal('Incorrect username or password');
-}).timeout(5000);  // set a timeout of 5 seconds
-
-
-
+    expect(response.body).to.deep.equal({ message: 'Incorrect username or password' });
+  });
 });

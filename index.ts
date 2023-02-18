@@ -4,6 +4,7 @@ import express, { Express, Request, Response } from 'express'
 import { connectToDatabase } from './src/connections/mongodb'
 import { loginRouter } from './src/routes/login.routes'
 import { signupRouter } from './src/routes/signup.routes'
+import {updateRouter} from './src/routes/patchUser.routes'
 
 dotenv.config()
 
@@ -11,8 +12,10 @@ const app: Express = express()
 const port: string = process.env.PORT || '1017'
 const host: string = process.env.HOST || 'http://localhost:'
 const dbUri: string = process.env.MONGO_ATLAS_URI || ''
+const dbName: string = process.env.DB_USERS_COLLECTION_USERS || ''
+const UriQueryParam: string = process.env.QUERY_PARAMETERS || ''
 
-console.log(dbUri)
+console.log(dbUri + dbName + UriQueryParam)
 
 // Body parsing Middleware
 app.use(express.json())
@@ -20,6 +23,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(cors())
 app.use(signupRouter)
 app.use(loginRouter)
+app.use(updateRouter)
 
 
 app.get('/', async (req: Request, res: Response): Promise<Response> => {
@@ -36,4 +40,4 @@ try{
     /* eslint-enable no-console */
 }
 
-connectToDatabase(dbUri)
+connectToDatabase(dbUri + dbName + UriQueryParam)
