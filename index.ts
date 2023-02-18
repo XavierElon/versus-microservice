@@ -4,6 +4,7 @@ import express, { Express, Request, Response } from 'express'
 import { connectToDatabase } from './src/connections/mongodb'
 import { loginRouter } from './src/routes/login.routes'
 import { signupRouter } from './src/routes/signup.routes'
+import {updateRouter} from './src/routes/patchUser.routes'
 
 dotenv.config()
 
@@ -22,6 +23,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(cors())
 app.use(signupRouter)
 app.use(loginRouter)
+app.use(updateRouter)
 
 
 app.get('/', async (req: Request, res: Response): Promise<Response> => {
