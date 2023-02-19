@@ -73,15 +73,15 @@ export const deleteUser = async (email: string): Promise<typeof User | null> => 
   }
 }
 
-
-/*
-FIND USER BY ID 
-check the username against the database for duplicates before proceeding with creation of new user
-*/
-export const findUserById = async (id: string) => {
-  const existingUser = await User.findOne({ id });
-  if (existingUser) {
-    return true;
+export const getUserByEmail =  async (email: string): Promise<typeof User | null>  => {
+  const UserModel: Model<Document & typeof User> = mongoose.model('User');
+  try {
+    const user = await UserModel.findOne({ email });
+    return user || null;
+  } catch (error) {
+    console.error(`Error while getting user by email: ${error}`);
+    return null;
   }
-  return false;
-};
+}
+
+

@@ -2,10 +2,8 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import express, { Express, Request, Response } from 'express'
 import { connectToDatabase } from './src/connections/mongodb'
-import { loginRouter } from './src/routes/login.routes'
-import { signupRouter } from './src/routes/signup.routes'
-import {updateRouter} from './src/routes/patchUser.routes'
-import { deleteRouter } from './src/routes/deleteUser.routes'
+import { loginRouter, signupRouter, updateRouter, deleteRouter } from './src/routes/user.routes'
+
 
 dotenv.config()
 
