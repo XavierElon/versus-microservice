@@ -5,6 +5,7 @@ import { connectToDatabase } from './src/connections/mongodb'
 import { loginRouter } from './src/routes/login.routes'
 import { signupRouter } from './src/routes/signup.routes'
 import {updateRouter} from './src/routes/patchUser.routes'
+import { deleteRouter } from './src/routes/deleteUser.routes'
 
 dotenv.config()
 
@@ -24,6 +25,7 @@ app.use(cors())
 app.use(signupRouter)
 app.use(loginRouter)
 app.use(updateRouter)
+app.use(deleteRouter)
 
 
 app.get('/', async (req: Request, res: Response): Promise<Response> => {
