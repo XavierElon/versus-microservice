@@ -60,6 +60,21 @@ export const updateUser = async (id: string, update: Partial<typeof User>): Prom
 };
 
 /*
+DELETE USER
+*/
+export const deleteUser = async (email: string): Promise<typeof User | null> => {
+  const UserModel: Model<Document & typeof User> = mongoose.model('User');
+  try {
+    const deletedUser = await UserModel.findOneAndDelete({ email });
+    return deletedUser;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+}
+
+
+/*
 FIND USER BY ID 
 check the username against the database for duplicates before proceeding with creation of new user
 */
