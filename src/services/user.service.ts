@@ -1,7 +1,7 @@
 import { User } from '../models/user.model'
 import mongoose, { Model } from 'mongoose';
 import { sendConfirmationGmail, createConfirmationLink } from '../utils/email.helper'
-
+import { v4 as uuidv4 } from 'uuid';
 
 const port: string = process.env.PORT || '1017'
 const host: string = process.env.HOST || 'http://localhost:'
@@ -14,6 +14,7 @@ export const createUser = async (userData: typeof User): Promise<any> => {
   const user = new User(userData)
   const baseUrl = host + port;
   try {
+    user.confirmationCode = uuidv4()
     user.confirmationTokenExpirationTime = new Date(Date.now());
     const savedUser = await user.save();
     console.log('Result:', savedUser);
@@ -24,7 +25,7 @@ export const createUser = async (userData: typeof User): Promise<any> => {
   } catch (error) {
     console.log(`Error creating user or sending confirmation email to user ${user.email}`, error);
     if (user._id) {
-      await User.deleteOne({ _id: user._id }); // Rollback by deleting the saved user if it was because the email didnt send
+      await User.deleteOne({ _id: user._id }); // Rollback by deleting the saved user if it was because the email
     }
     throw error;
   }
