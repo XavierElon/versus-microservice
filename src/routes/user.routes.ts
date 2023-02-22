@@ -1,10 +1,11 @@
 import express, { Request, Response, Router } from 'express'
-import { createUser, checkIfUserExists, updateUser, verifyUser, deleteUser } from '../services/user.service'
+import { createUser, checkIfUserExists, updateUser, verifyUser, deleteUser, confirmUser } from '../services/user.service'
 
 export const signupRouter: Router = express.Router()
 export const updateRouter: Router = express.Router()
 export const loginRouter: Router = express.Router()
 export const deleteRouter: Router = express.Router()
+export const validationRouter: Router = express.Router()
 
 // Create a User
 signupRouter.post('/signup', async (req: Request, res: Response) => {
@@ -71,4 +72,20 @@ deleteRouter.delete('/delete/:email', async (req, res) => {
         console.error(`Error deleting user with email ${email}:`, err);
         return res.status(500).send('Error deleting user');
     }
+});
+
+//Confirm the user has created an account
+validationRouter.get('/validate-account-creation/:userID', async (req, res) => {
+    try {
+        const { confirmed, token } = req.query;
+        if (confirmed === 'true' && typeof token === 'string') {
+          res.send('Your account has been successfully created and confirmed.');
+          await confirmUser(token);  
+        } else {
+          res.send('Your account has been created. Please check your email to confirm your account.');
+        }
+      } catch (error) {
+        console.error(error);
+        res.status(500).send('An error occurred while validating your account creation.');
+      }
 });
