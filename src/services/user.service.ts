@@ -2,7 +2,6 @@ import { User } from '../models/user.model'
 import mongoose, { Model } from 'mongoose';
 import { sendConfirmationGmail, createConfirmationLink } from '../utils/email.helper'
 
-
 const port: string = process.env.PORT || '1017'
 const host: string = process.env.HOST || 'http://localhost:'
 
@@ -118,19 +117,11 @@ export const deleteUnconfirmedUsers = async (): Promise<void> => {
 
 /*  Find the user with the provided confirmation code */
 export const confirmUser = async (confirmationCode: string) => {
-
   const user = await User.findOne({ confirmationCode: confirmationCode }).exec();
-
-  if (!user) {
-    return null;
-  }
-
+  if (!user) {return null;}
   user.active = true;
   user.confirmationTokenExpirationTime = undefined;
-
   await user.save();
-
-
   return user;
 }
 
