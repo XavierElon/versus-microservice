@@ -61,7 +61,7 @@ const userSchema = new mongoose.Schema({
     }
   },
   confirmationCode: {
-    type: String
+    type: String, default: uuidv4()
   },
   confirmationTokenExpirationTime:{
     type: Date || null

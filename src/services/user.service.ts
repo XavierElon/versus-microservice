@@ -1,7 +1,7 @@
 import { User } from '../models/user.model'
 import mongoose, { Model } from 'mongoose';
 import { sendConfirmationGmail, createConfirmationLink } from '../utils/email.helper'
-import { v4 as uuidv4 } from 'uuid';
+
 
 const port: string = process.env.PORT || '1017'
 const host: string = process.env.HOST || 'http://localhost:'
@@ -14,7 +14,6 @@ export const createUser = async (userData: typeof User): Promise<any> => {
   const user = new User(userData)
   const baseUrl = host + port;
   try {
-    user.confirmationCode = uuidv4()
     user.confirmationTokenExpirationTime = new Date(Date.now());
     const savedUser = await user.save();
     console.log('Result:', savedUser);
