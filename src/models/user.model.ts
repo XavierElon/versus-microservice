@@ -7,7 +7,7 @@ import {
   validateUsername,
   validateName
 } from '../utils/verification.helper'
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid'
 
 const error = new ErrorMessage()
 
@@ -61,15 +61,14 @@ const userSchema = new mongoose.Schema({
     }
   },
   confirmationCode: {
-    type: String, default: uuidv4()
+    type: String,
+    default: uuidv4()
   },
-  confirmationTokenExpirationTime:{
+  confirmationTokenExpirationTime: {
     type: Date || null
   },
-  active: {type: Boolean, default: false},
-  date: { type: Date, default: Date.now },
+  active: { type: Boolean, default: false },
+  date: { type: Date, default: Date.now }
 })
 
-export const User = mongoose.model('User', userSchema);
-
-
+export const User = mongoose.model('User', userSchema)

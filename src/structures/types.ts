@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+import nodemailer from 'nodemailer'
 
 export class ErrorMessage {
   password: string
@@ -20,7 +20,7 @@ export class ErrorMessage {
 }
 
 export class CustomTransporter {
-  private transporter: nodemailer.Transporter;
+  private transporter: nodemailer.Transporter
 
   constructor(host: string, port: number, secure: boolean, user: string, pass: string) {
     this.transporter = nodemailer.createTransport({
@@ -29,28 +29,28 @@ export class CustomTransporter {
       secure: secure,
       auth: {
         user: user,
-        pass: pass,
-      },
-    });
+        pass: pass
+      }
+    })
   }
 
   async sendMail(mailOptions: nodemailer.SendMailOptions): Promise<nodemailer.SentMessageInfo> {
-    return await this.transporter.sendMail(mailOptions);
+    return await this.transporter.sendMail(mailOptions)
   }
 }
 
-
 export class MailOptions {
-  from: string;
-  to: string;
-  subject: string;
-  html: string;
-  confirmationLink: string;
+  from: string
+  to: string
+  subject: string
+  html: string
+  confirmationLink: string
 
   constructor(from: string, to: string, confirmationLink: string) {
-    this.from = from;
-    this.to = to;
-    this.subject = 'Confirm your account';
-    this.html = `Thank you for creating an account. Please click the following link to confirm your email address:${this.confirmationLink = confirmationLink}`;
+    this.from = from
+    this.to = to
+    this.subject = 'Confirm your account'
+    this.html = `Thank you for creating an account. Please click the following link to confirm your email address:${(this.confirmationLink =
+      confirmationLink)}`
   }
 }

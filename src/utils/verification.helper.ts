@@ -1,8 +1,7 @@
-
 /* PHONE NUMBER VALIDATION*/
 export const validatePhone = (value: string): boolean => {
-  const regex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
-  return regex.test(value);
+  const regex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
+  return regex.test(value)
 }
 
 /*
@@ -13,8 +12,8 @@ PASSWORD VALIDATION
 - contains at least one special character (@$!%*#?&)
 */
 export const validatePassword = (value: string): boolean => {
-  const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
-  return regex.test(value);
+  const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
+  return regex.test(value)
 }
 
 /*
@@ -26,10 +25,10 @@ EMAIL VALIDATION
 - must end in .com
 */
 export const validateEmail = (value: string): boolean => {
-  const regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.com$/;
-  return regex.test(value);
+  const regex =
+    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.com$/
+  return regex.test(value)
 }
-
 
 /*
 USERNAME VALIADTION
@@ -38,8 +37,8 @@ letters (uppercase or lowercase) and numbers.
 Additionally, the length of the username must be between 3 and 20 characters.
 */
 export const validateUsername = (value: string): boolean => {
-  const regex = /^[a-zA-Z0-9_]{3,20}$/;
-  return regex.test(value);
+  const regex = /^[a-zA-Z0-9_]{3,20}$/
+  return regex.test(value)
 }
 
 /*
@@ -49,9 +48,6 @@ for a string that contains only letters
 (uppercase or lowercase). Additionally, the length of the name must be between 2 and 30 characters.
 */
 export const validateName = (value: string): boolean => {
-  const regex = /^[a-zA-Z0-9_]{2,20}$/;
-  return regex.test(value);
+  const regex = /^[a-zA-Z0-9_]{2,20}$/
+  return regex.test(value)
 }
-
-
-
