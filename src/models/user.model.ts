@@ -7,6 +7,7 @@ import {
   validateUsername,
   validateName
 } from '../utils/verification.helper'
+import { v4 as uuidv4 } from 'uuid';
 
 const error = new ErrorMessage()
 
@@ -59,7 +60,14 @@ const userSchema = new mongoose.Schema({
       message: error.password
     }
   },
-  date: { type: Date, default: Date.now }
+  confirmationCode: {
+    type: String, default: uuidv4()
+  },
+  confirmationTokenExpirationTime:{
+    type: Date || null
+  },
+  active: {type: Boolean, default: false},
+  date: { type: Date, default: Date.now },
 })
 
 export const User = mongoose.model('User', userSchema);

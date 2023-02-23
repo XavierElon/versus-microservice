@@ -1,4 +1,3 @@
-import * as Joi from 'joi'
 
 /* PHONE NUMBER VALIDATION*/
 export const validatePhone = (value: string): boolean => {
@@ -24,11 +23,13 @@ EMAIL VALIDATION
 - contains an @ symbol
 - has a domain name with one or more dots (.)
 - contains only lowercase and uppercase letters, numbers, dots, hyphens, and/or underscores
+- must end in .com
 */
 export const validateEmail = (value: string): boolean => {
-  const regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+  const regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.com$/;
   return regex.test(value);
 }
+
 
 /*
 USERNAME VALIADTION
@@ -51,3 +52,6 @@ export const validateName = (value: string): boolean => {
   const regex = /^[a-zA-Z0-9_]{2,20}$/;
   return regex.test(value);
 }
+
+
+

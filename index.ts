@@ -2,7 +2,7 @@ import cors from 'cors'
 import dotenv from 'dotenv'
 import express, { Express, Request, Response } from 'express'
 import { connectToDatabase } from './src/connections/mongodb'
-import { loginRouter, signupRouter, updateRouter, deleteRouter } from './src/routes/user.routes'
+import { loginRouter, signupRouter, updateRouter, deleteRouter, validationRouter } from './src/routes/user.routes'
 
 
 dotenv.config()
@@ -24,6 +24,7 @@ app.use(signupRouter)
 app.use(loginRouter)
 app.use(updateRouter)
 app.use(deleteRouter)
+app.use(validationRouter)
 
 
 app.get('/', async (req: Request, res: Response): Promise<Response> => {
