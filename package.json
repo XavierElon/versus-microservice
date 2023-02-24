@@ -14,15 +14,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/XavierElon/versus-microservice.git"
+    "url": "git+https://github.com/XavierElon/xsj-users-microservice.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/XavierElon/versus-microservice/issues"
+    "url": "https://github.com/XavierElon/xsj-users-microservice/issues"
   },
-  "homepage": "https://github.com/XavierElon/versus-microservice#readme",
+  "homepage": "https://github.com/XavierElon/xsj-users-microservice#readme",
   "dependencies": {
     "@types/chai": "^4.3.4",
     "cors": "^2.8.5",
