@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "main.ts",
+  "type":"module",
   "scripts": {
     "dev": "ts-node-dev ./index.ts",
     "build": "yarn run lint && npx tsc",
