@@ -1,51 +1,45 @@
-import asyncio
+import time
 import schedule
 import datetime
 from pymongo import MongoClient
 
-# Establish a connection to the database
-client = MongoClient("mongodb+srv://root:IhvkxnDwROpiDZpd@jsx.nwqtn5o.mongodb.net/users", port=1017)
+def connect_to_database():
+    client = MongoClient("mongodb+srv://root:IhvkxnDwROpiDZpd@jsx.nwqtn5o.mongodb.net/users", port=1017)
+    db = client['users']
+    collection = db['users']
+    return collection
 
-# Get the database
-db = client['users']
+collection = connect_to_database()
 
-# Get the collection
-collection = db['users']
-
-async def deleteUnconfirmedUsers():
-   
+def deleteUnconfirmedUsers():
     currentTime = datetime.datetime.now()
     print('SCRIPT IS RUNNING')
 
     # Check if the connection is successful
-    if client is not None:
-        print(f"Connected to database '{db.name}'")
+    if collection is not None:
+        print(f"Connected to database '{collection.database.name}'")
     else:
         print("Connection failed")
-    
 
     # Calculate the timestamp for 2 minutes ago
     twoMinutesAgo = currentTime - datetime.timedelta(minutes=2)
-
-    # Find all users that are unconfirmed and have a confirmation token expiration time
+            # Get the count of unconfirmed users
+    user_count = collection.count_documents({'active': False, 'confirmationTokenExpirationTime': {'$gte': twoMinutesAgo}})
+    print(f"Found {user_count} unconfirmed user(s).")
+    # Delete all users that are unconfirmed and have a confirmation token expiration time
     # earlier than 2 minutes ago
-    unconfirmedUsers = collection.find({'active': False, 'confirmationTokenExpirationTime': {'$lt': twoMinutesAgo}})
-    userCount = collection.count_documents({'active': False}) # count the number of unconfirmed users
-    print(f"Found {userCount} unconfirmed user(s).")
-    if userCount > 0:
-       for user in unconfirmedUsers:
-            print(user)
-            collection.delete_one({'_id': user['_id']})
-    else:
-      print("No unconfirmed user was found.")
+    deleted = collection.delete_many({'active': False, 'confirmationTokenExpirationTime': {'$gte': twoMinutesAgo}})
+    print(f"Deleted {deleted.deleted_count} unconfirmed user(s).")
+        # Get the count of unconfirmed users
   
-    
+       
+
 def run_delete_unconfirmed_users():
-    asyncio.run(deleteUnconfirmedUsers())
+    deleteUnconfirmedUsers()
 
 # Run the function every 5 seconds
 schedule.every(5).seconds.do(run_delete_unconfirmed_users)
 
 while True:
     schedule.run_pending()
-    asyncio.sleep(1)
+    time.sleep(1)
