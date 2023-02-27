@@ -1,12 +1,7 @@
-import cron from 'node-cron';
-import {deleteUnconfirmedUsers} from '../services/user.service'
+#!/usr/bin/env node
 
-// Schedule the task to run every day at midnight
-/*
-cron.schedule('0 0 * * *', async () => {
-    await deleteUnconfirmedUsers();
-  });
-*/
+const cron = require('node-cron');
+const { deleteUnconfirmedUsers } = require('./services/user.service');
 
 // Schedule the task to run every 6 hours
 cron.schedule('0 */6 * * *', async () => {
@@ -18,5 +13,3 @@ cron.schedule('0 */6 * * *', async () => {
     console.error('Cron job failed:', error);
   }
 });
-
-
