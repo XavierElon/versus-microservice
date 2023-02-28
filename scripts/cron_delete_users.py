@@ -23,7 +23,7 @@ def deleteUnconfirmedUsers():
 
     # Calculate the timestamp for 2 minutes ago
     twoMinutesAgo = currentTime - datetime.timedelta(minutes=2)
-            # Get the count of unconfirmed users
+    # Get the count of unconfirmed users
     user_count = collection.count_documents({'active': False, 'confirmationTokenExpirationTime': {'$gte': twoMinutesAgo}})
     print(f"Found {user_count} unconfirmed user(s).")
     # Delete all users that are unconfirmed and have a confirmation token expiration time

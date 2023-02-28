@@ -1,18 +1,17 @@
 import cors from 'cors'
-import dotenv from 'dotenv'
+import config from './config'
 import express, { Express, Request, Response } from 'express'
 import { connectToDatabase } from './src/connections/mongodb'
 import { loginRouter, signupRouter, updateRouter, deleteRouter, validationRouter } from './src/routes/user.routes'
 
-
-dotenv.config()
-
 const app: Express = express()
-const port: string = process.env.PORT || '1017'
-const host: string = process.env.HOST || 'http://localhost:'
-const dbUri: string = process.env.MONGO_ATLAS_URI || ''
-const dbName: string = process.env.DB_USERS_COLLECTION_USERS || ''
-const UriQueryParam: string = process.env.QUERY_PARAMETERS || ''
+
+const port = config.PORT;
+const dbName = config.DB_NAME;
+const dbUri = config.DB_URI;
+const UriQueryParam = config.QUERY_PARAM;
+const host = config.HOST;
+
 
 console.log(dbUri + dbName + UriQueryParam)
 

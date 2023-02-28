@@ -1,10 +1,12 @@
 import { MailOptions, CustomTransporter } from '../structures/types'
 import { User } from '../models/user.model'
+import config from '../../config'
 
-const Gmail_SMTP: string = process.env.GMAIL_SMTP || 'smtp.gmail.com'
-const Gmail_ACCOUNT: string = process.env.GMAIL_ACCOUNT || 'devgrusolutions@gmail.com'
-const Gmail_PASSWORD: string = process.env.GMAIL_PASSWORD || 'lbbhthmaohhjegqd'
-const Gmail_PORT: number = parseInt(process.env.GMAIL_PORT || '465', 10)
+const Gmail_SMTP = config.Gmail_SMTP
+const Gmail_ACCOUNT = config.Gmail_ACCOUNT
+const Gmail_PASSWORD = config.Gmail_PASSWORD
+const Gmail_PORT = config.Gmail_PORT
+
 /*
 SEND GMAIL CONFIRMATION
 */

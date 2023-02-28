@@ -1,9 +1,10 @@
 import { User } from '../models/user.model'
 import mongoose, { Model } from 'mongoose'
 import { sendConfirmationGmail, createConfirmationLink } from '../utils/email.helper'
+import config from '../../config'
 
-const port: string = process.env.PORT || '1017'
-const host: string = process.env.HOST || 'http://localhost:'
+const port = config.PORT;
+const host = config.HOST;
 
 /*
 CREATE USER
