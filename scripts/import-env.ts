@@ -1,3 +1,12 @@
+/*
+When you run npm start, 
+the import-env.js script will automatically import the environment 
+variables into your configuration file before running your application code.
+
+The replace method will find variables formatted with either one word like "PORT" or 
+seperated by one underscore like "ENV_VARIABLE"
+*/
+
 import dotenv from 'dotenv';
 import fs from 'fs';
 import path from 'path';
