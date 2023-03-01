@@ -15,9 +15,20 @@ dotenv.config();
 
 const configPath = path.join(__dirname, '../src/config/config.ts');
 const configFile = fs.readFileSync(configPath, 'utf-8');
-const newConfigFile = configFile.replace(/process\.env\.[a-z]+(_[a-z]+)?/g, (match) => {
+/*const newConfigFile = configFile.replace(/process\.env\.[a-z]+(_[a-z]+)?/g, (match) => {
   const envVariable = match.split('.')[2];
   return JSON.stringify(process.env[envVariable]);
+});*/
+const newConfigFile = configFile.replace(/([A-Z_]+):\s*process\.env\.([A-Z_]+)/g, (match, p1, p2) => {
+  console.log(p1);
+  return `${p1}: process.env.${p2} || ''`;
 });
 
 fs.writeFileSync(configPath, newConfigFile, 'utf-8');
+console.log('new config file', newConfigFile);
+//const config = JSON.parse(newConfigFile);
+//console.log('port -> ', config.PORT);
+//console.log('host -> ', config.HOST);
+
+//export default config;
+
