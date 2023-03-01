@@ -3,8 +3,8 @@ import mongoose, { Model } from 'mongoose'
 import { sendConfirmationGmail, createConfirmationLink } from '../utils/email.helper'
 import config from '../config/config'
 
-const port = config.PORT;
-const host = config.HOST;
+const port = config.PORT
+const host = config.HOST
 
 /*
 CREATE USER

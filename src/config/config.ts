@@ -1,17 +1,17 @@
-import dotenv from 'dotenv';
+import dotenv from 'dotenv'
 
-dotenv.config();
+dotenv.config()
 
 interface Config {
-  PORT: string;
-  HOST: string;
-  DB_URI: string;
-  DB_NAME: string;
-  QUERY_PARAM: string;
-  Gmail_SMTP: string;
-  Gmail_ACCOUNT: string;
-  Gmail_PASSWORD: string;
-  Gmail_PORT: number;
+  PORT: string
+  HOST: string
+  DB_URI: string
+  DB_NAME: string
+  QUERY_PARAM: string
+  Gmail_SMTP: string
+  Gmail_ACCOUNT: string
+  Gmail_PASSWORD: string
+  Gmail_PORT: number
 }
 
 const config: Config = {
@@ -24,6 +24,6 @@ const config: Config = {
   Gmail_ACCOUNT: process.env.GMAIL_ACCOUNT || '',
   Gmail_PASSWORD: process.env.GMAIL_PASSWORD || '',
   Gmail_PORT: parseInt(process.env.GMAIL_PORT || '465', 10)
-};
+}
 
-export default config;
+export default config
