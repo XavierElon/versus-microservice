@@ -1,6 +1,6 @@
 import { MailOptions, CustomTransporter } from '../structures/types'
 import { User } from '../models/user.model'
-import config from '../../config'
+import config from '../config/config'
 
 const Gmail_SMTP = config.Gmail_SMTP
 const Gmail_ACCOUNT = config.Gmail_ACCOUNT

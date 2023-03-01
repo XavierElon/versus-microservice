@@ -1,5 +1,5 @@
 import cors from 'cors'
-import config from './config'
+import config from './src/config/config'
 import express, { Express, Request, Response } from 'express'
 import { connectToDatabase } from './src/connections/mongodb'
 import { loginRouter, signupRouter, updateRouter, deleteRouter, validationRouter } from './src/routes/user.routes'

@@ -1,7 +1,7 @@
 import { User } from '../models/user.model'
 import mongoose, { Model } from 'mongoose'
 import { sendConfirmationGmail, createConfirmationLink } from '../utils/email.helper'
-import config from '../../config'
+import config from '../config/config'
 
 const port = config.PORT;
 const host = config.HOST;
