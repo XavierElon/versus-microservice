@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "ts-node-dev ./index.ts",
     "build": "yarn run lint && npx tsc",
-    "start": "yarn run lint && node dist/main.js",
+    "start": "yarn run lint && node dist/main.js && node import-env.js",
     "test": "mocha --require ts-node/register tests/**/*.spec.ts",
     "test:coverage": "nyc npm run test",
     "lint": "yarn eslint .",
