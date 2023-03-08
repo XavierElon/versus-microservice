@@ -1,4 +1,4 @@
-FROM node:16
+FROM --platform=linux/amd64 node:16
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -11,4 +11,4 @@ RUN --mount=type=cache,target=/var/cache/yarn yarn config set cache-folder /var/
 COPY . .
 EXPOSE 1017
 
-CMD ["pm2", "start", "npm", "--name", "users-microservice", "--", "start", "--watch"]
+CMD ["pm2-runtime", "start", "npm", "--name", "users-microservice", "--", "start", "--watch"]
