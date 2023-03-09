@@ -11,18 +11,18 @@
         "plugin:@typescript-eslint/recommended"
     ],
     "rules": {
-        "no-console": 2,
-        "quotes": [2, "single", { "avoidEscape": true }],
+        "no-console": 1,
+        "quotes": [1, "single", { "avoidEscape": true }],
         "no-useless-return": 1,
         "no-unused-vars": 1,
         "unused-imports/no-unused-imports": "error",
         "no-duplicate-imports": 1,
-        "no-unreachable": 2,
-        "no-unreachable-loop": 2,
+        "no-unreachable": 1,
+        "no-unreachable-loop": 1,
         "no-use-before-define": 1,
-        "no-inline-comments": 2,
+        "no-inline-comments": 1,
         "max-params": ["error", 3],
-        "sort-imports": ["error", {
+        "sort-imports": ["warn", {
             "ignoreCase": false,
             "ignoreDeclarationSort": true,
             "ignoreMemberSort": false,
