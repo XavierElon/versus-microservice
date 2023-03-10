@@ -28,6 +28,7 @@
   "homepage": "https://github.com/XavierElon/xsj-users-microservice#readme",
   "dependencies": {
     "@types/chai": "^4.3.4",
+    "@types/mongodb": "^4.0.7",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "joi": "^17.7.1",
