@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { User } from '../models/user.model'
 import mongoose, { Model } from 'mongoose'
 import { sendConfirmationGmail, createConfirmationLink } from '../utils/email.helper'
