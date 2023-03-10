@@ -9,7 +9,7 @@
     "config": "ts-node-dev ./scripts/import-env",
     "dev": "ts-node-dev ./index.ts",
     "build": "npx tsc",
-    "start": "node dist/main.js && node import-env.js",
+    "start": "node dist/index.js",
     "test": "mocha --require ts-node/register tests/**/*.spec.ts",
     "test:coverage": "nyc npm run test",
     "lint": "yarn eslint .",
