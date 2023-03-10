@@ -1,0 +1,45 @@
+{
+    "family": "xsj-users-microservice-TD",
+    "containerDefinitions": [
+        {
+            "name": "xsj-users-microservice-container",
+            "image": "275136276893.dkr.ecr.us-west-2.amazonaws.com/xsj-users-microservice",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "name": "xsj-users-microservice-container-1017-tcp",
+                    "containerPort": 1017,
+                    "hostPort": 1017,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-create-group": "true",
+                    "awslogs-group": "/ecs/xsj-users-microservice-TD",
+                    "awslogs-region": "us-west-2",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            }
+        }
+    ],
+    "taskRoleArn": "arn:aws:iam::275136276893:role/ecsTaskExecutionRole",
+    "executionRoleArn": "arn:aws:iam::275136276893:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "1024",
+    "memory": "3072",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    }
+}
