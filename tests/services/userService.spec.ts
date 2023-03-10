@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 /*
 THIS CLASS COVERS THE USER SERVICE FILE
 */
