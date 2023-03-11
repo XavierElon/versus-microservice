@@ -1,11 +1,11 @@
 import { expect } from 'chai';
 import request from 'supertest';
 import express, { Express } from 'express';
-import { createUser, checkIfUserExists } from '../../src/services/user.service';
 import { signupRouter } from '../../src/routes/user.routes';
 import mongoose, { Model } from 'mongoose';
 import sinon from 'sinon';
 import { User } from '../../src/models/user.model'
+
 const app: Express = express();
 app.use(express.json());
 app.use('/', signupRouter);
