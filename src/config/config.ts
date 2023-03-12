@@ -16,7 +16,7 @@ interface Config {
 
 let config: Config = {
   PORT: '1017' || '',
-  HOST: 'http://50.112.190.75/:' || '',
+  HOST: 'xsj-users-microservice-ALB-2043036145.us-west-2.elb.amazonaws.com' || '',
   DB_URI: 'mongodb+srv://root:IhvkxnDwROpiDZpd@jsx.nwqtn5o.mongodb.net' || '',
   DB_NAME: '/users' || '',
   QUERY_PARAM: '?retryWrites=true&w=majority' || '',
