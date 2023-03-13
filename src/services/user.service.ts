@@ -4,7 +4,6 @@ import mongoose, { Model } from 'mongoose'
 import { sendConfirmationGmail, createConfirmationLink } from '../utils/email.helper'
 import config from '../config/config'
 
-const port = config.PORT
 const host = config.HOST
 
 /*
@@ -13,7 +12,7 @@ This function creates a new user using the userSchema and saves it to the databa
 */
 export const createUser = async (userData: typeof User): Promise<any> => {
   const user = new User(userData)
-  const baseUrl = host + port
+  const baseUrl = host;
   try {
     user.confirmationTokenExpirationTime = new Date(Date.now())
     const savedUser = await user.save()
@@ -35,9 +34,9 @@ export const createUser = async (userData: typeof User): Promise<any> => {
 VERIFY USER
 check the username and password against the database to approve login
 */
-export const verifyUser = async (username: string, password: string) => {
-  const existingUser = await User.findOne({ username, password })
-  if (existingUser) {
+export const verifyUser = async (email: string, password: string) => {
+  const existingUser = await User.findOne({ email, password })
+  if (existingUser && existingUser.active === true) {
     return true
   }
   return false
