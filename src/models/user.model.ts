@@ -58,10 +58,10 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    validate: {
-      validator: validatePassword,
-      message: error.password
-    }
+    // validate: {
+    //   validator: validatePassword,
+    //   message: error.password
+    // }
   },
   confirmationCode: {
     type: String,

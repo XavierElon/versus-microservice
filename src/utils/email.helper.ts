@@ -35,7 +35,9 @@ export const createConfirmationLink = async (
   baseUrl: string
 ): Promise<string> => {
   const user = new User(userData)
+  console.log(baseUrl)
   const confirmationPath = `/validate-account-creation/${user.id}?confirmed=true&token=${user.confirmationCode}`
   const confirmationUrl = new URL(confirmationPath, baseUrl)
+  console.log('create link')
   return confirmationUrl.toString()
 }

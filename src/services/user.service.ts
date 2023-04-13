@@ -1,22 +1,32 @@
 // @ts-nocheck
 import { User } from '../models/user.model'
 import mongoose, { Model } from 'mongoose'
+import dotenv from 'dotenv'
+import bcrypt from 'bcrypt'
+import cookieParser from 'cookie-parser'
 import { sendConfirmationGmail, createConfirmationLink } from '../utils/email.helper'
 import config from '../config/config'
 
 const host = config.HOST
+dotenv.config()
 
 /*
 CREATE USER
 This function creates a new user using the userSchema and saves it to the database
 */
 export const createUser = async (userData: typeof User): Promise<any> => {
-  const user = new User(userData)
-  const baseUrl = host;
+  const { password } = userData
+  const hash = await bcrypt.hash(password, 10)
+  userData = { ...userData,  password: hash }
+  let user = new User(userData)
+  
+  // const baseUrl = host;
+  const baseUrl = process.env.HOST + process.env.PORT
   try {
     user.confirmationTokenExpirationTime = new Date(Date.now())
     const savedUser = await user.save()
     console.log('Result:', savedUser)
+    
     const confirmationLink = await createConfirmationLink(userData, baseUrl)
     await sendConfirmationGmail(user.email, confirmationLink)
     console.log(`Sent email to user ${user.email}`)

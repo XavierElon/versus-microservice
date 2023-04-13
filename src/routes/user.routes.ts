@@ -1,4 +1,8 @@
 import express, { Express, Request, Response, Router } from 'express'
+import dotenv from 'dotenv'
+import bcrypt from 'bcrypt'
+import cookieParser from 'cookie-parser'
+import { User } from '../models/user.model'
 import {
   createUser,
   checkIfUserExists,
@@ -8,7 +12,6 @@ import {
   confirmUser
 } from '../services/user.service'
 
-const app: Express = express()
 export const signupRouter: Router = express.Router()
 export const updateRouter: Router = express.Router()
 export const loginRouter: Router = express.Router()
@@ -54,15 +57,17 @@ updateRouter.put('/update/:id', async (req: Request, res: Response) => {
 
 /*Verify user credentials against the database and login*/
 loginRouter.post('/login', async (req: Request, res: Response) => {
-  const { email, password } = req.body
+  const { email, userName, password } = req.body
+  console.log(email)
+  // const isValid = await verifyUser(email, password)
+  const user = await User.findOne({ email })
+  console.log(user)
 
-  const isValid = await verifyUser(email, password)
-
-  if (isValid) {
-    res.status(200).json({ message: 'Login successful' })
-  } else {
-    res.status(401).json({ message: 'Incorrect username or password, please make sure you have confirmed your email' })
-  }
+  // if (isValid) {
+  //   res.status(200).json({ message: 'Login successful' })
+  // } else {
+  //   res.status(401).json({ message: 'Incorrect username or password, please make sure you have confirmed your email' })
+  // }
 })
 
 // Delete user by email endpoint
