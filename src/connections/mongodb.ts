@@ -10,7 +10,9 @@ export const connectToDatabase = async (dbUri: string) => {
     keepAliveInitialDelay: 30000
   }
   try {
+    mongoose.set('strictQuery', false)
     await mongoose.connect(dbUri, options)
+
     User.collection.createIndex({ username: 1 }, { unique: true })
   } catch (error: any) {
     throw new Error(`Mongodb connection failed: ${error}`)

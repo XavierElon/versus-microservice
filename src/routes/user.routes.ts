@@ -1,4 +1,4 @@
-import express, { Request, Response, Router } from 'express'
+import express, { Express, Request, Response, Router } from 'express'
 import {
   createUser,
   checkIfUserExists,
@@ -8,6 +8,7 @@ import {
   confirmUser
 } from '../services/user.service'
 
+const app: Express = express()
 export const signupRouter: Router = express.Router()
 export const updateRouter: Router = express.Router()
 export const loginRouter: Router = express.Router()
