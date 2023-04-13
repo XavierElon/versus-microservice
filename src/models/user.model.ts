@@ -23,6 +23,7 @@ const userSchema = new mongoose.Schema({
   lastName: {
     type: String,
     required: true,
+    unique: true,
     validate: {
       validator: validateName,
       message: error.lastName
@@ -39,6 +40,7 @@ const userSchema = new mongoose.Schema({
   mobileNumber: {
     type: Number,
     required: true,
+    unique: true,
     validate: {
       validator: validatePhone,
       message: error.mobileNumber
@@ -47,6 +49,7 @@ const userSchema = new mongoose.Schema({
   userName: {
     type: String,
     required: true,
+    unique: true,
     validate: {
       validator: validateUsername,
       message: error.userName
