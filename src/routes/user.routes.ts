@@ -11,10 +11,12 @@ import {
   deleteUser,
   confirmUser
 } from '../services/user.service'
+import { createToken, validateToken } from '../utils/jwt'
 
 export const signupRouter: Router = express.Router()
 export const updateRouter: Router = express.Router()
 export const loginRouter: Router = express.Router()
+export const profileRouter: Router = express.Router()
 export const deleteRouter: Router = express.Router()
 export const validationRouter: Router = express.Router()
 
@@ -57,12 +59,27 @@ updateRouter.put('/update/:id', async (req: Request, res: Response) => {
 
 /*Verify user credentials against the database and login*/
 loginRouter.post('/login', async (req: Request, res: Response) => {
-  const { email, userName, password } = req.body
-  console.log(email)
-  // const isValid = await verifyUser(email, password)
+  const { email, password } = req.body
   const user = await User.findOne({ email })
-  console.log(user)
 
+  if(!user) {
+    console.log('User does not exist')
+    res.status(401).json({ message: 'Incorrect username or password, please make sure you have confirmed your email' })
+  }
+
+  const hashedPassword = user?.password
+  bcrypt.compare(password, hashedPassword).then((match) => {
+    if (!match) {
+      res.status(400).json({ error: 'Wrong username or password'})
+    } else {
+      const accessToken = createToken(user)
+      res.cookie('access-token', accessToken, {
+        maxAge: 60 * 60 * 24 * 1000,
+        httpOnly: true
+      })
+      res.json('Logged in')
+    }
+  })
   // if (isValid) {
   //   res.status(200).json({ message: 'Login successful' })
   // } else {
@@ -70,8 +87,14 @@ loginRouter.post('/login', async (req: Request, res: Response) => {
   // }
 })
 
+profileRouter.get('/profile', validateToken, (req, res) => {
+  console.log(req)
+  res.json('profile')
+})
+
+
 // Delete user by email endpoint
-deleteRouter.delete('/delete/:email', async (req, res) => {
+deleteRouter.delete('/delete/:email', validateToken, async (req, res) => {
   const email = req.params.email
   try {
     const deletedUser = await deleteUser(email)

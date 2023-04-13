@@ -4,7 +4,7 @@ import express, { Express, Request, Response } from 'express'
 import bcrypt from 'bcrypt'
 import cookieParser from 'cookie-parser'
 import { connectToDatabase } from './src/connections/mongodb'
-import { loginRouter, signupRouter, updateRouter, deleteRouter, validationRouter } from './src/routes/user.routes'
+import { loginRouter, signupRouter, updateRouter, profileRouter, deleteRouter, validationRouter } from './src/routes/user.routes'
 import { User } from './src/models/user.model'
 import { createToken, validateToken } from './src/utils/jwt'
 
