@@ -13,15 +13,16 @@ import {
 } from '../services/user.service'
 import { createToken, validateToken } from '../utils/jwt'
 
-export const signupRouter: Router = express.Router()
-export const updateRouter: Router = express.Router()
-export const loginRouter: Router = express.Router()
-export const profileRouter: Router = express.Router()
-export const deleteRouter: Router = express.Router()
-export const validationRouter: Router = express.Router()
+export const userRouter: Router = express.Router()
+// export const signupRouter: Router = express.Router()
+// export const updateRouter: Router = express.Router()
+// export const loginRouter: Router = express.Router()
+// export const profileRouter: Router = express.Router()
+// export const deleteRouter: Router = express.Router()
+// export const validationRouter: Router = express.Router()
 
 // Create a User
-signupRouter.post('/signup', async (req: Request, res: Response) => {
+userRouter.post('/signup', async (req: Request, res: Response) => {
   const userData = req.body
   const userExists = await checkIfUserExists(userData.email)
   if (userExists) {
@@ -39,26 +40,8 @@ signupRouter.post('/signup', async (req: Request, res: Response) => {
   }
 })
 
-// Update a user by ID
-updateRouter.put('/update/:id', async (req: Request, res: Response) => {
-  try {
-    const id = req.params.id
-    const update = req.body
-    // Find the user by ID and update its properties
-    const updatedUser = updateUser(id, update)
-    if (!updatedUser) {
-      return res.status(404).send({ error: 'User not found' })
-    } else {
-      return res.status(200).send({ updatedUser, message: 'User updated' })
-    }
-  } catch (error) {
-    console.error(`Error updating user: ${error}`)
-    return res.status(500).send({ error: 'Server error' })
-  }
-})
-
 /*Verify user credentials against the database and login*/
-loginRouter.post('/login', async (req: Request, res: Response) => {
+userRouter.post('/login', async (req: Request, res: Response) => {
   const { email, password } = req.body
   const user = await User.findOne({ email })
 
@@ -77,24 +60,36 @@ loginRouter.post('/login', async (req: Request, res: Response) => {
         maxAge: 60 * 60 * 24 * 1000,
         httpOnly: true
       })
-      res.json('Logged in')
+      res.status(200).json({ message: 'Login successful' })
     }
   })
-  // if (isValid) {
-  //   res.status(200).json({ message: 'Login successful' })
-  // } else {
-  //   res.status(401).json({ message: 'Incorrect username or password, please make sure you have confirmed your email' })
-  // }
 })
 
-profileRouter.get('/profile', validateToken, (req, res) => {
-  console.log(req)
+// Test route for token/cookie
+userRouter.get('/profile', validateToken, (req, res) => {
   res.json('profile')
 })
 
+// Update a user by ID
+userRouter.put('/update/:id',validateToken, async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id
+    const update = req.body
+    // Find the user by ID and update its properties
+    const updatedUser = updateUser(id, update)
+    if (!updatedUser) {
+      return res.status(404).send({ error: 'User not found' })
+    } else {
+      return res.status(200).send({ updatedUser, message: 'User updated' })
+    }
+  } catch (error) {
+    console.error(`Error updating user: ${error}`)
+    return res.status(500).send({ error: 'Server error' })
+  }
+})
 
 // Delete user by email endpoint
-deleteRouter.delete('/delete/:email', validateToken, async (req, res) => {
+userRouter.delete('/delete/:email', validateToken, async (req, res) => {
   const email = req.params.email
   try {
     const deletedUser = await deleteUser(email)
@@ -109,7 +104,7 @@ deleteRouter.delete('/delete/:email', validateToken, async (req, res) => {
 })
 
 //Confirm the user has created an account
-validationRouter.get('/validate-account-creation/:userID', async (req, res) => {
+userRouter.get('/validate-account-creation/:userID', async (req, res) => {
   try {
     const { confirmed, token } = req.query
     if (confirmed === 'true' && typeof token === 'string') {
