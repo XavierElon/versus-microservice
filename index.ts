@@ -1,8 +1,12 @@
 import cors from 'cors'
 import config from './src/config/config'
 import express, { Express, Request, Response } from 'express'
+import bcrypt from 'bcrypt'
+import cookieParser from 'cookie-parser'
 import { connectToDatabase } from './src/connections/mongodb'
-import { loginRouter, signupRouter, updateRouter, deleteRouter, validationRouter } from './src/routes/user.routes'
+import { userRouter } from './src/routes/user.routes'
+import { User } from './src/models/user.model'
+import { createToken, validateToken } from './src/utils/jwt'
 
 const app: Express = express()
 
@@ -14,17 +18,15 @@ const host = config.HOST;
 
 
 console.log(dbUri + dbName + UriQueryParam)
+console.log(' ')
+console.log(process.env.JWT_SECRET)
 
 // Body parsing Middleware
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cors())
-app.use(signupRouter)
-app.use(loginRouter)
-app.use(updateRouter)
-app.use(deleteRouter)
-app.use(validationRouter)
-
+app.use(cookieParser())
+app.use(userRouter)
 
 app.get('/', async (req: Request, res: Response): Promise<Response> => {
     return res.status(200).send({ message: 'Typescript node server running!' })

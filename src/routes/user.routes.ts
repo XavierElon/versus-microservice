@@ -1,4 +1,8 @@
-import express, { Request, Response, Router } from 'express'
+import express, { Express, Request, Response, Router } from 'express'
+import dotenv from 'dotenv'
+import bcrypt from 'bcrypt'
+import cookieParser from 'cookie-parser'
+import { User } from '../models/user.model'
 import {
   createUser,
   checkIfUserExists,
@@ -7,15 +11,18 @@ import {
   deleteUser,
   confirmUser
 } from '../services/user.service'
+import { createToken, validateToken } from '../utils/jwt'
 
-export const signupRouter: Router = express.Router()
-export const updateRouter: Router = express.Router()
-export const loginRouter: Router = express.Router()
-export const deleteRouter: Router = express.Router()
-export const validationRouter: Router = express.Router()
+export const userRouter: Router = express.Router()
+// export const signupRouter: Router = express.Router()
+// export const updateRouter: Router = express.Router()
+// export const loginRouter: Router = express.Router()
+// export const profileRouter: Router = express.Router()
+// export const deleteRouter: Router = express.Router()
+// export const validationRouter: Router = express.Router()
 
 // Create a User
-signupRouter.post('/signup', async (req: Request, res: Response) => {
+userRouter.post('/signup', async (req: Request, res: Response) => {
   const userData = req.body
   const userExists = await checkIfUserExists(userData.email)
   if (userExists) {
@@ -33,8 +40,38 @@ signupRouter.post('/signup', async (req: Request, res: Response) => {
   }
 })
 
+/*Verify user credentials against the database and login*/
+userRouter.post('/login', async (req: Request, res: Response) => {
+  const { email, password } = req.body
+  const user = await User.findOne({ email })
+
+  if(!user) {
+    console.log('User does not exist')
+    res.status(401).json({ message: 'Incorrect username or password, please make sure you have confirmed your email' })
+  }
+
+  const hashedPassword = user?.password
+  bcrypt.compare(password, hashedPassword).then((match) => {
+    if (!match) {
+      res.status(400).json({ error: 'Wrong username or password'})
+    } else {
+      const accessToken = createToken(user)
+      res.cookie('access-token', accessToken, {
+        maxAge: 60 * 60 * 24 * 1000,
+        httpOnly: true
+      })
+      res.status(200).json({ message: 'Login successful' })
+    }
+  })
+})
+
+// Test route for token/cookie
+userRouter.get('/profile', validateToken, (req, res) => {
+  res.json('profile')
+})
+
 // Update a user by ID
-updateRouter.put('/update/:id', async (req: Request, res: Response) => {
+userRouter.put('/update/:id',validateToken, async (req: Request, res: Response) => {
   try {
     const id = req.params.id
     const update = req.body
@@ -51,21 +88,8 @@ updateRouter.put('/update/:id', async (req: Request, res: Response) => {
   }
 })
 
-/*Verify user credentials against the database and login*/
-loginRouter.post('/login', async (req: Request, res: Response) => {
-  const { email, password } = req.body
-
-  const isValid = await verifyUser(email, password)
-
-  if (isValid) {
-    res.status(200).json({ message: 'Login successful' })
-  } else {
-    res.status(401).json({ message: 'Incorrect username or password, please make sure you have confirmed your email' })
-  }
-})
-
 // Delete user by email endpoint
-deleteRouter.delete('/delete/:email', async (req, res) => {
+userRouter.delete('/delete/:email', validateToken, async (req, res) => {
   const email = req.params.email
   try {
     const deletedUser = await deleteUser(email)
@@ -80,7 +104,7 @@ deleteRouter.delete('/delete/:email', async (req, res) => {
 })
 
 //Confirm the user has created an account
-validationRouter.get('/validate-account-creation/:userID', async (req, res) => {
+userRouter.get('/validate-account-creation/:userID', async (req, res) => {
   try {
     const { confirmed, token } = req.query
     if (confirmed === 'true' && typeof token === 'string') {
