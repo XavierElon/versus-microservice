@@ -115,17 +115,17 @@ userRouter.get('/validate-account-creation/:userID', async (req: Request, res: R
 
 // Update user's password
 userRouter.put('/changepassword', validateToken, async (req: Request, res: Response) => {
-  const { oldPassword, newPassword, email, username } = req.body
+  const { oldPassword, newPassword, email } = req.body
   console.log(req)
 
   // const user = await User.findOne({ where: { username: req.user.username }})
-  const user = await User.findOne({ where: { username: username }})
+  const user = await User.findOne({ where: { email: email }})
 
   bcrypt.compare(oldPassword, user.password).then(async (match) => {
     if (!match) res.json({ error: 'Wrong Password Entered!' })
 
-    bcrypt.hash(newPassword, 10).then(async (hash) => {
-      await User.update({password: hash}, {where: { username: username }})
+    bcrypt.hash(newPassword, 10).then((hash) => {
+      User.update({password: hash}, {where: { email: email }})
       res.json('success')
     })
   })
