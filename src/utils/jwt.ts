@@ -17,6 +17,7 @@ export const validateToken = (req, res, next) => {
 
     try {
         const validToken = verify(accessToken, process.env.JWT_SECRET)
+        req.use = validToken
         if (validToken) {
             req.authenticated = true
             return next()

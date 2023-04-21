@@ -14,12 +14,6 @@ import {
 import { createToken, validateToken } from '../utils/jwt'
 
 export const userRouter: Router = express.Router()
-// export const signupRouter: Router = express.Router()
-// export const updateRouter: Router = express.Router()
-// export const loginRouter: Router = express.Router()
-// export const profileRouter: Router = express.Router()
-// export const deleteRouter: Router = express.Router()
-// export const validationRouter: Router = express.Router()
 
 // Create a User
 userRouter.post('/signup', async (req: Request, res: Response) => {
@@ -71,7 +65,7 @@ userRouter.get('/profile', validateToken, (req, res) => {
 })
 
 // Update a user by ID
-userRouter.put('/update/:id',validateToken, async (req: Request, res: Response) => {
+userRouter.put('/update/:id', validateToken, async (req: Request, res: Response) => {
   try {
     const id = req.params.id
     const update = req.body
@@ -104,7 +98,7 @@ userRouter.delete('/delete/:email', validateToken, async (req, res) => {
 })
 
 //Confirm the user has created an account
-userRouter.get('/validate-account-creation/:userID', async (req, res) => {
+userRouter.get('/validate-account-creation/:userID', async (req: Request, res: Response) => {
   try {
     const { confirmed, token } = req.query
     if (confirmed === 'true' && typeof token === 'string') {
@@ -117,4 +111,22 @@ userRouter.get('/validate-account-creation/:userID', async (req, res) => {
     console.error(error)
     res.status(500).send('An error occurred while validating your account creation.')
   }
+})
+
+// Update user's password
+userRouter.put('/changepassword', validateToken, async (req: Request, res: Response) => {
+  const { oldPassword, newPassword, email } = req.body
+  console.log(req)
+
+  // const user = await User.findOne({ where: { username: req.user.username }})
+  const user = await User.findOne({ where: { email: email }})
+
+  bcrypt.compare(oldPassword, user.password).then(async (match) => {
+    if (!match) res.json({ error: 'Wrong Password Entered!' })
+
+    bcrypt.hash(newPassword, 10).then((hash) => {
+      User.update({password: hash}, {where: { email: email }})
+      res.json('success')
+    })
+  })
 })
