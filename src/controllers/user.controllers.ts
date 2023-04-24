@@ -1,5 +1,4 @@
-import express, { Express, Request, Response, Router } from 'express'
-import dotenv from 'dotenv'
+import { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
 import cookieParser from 'cookie-parser'
 import { User } from '../models/user.model'
@@ -11,7 +10,7 @@ import {
   deleteUser,
   confirmUser
 } from '../services/user.service'
-import { createToken, validateToken } from '../utils/jwt'
+import { createLocalToken } from '../utils/jwt'
 
 export const CreateUser = async (req: Request, res: Response) => {
   const userData = req.body
@@ -45,7 +44,7 @@ export const LoginUser = async (req: Request, res: Response) => {
     if (!match) {
       res.status(400).json({ error: 'Wrong username or password'})
     } else {
-      const accessToken = createToken(user)
+      const accessToken = createLocalToken(user)
       res.cookie('access-token', accessToken, {
         maxAge: 60 * 60 * 24 * 1000,
         httpOnly: true

@@ -3,8 +3,13 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-export const createToken = (user) => {
-    const accessToken = sign({ email: user.email, id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' })
+export const createLocalToken = (user) => {
+    const accessToken = sign({ email: user.email, id: user.id }, process.env.JWT_SECRET, { expiresIn: '24h' })
+    return accessToken
+}
+
+export const createGoogleAuthToken = (firebaseUid) => {
+    const accessToken = sign({ firebaseUid: firebaseUid }, process.env.JWT_SECRET, { expiresIn: '24h'})
     return accessToken
 }
 

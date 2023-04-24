@@ -65,10 +65,12 @@ const userSchema = new mongoose.Schema({
     confirmationTokenExpirationTime: {
       type: Date || null
     },
+    active: { type: Boolean, default: false },
   },
   firebaseGoogle: {
     firebaseUid: String,
     accessToken: String,
+    refreshToken: String,
     email: String,
     displayName: String,
     photoURL: String,
@@ -77,7 +79,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['local', 'firebaseGoogle'], required: true
   },
-  active: { type: Boolean, default: false },
   date: { type: Date, default: Date.now }
 })
 

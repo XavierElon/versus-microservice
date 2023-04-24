@@ -30,15 +30,17 @@ userRouter.get('/validate-account-creation/:userID', ValidateAccountCreation)
 userRouter.put('/changepassword', validateToken, ChangePassword)
 
 userRouter.post('/auth/firebase/google', async (req: Request, res: Response) => {
-  // res.status(200).json({ message: 'hello' })
+  console.log('hitting auth endpoint')
+  console.log(req.body)
   try {
-    const { accessToken, displayName, email, firebaseUid, photoURL, refreshToken } = req.body
+    const { accessToken, displayName, email, firebaseUid, photoURL, refreshToken } = req.body.firebaseGoogle
     
     if (!firebaseUid) {
       return res.status(400).json({ message: 'Missing firebaseUid' })
     }
 
-    let user = await User.findOne({ firebaseUid })
+    let user = await User.findOne({ firebaseGoogle: {
+      firebaseUid }})
 
     if (!user) {
       user = new User({

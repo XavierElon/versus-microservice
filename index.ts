@@ -6,8 +6,6 @@ import cookieParser from 'cookie-parser'
 import nodemailer from 'nodemailer'
 import { connectToDatabase } from './src/connections/mongodb'
 import { userRouter } from './src/routes/user.routes'
-import { User } from './src/models/user.model'
-import { createToken, validateToken } from './src/utils/jwt'
 
 const app: Express = express()
 
