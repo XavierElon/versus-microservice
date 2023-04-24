@@ -10,7 +10,7 @@ import {
   deleteUser,
   confirmUser
 } from '../services/user.service'
-import { createLocalToken } from '../utils/jwt'
+import { createGoogleAuthToken, createLocalToken } from '../utils/jwt'
 
 export const CreateUser = async (req: Request, res: Response) => {
   const userData = req.body
@@ -115,4 +115,52 @@ export const ChangePassword = async (req: Request, res: Response) => {
       res.json('success')
     })
   })
+}
+
+export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
+    console.log(req.body)
+  try {
+    const { accessToken, displayName, email, firebaseUid, photoURL, refreshToken } = req.body.firebaseGoogle
+    
+    if (!firebaseUid) {
+      return res.status(400).json({ message: 'Missing firebaseUid' })
+    }
+
+    let user = await User.findOne({ firebaseGoogle: {
+      firebaseUid }})
+
+    if (!user) {
+      user = new User({
+        local: {
+          active: true,
+        },
+        firebaseGoogle: {
+          firebaseUid: firebaseUid,
+          accessToken: accessToken, 
+          email: email,
+          displayName: displayName,
+          photoURL: photoURL,
+          refreshToken: refreshToken
+        },
+        provider: 'firebaseGoogle'
+      })
+      await user.save()
+    }
+
+    const token = createGoogleAuthToken(firebaseUid)
+
+    res.json({
+      token,
+      user: {
+        _id: user.id,
+        firebaseUid: user.firebaseGoogle.firebaseUid,
+        email,
+        provider: user.provider
+      }
+    })
+  
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: 'Internal server error' })
+  }
 }
