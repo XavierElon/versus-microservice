@@ -58,7 +58,8 @@ check the username against the database for duplicates before proceeding with cr
 */
 export const checkIfUserExists = async (email: string) => {
   const existingUser = await User.findOne({ email })
-  if (existingUser) {
+  const existingGoogleUser = await User.findOne({ firbaseGoogle : { email: email}})
+  if (existingUser || existingGoogleUser) {
     return true
   }
   return false

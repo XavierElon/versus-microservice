@@ -35,22 +35,22 @@ const userSchema = new mongoose.Schema({
         message: error.email
       }
     },
-    mobileNumber: {
-      type: Number,
-      unique: true,
-      validate: {
-        validator: validatePhone,
-        message: error.mobileNumber
-      }
-    },
-    userName: {
-      type: String,
-      unique: true,
-      validate: {
-        validator: validateUsername,
-        message: error.userName
-      }
-    },
+    // mobileNumber: {
+    //   type: Number,
+    //   unique: true,
+    //   validate: {
+    //     validator: validatePhone,
+    //     message: error.mobileNumber
+    //   }
+    // },
+    // userName: {
+    //   type: String,
+    //   unique: true,
+    //   validate: {
+    //     validator: validateUsername,
+    //     message: error.userName
+    //   }
+    // },
     password: {
       type: String,
       validate: {
