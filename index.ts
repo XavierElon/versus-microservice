@@ -3,6 +3,7 @@ import config from './src/config/config'
 import express, { Express, Request, Response } from 'express'
 import bcrypt from 'bcrypt'
 import cookieParser from 'cookie-parser'
+import nodemailer from 'nodemailer'
 import { connectToDatabase } from './src/connections/mongodb'
 import { userRouter } from './src/routes/user.routes'
 import { User } from './src/models/user.model'
@@ -16,10 +17,7 @@ const dbUri = config.DB_URI;
 const UriQueryParam = config.QUERY_PARAM;
 const host = config.HOST;
 
-
 console.log(dbUri + dbName + UriQueryParam)
-console.log(' ')
-console.log(process.env.JWT_SECRET)
 
 // Body parsing Middleware
 app.use(express.json())

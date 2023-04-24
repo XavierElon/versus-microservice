@@ -12,56 +12,57 @@ import { v4 as uuidv4 } from 'uuid'
 const error = new ErrorMessage()
 
 const userSchema = new mongoose.Schema({
-  firstName: {
-    type: String,
-    required: true,
-    validate: {
-      validator: validateName,
-      message: error.firstName
-    }
+  local:  {
+    firstName: {
+      type: String,
+      validate: {
+        validator: validateName,
+        message: error.firstName
+      }
+    },
+    lastName: {
+      type: String,
+      unique: true,
+      validate: {
+        validator: validateName,
+        message: error.lastName
+      }
+    },
+    email: {
+      type: String,
+      validate: {
+        validator: validateEmail,
+        message: error.email
+      }
+    },
+    mobileNumber: {
+      type: Number,
+      unique: true,
+      validate: {
+        validator: validatePhone,
+        message: error.mobileNumber
+      }
+    },
+    userName: {
+      type: String,
+      unique: true,
+      validate: {
+        validator: validateUsername,
+        message: error.userName
+      }
+    },
+    password: {
+      type: String,
+      // validate: {
+      //   validator: validatePassword,
+      //   message: error.password
+      // }
+    },
   },
-  lastName: {
+  firebaseUid: String,
+  provider: {
     type: String,
-    required: true,
-    unique: true,
-    validate: {
-      validator: validateName,
-      message: error.lastName
-    }
-  },
-  email: {
-    type: String,
-    required: true,
-    validate: {
-      validator: validateEmail,
-      message: error.email
-    }
-  },
-  mobileNumber: {
-    type: Number,
-    required: true,
-    unique: true,
-    validate: {
-      validator: validatePhone,
-      message: error.mobileNumber
-    }
-  },
-  userName: {
-    type: String,
-    required: true,
-    unique: true,
-    validate: {
-      validator: validateUsername,
-      message: error.userName
-    }
-  },
-  password: {
-    type: String,
-    required: true,
-    // validate: {
-    //   validator: validatePassword,
-    //   message: error.password
-    // }
+    enum: ['local', 'firebase-google'], required: true
   },
   confirmationCode: {
     type: String,
