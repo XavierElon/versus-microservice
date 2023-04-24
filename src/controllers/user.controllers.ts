@@ -30,3 +30,27 @@ export const CreateUser = async (req: Request, res: Response) => {
       })
   }
 }
+
+export const LoginUser = async (req: Request, res: Response) => {
+  const { email, password } = req.body
+  const user = await User.findOne({ email })
+
+  if(!user) {
+    console.log('User does not exist')
+    res.status(401).json({ message: 'Incorrect username or password, please make sure you have confirmed your email' })
+  }
+
+  const hashedPassword = user?.local.password
+  bcrypt.compare(password, hashedPassword).then((match) => {
+    if (!match) {
+      res.status(400).json({ error: 'Wrong username or password'})
+    } else {
+      const accessToken = createToken(user)
+      res.cookie('access-token', accessToken, {
+        maxAge: 60 * 60 * 24 * 1000,
+        httpOnly: true
+      })
+      res.status(200).json({ message: 'Login successful' })
+    }
+  })
+}
