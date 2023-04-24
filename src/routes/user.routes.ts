@@ -1,17 +1,5 @@
-import express, { Express, Request, Response, Router } from 'express'
-import dotenv from 'dotenv'
-import bcrypt from 'bcrypt'
-import cookieParser from 'cookie-parser'
-import { User } from '../models/user.model'
-import {
-  createUser,
-  checkIfUserExists,
-  updateUser,
-  verifyUser,
-  deleteUser,
-  confirmUser
-} from '../services/user.service'
-import { createToken, validateToken } from '../utils/jwt'
+import express, { Router } from 'express'
+import { validateToken } from '../utils/jwt'
 import { ChangePassword, CreateUser, DeleteUserByEmail, LoginUser, UpdateUserById, ValidateAccountCreation } from '../controllers/user.controllers'
 
 export const userRouter: Router = express.Router()
