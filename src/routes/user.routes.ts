@@ -12,9 +12,10 @@ import {
   confirmUser
 } from '../services/user.service'
 import { createToken, validateToken } from '../utils/jwt'
-import { CreateUser, DeleteUserByEmail, LoginUser, UpdateUserById, ValidateAccountCreation } from '../controllers/user.controllers'
+import { ChangePassword, CreateUser, DeleteUserByEmail, LoginUser, UpdateUserById, ValidateAccountCreation } from '../controllers/user.controllers'
 
 export const userRouter: Router = express.Router()
+export const googleAuthRouter: Router = express.Router()
 
 // Create a User
 userRouter.post('/signup', CreateUser)
@@ -37,19 +38,5 @@ userRouter.delete('/delete/:email', validateToken, DeleteUserByEmail)
 userRouter.get('/validate-account-creation/:userID', ValidateAccountCreation)
 
 // Update user's password
-userRouter.put('/changepassword', validateToken, async (req: Request, res: Response) => {
-  const { oldPassword, newPassword, email } = req.body
-  console.log(req)
+userRouter.put('/changepassword', validateToken, ChangePassword)
 
-  // const user = await User.findOne({ where: { username: req.user.username }})
-  const user = await User.findOne({ where: { email: email }})
-
-  bcrypt.compare(oldPassword, user.local.password).then(async (match) => {
-    if (!match) res.json({ error: 'Wrong Password Entered!' })
-
-    bcrypt.hash(newPassword, 10).then((hash) => {
-      User.update({password: hash}, {where: { email: email }})
-      res.json('success')
-    })
-  })
-})

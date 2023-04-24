@@ -100,3 +100,20 @@ export const ValidateAccountCreation = async (req: Request, res: Response) => {
         res.status(500).send('An error occurred while validating your account creation.')
       }
 }
+
+export const ChangePassword = async (req: Request, res: Response) => {
+  const { oldPassword, newPassword, email } = req.body
+  console.log(req)
+
+  // const user = await User.findOne({ where: { username: req.user.username }})
+  const user = await User.findOne({ where: { email: email }})
+
+  bcrypt.compare(oldPassword, user.local.password).then(async (match) => {
+    if (!match) res.json({ error: 'Wrong Password Entered!' })
+
+    bcrypt.hash(newPassword, 10).then((hash) => {
+      User.update({password: hash}, {where: { email: email }})
+      res.json('success')
+    })
+  })
+}
