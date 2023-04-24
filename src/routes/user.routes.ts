@@ -106,7 +106,7 @@ userRouter.put('/changepassword', validateToken, async (req: Request, res: Respo
   // const user = await User.findOne({ where: { username: req.user.username }})
   const user = await User.findOne({ where: { email: email }})
 
-  bcrypt.compare(oldPassword, user.password).then(async (match) => {
+  bcrypt.compare(oldPassword, user.local.password).then(async (match) => {
     if (!match) res.json({ error: 'Wrong Password Entered!' })
 
     bcrypt.hash(newPassword, 10).then((hash) => {

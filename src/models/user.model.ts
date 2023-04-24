@@ -53,10 +53,10 @@ const userSchema = new mongoose.Schema({
     },
     password: {
       type: String,
-      // validate: {
-      //   validator: validatePassword,
-      //   message: error.password
-      // }
+      validate: {
+        validator: validatePassword,
+        message: error.password
+      }
     },
   },
   firebaseUid: String,

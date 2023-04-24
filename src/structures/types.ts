@@ -9,7 +9,7 @@ export class ErrorMessage {
   lastName: string
   constructor() {
     this.password =
-      'Password must contain at least 8 characters, at least one letter, at least one number, and at least one special character (@$!%*#?&)'
+      'Local password must contain at least 8 characters, at least one letter, at least one number, and at least one special character (@$!%*#?&)'
     this.mobileNumber = 'Invalid phone number'
     this.email = 'Invalid email'
     this.userName =
