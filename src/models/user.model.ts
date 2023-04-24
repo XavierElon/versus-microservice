@@ -58,18 +58,25 @@ const userSchema = new mongoose.Schema({
         message: error.password
       }
     },
+    confirmationCode: {
+      type: String,
+      default: uuidv4()
+    },
+    confirmationTokenExpirationTime: {
+      type: Date || null
+    },
   },
-  firebaseUid: String,
+  firebaseGoogle: {
+    firebaseUid: String,
+    accessToken: String,
+    // refreshToken: String,
+    email: String,
+    displayName: String,
+    photoURL: String,
+  },
   provider: {
     type: String,
-    enum: ['local', 'firebase-google'], required: true
-  },
-  confirmationCode: {
-    type: String,
-    default: uuidv4()
-  },
-  confirmationTokenExpirationTime: {
-    type: Date || null
+    enum: ['local', 'firebaseGoogle'], required: true
   },
   active: { type: Boolean, default: false },
   date: { type: Date, default: Date.now }
