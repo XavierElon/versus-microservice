@@ -69,7 +69,6 @@ const userSchema = new mongoose.Schema({
   firebaseGoogle: {
     firebaseUid: String,
     accessToken: String,
-    // refreshToken: String,
     email: String,
     displayName: String,
     photoURL: String,
