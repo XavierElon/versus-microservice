@@ -22,7 +22,6 @@ const userSchema = new mongoose.Schema({
     },
     lastName: {
       type: String,
-      unique: true,
       validate: {
         validator: validateName,
         message: error.lastName
@@ -53,10 +52,10 @@ const userSchema = new mongoose.Schema({
     // },
     password: {
       type: String,
-      validate: {
-        validator: validatePassword,
-        message: error.password
-      }
+      // validate: {
+      //   validator: validatePassword,
+      //   message: error.password
+      // }
     },
     confirmationCode: {
       type: String,

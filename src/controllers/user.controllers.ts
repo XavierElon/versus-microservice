@@ -8,16 +8,32 @@ import {
   updateUser,
   verifyUser,
   deleteUser,
-  confirmUser
+  confirmUser,
+  checkIfGoogleFirebaseUserExists
 } from '../services/user.service'
 import { createGoogleAuthToken, createLocalToken } from '../utils/jwt'
 
 export const CreateUser = async (req: Request, res: Response) => {
+  console.log(req.body)
   const userData = req.body
-  const userExists = await checkIfUserExists(userData.email)
-  if (userExists) {
-    res.status(400).json({ message: 'User already exists' })
+  const localEmail: string = userData?.local?.email || ''
+  const googleFirebaseEmail: string = userData?.firebaseGoogle?.email || ''
+  let userExists: any
+  let googleFirebaseUserExists: any
+  if (localEmail) {
+    userExists = await checkIfUserExists(localEmail)
   } else {
+    googleFirebaseUserExists = await checkIfGoogleFirebaseUserExists(googleFirebaseEmail)
+  }
+//   const userExists = await checkIfUserExists(userData.email)
+  if (userExists) {
+    console.log('user exists')
+    res.status(400).json({ message: 'Local user with that email already exists' })
+  } else if (googleFirebaseUserExists) {
+    console.log('user exists')
+    res.status(400).json({ message: 'Google auth user already exists with that email' })
+  } else {
+    console.log('create')
     createUser(userData)
       .then((result) => {
         console.log('User created successfully: ', result)
