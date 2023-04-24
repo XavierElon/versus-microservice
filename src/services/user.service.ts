@@ -15,9 +15,11 @@ CREATE USER
 This function creates a new user using the userSchema and saves it to the database
 */
 export const createUser = async (userData: typeof User): Promise<any> => {
-  const { password } = userData
+  const { password } = userData.local
+  
   const hash = await bcrypt.hash(password, 10)
-  userData = { ...userData,  password: hash }
+  userData.local.password = hash
+  userData = { ...userData }
   let user = new User(userData)
   
   // const baseUrl = host;
@@ -28,7 +30,7 @@ export const createUser = async (userData: typeof User): Promise<any> => {
     console.log('Result:', savedUser)
     
     const confirmationLink = await createConfirmationLink(userData, baseUrl)
-    await sendConfirmationGmail(user.email, confirmationLink)
+    await sendConfirmationGmail(user.local.email, confirmationLink)
     console.log(`Sent email to user ${user.email}`)
     return savedUser
   } catch (error) {
@@ -57,8 +59,20 @@ CHECK IF USER EXISTS
 check the username against the database for duplicates before proceeding with creation of new user
 */
 export const checkIfUserExists = async (email: string) => {
-  const existingUser = await User.findOne({ email })
+  console.log(email)
+  const existingUser = await User.findOne({ 'local.email': email })
+  console.log('existing user = ' + existingUser)
   if (existingUser) {
+    return true
+  }
+  return false
+}
+
+export const checkIfGoogleFirebaseUserExists = async (email: string) => {
+  console.log(email)
+  const existingGoogleUser = await User.findOne({ firebaseGoogle : { email: email}})
+  console.log('existing google user = ' + existingGoogleUser)
+  if (existingGoogleUser) {
     return true
   }
   return false
