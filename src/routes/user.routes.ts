@@ -12,7 +12,7 @@ import {
   confirmUser
 } from '../services/user.service'
 import { createToken, validateToken } from '../utils/jwt'
-import { CreateUser, LoginUser, UpdateUserById } from '../controllers/user.controllers'
+import { CreateUser, DeleteUserByEmail, LoginUser, UpdateUserById } from '../controllers/user.controllers'
 
 export const userRouter: Router = express.Router()
 
@@ -31,19 +31,7 @@ userRouter.get('/profile', validateToken, (req, res) => {
 userRouter.put('/update/:id', validateToken, UpdateUserById)
 
 // Delete user by email endpoint
-userRouter.delete('/delete/:email', validateToken, async (req, res) => {
-  const email = req.params.email
-  try {
-    const deletedUser = await deleteUser(email)
-    if (!deletedUser) {
-      return res.status(404).send(`User with email ${email} not found`)
-    }
-    return res.send(`Deleted user: ${deletedUser}`)
-  } catch (err) {
-    console.error(`Error deleting user with email ${email}:`, err)
-    return res.status(500).send('Error deleting user')
-  }
-})
+userRouter.delete('/delete/:email', validateToken, DeleteUserByEmail)
 
 //Confirm the user has created an account
 userRouter.get('/validate-account-creation/:userID', async (req: Request, res: Response) => {

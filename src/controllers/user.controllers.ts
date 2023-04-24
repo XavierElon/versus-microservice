@@ -71,3 +71,17 @@ export const UpdateUserById = async (req: Request, res: Response) => {
         return res.status(500).send({ error: 'Server error' })
       }
 }
+
+export const DeleteUserByEmail = async (req: Request, res: Response) => {
+    const email = req.params.email
+  try {
+    const deletedUser = await deleteUser(email)
+    if (!deletedUser) {
+      return res.status(404).send(`User with email ${email} not found`)
+    }
+    return res.send(`Deleted user: ${deletedUser}`)
+  } catch (err) {
+    console.error(`Error deleting user with email ${email}:`, err)
+    return res.status(500).send('Error deleting user')
+  }
+}

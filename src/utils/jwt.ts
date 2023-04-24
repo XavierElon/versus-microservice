@@ -3,7 +3,6 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-
 export const createToken = (user) => {
     const accessToken = sign({ email: user.email, id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' })
     return accessToken
