@@ -85,3 +85,18 @@ export const DeleteUserByEmail = async (req: Request, res: Response) => {
     return res.status(500).send('Error deleting user')
   }
 }
+
+export const ValidateAccountCreation = async (req: Request, res: Response) => {
+    try {
+        const { confirmed, token } = req.query
+        if (confirmed === 'true' && typeof token === 'string') {
+          res.send('Your account has been successfully created and confirmed.')
+          await confirmUser(token)
+        } else {
+          res.send('Your account has been created. Please check your email to confirm your account.')
+        }
+      } catch (error) {
+        console.error(error)
+        res.status(500).send('An error occurred while validating your account creation.')
+      }
+}
