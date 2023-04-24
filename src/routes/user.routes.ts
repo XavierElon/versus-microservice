@@ -12,7 +12,7 @@ import {
   confirmUser
 } from '../services/user.service'
 import { createToken, validateToken } from '../utils/jwt'
-import { CreateUser, LoginUser } from '../controllers/user.controllers'
+import { CreateUser, LoginUser, UpdateUserById } from '../controllers/user.controllers'
 
 export const userRouter: Router = express.Router()
 
@@ -28,22 +28,7 @@ userRouter.get('/profile', validateToken, (req, res) => {
 })
 
 // Update a user by ID
-userRouter.put('/update/:id', validateToken, async (req: Request, res: Response) => {
-  try {
-    const id = req.params.id
-    const update = req.body
-    // Find the user by ID and update its properties
-    const updatedUser = updateUser(id, update)
-    if (!updatedUser) {
-      return res.status(404).send({ error: 'User not found' })
-    } else {
-      return res.status(200).send({ updatedUser, message: 'User updated' })
-    }
-  } catch (error) {
-    console.error(`Error updating user: ${error}`)
-    return res.status(500).send({ error: 'Server error' })
-  }
-})
+userRouter.put('/update/:id', validateToken, UpdateUserById)
 
 // Delete user by email endpoint
 userRouter.delete('/delete/:email', validateToken, async (req, res) => {
