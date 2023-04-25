@@ -2,20 +2,23 @@ import cors from 'cors'
 import config from './src/config/config'
 import express, { Express, Request, Response } from 'express'
 import bcrypt from 'bcrypt'
+import dotenv from 'dotenv'
 import cookieParser from 'cookie-parser'
 import nodemailer from 'nodemailer'
 import { connectToDatabase } from './src/connections/mongodb'
 import { userRouter } from './src/routes/user.routes'
 
+dotenv.config()
+
 const app: Express = express()
 
-const port = config.PORT;
-const dbName = config.DB_NAME;
-const dbUri = config.DB_URI;
-const UriQueryParam = config.QUERY_PARAM;
-const host = config.HOST;
+const port = process.env.PORT
+const dbName: string = process.env.DB_NAME
+const dbUri: string = process.env.MONGO_ATLAS_URI
+const UriQueryParam: string = process.env.QUERY_PARAMETERS
+const host: string = process.env.HOST
 
-console.log(dbUri + dbName + UriQueryParam)
+// console.log(dbUri + dbName + UriQueryParam)
 
 // Body parsing Middleware
 app.use(express.json())
@@ -31,7 +34,7 @@ app.get('/', async (req: Request, res: Response): Promise<Response> => {
 try{
     app.listen(port, (): void => {
         /* eslint-disable no-console */
-        console.log(`Connected successfully to ${host}${port}`)
+        console.log(`Successfully connected to ${host}/${port}`)
     })
 } catch (error: any) {
     console.error(`Error occurred: ${error.message}`)

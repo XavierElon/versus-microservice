@@ -2,7 +2,6 @@ import mongoose, { ConnectOptions } from 'mongoose'
 import { User } from '../models/user.model'
 
 export const connectToDatabase = async (dbUri: string) => {
-  console.log(dbUri)
   const options: ConnectOptions = {
     connectTimeoutMS: 30000,
     socketTimeoutMS: 30000,

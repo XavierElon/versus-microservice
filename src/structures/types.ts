@@ -50,7 +50,8 @@ export class MailOptions {
     this.from = from
     this.to = to
     this.subject = 'Confirm your account'
-    this.html = `Thank you for creating an account. Please click the following link to confirm your email address:${(this.confirmationLink =
-      confirmationLink)}`
+    this.html = `Thank you for creating an account. Please click the following link to confirm your email address: <a href="${(this.confirmationLink = confirmationLink)}" target="_blank" rel="noopener noreferrer">
+    ${this.confirmationLink}
+  </a>`;
   }
 }
