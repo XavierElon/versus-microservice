@@ -17,23 +17,22 @@ export const CreateUser = async (req: Request, res: Response) => {
   console.log(req.body)
   const userData = req.body
   const localEmail: string = userData?.local?.email || ''
-  const googleFirebaseEmail: string = userData?.firebaseGoogle?.email || ''
-  let userExists: any
-  let googleFirebaseUserExists: any
-  if (localEmail) {
-    userExists = await checkIfUserExists(localEmail)
-  } else {
-    googleFirebaseUserExists = await checkIfGoogleFirebaseUserExists(googleFirebaseEmail)
-  }
+  console.log('local email = ' + localEmail)
+  let userExists: any = await checkIfUserExists(localEmail)
+  let googleFirebaseUserExists: any = await checkIfGoogleFirebaseUserExists(localEmail)
+  
+  console.log('user exists ' + userExists)
+  console.log('google user exists ' + googleFirebaseUserExists)
 //   const userExists = await checkIfUserExists(userData.email)
   if (userExists) {
-    console.log('user exists')
-    res.status(400).json({ message: 'Local user with that email already exists' })
+    res.status(400).json({ error: 'Local user with that email already exists' })
+    return
   } else if (googleFirebaseUserExists) {
-    console.log('user exists')
-    res.status(400).json({ message: 'Google auth user already exists with that email' })
+    res.status(400).json({ error: 'Google auth user already exists with that email' })
+    return
   } else {
     console.log('create')
+    console.log(userData)
     createUser(userData)
       .then((result) => {
         console.log('User created successfully: ', result)
@@ -42,23 +41,26 @@ export const CreateUser = async (req: Request, res: Response) => {
       .catch((error) => {
         console.log('Error creating user: ', error)
         res.status(500).json({ message: 'Error creating user', error })
+        return
       })
   }
 }
 
 export const LoginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body
-  const user = await User.findOne({ email })
+  const user = await User.findOne({ "local.email": email})
 
   if(!user) {
-    console.log('User does not exist')
-    res.status(401).json({ message: 'Incorrect username or password, please make sure you have confirmed your email' })
+    console.log('Email does not exist')
+    res.status(401).json({ error: 'Email does not exist.' })
+    return
   }
 
   const hashedPassword = user?.local.password
   bcrypt.compare(password, hashedPassword).then((match) => {
     if (!match) {
-      res.status(400).json({ error: 'Wrong username or password'})
+      res.status(400).json({ error: 'Wrong username or password.'})
+      return
     } else {
       const accessToken = createLocalToken(user)
       res.cookie('access-token', accessToken, {
@@ -102,8 +104,12 @@ export const DeleteUserByEmail = async (req: Request, res: Response) => {
 }
 
 export const ValidateAccountCreation = async (req: Request, res: Response) => {
+  console.log('here')
     try {
+      console.log('try')
         const { confirmed, token } = req.query
+        console.log(token)
+        console.log(confirmed)
         if (confirmed === 'true' && typeof token === 'string') {
           res.send('Your account has been successfully created and confirmed.')
           await confirmUser(token)
@@ -154,7 +160,7 @@ export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
           firebaseUid: firebaseUid,
           accessToken: accessToken, 
           email: email,
-          displayName: displayName,
+          displayName: displayName, 
           photoURL: photoURL,
           refreshToken: refreshToken
         },

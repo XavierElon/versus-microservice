@@ -4,7 +4,7 @@ import {
   validatePassword,
   validateEmail,
   validatePhone,
-  validateUsername,
+  // validateUsername,
   validateName
 } from '../utils/verification.helper'
 import { v4 as uuidv4 } from 'uuid'
@@ -37,25 +37,10 @@ const userSchema = new mongoose.Schema({
     // mobileNumber: {
     //   type: Number,
     //   unique: true,
-    //   validate: {
-    //     validator: validatePhone,
-    //     message: error.mobileNumber
-    //   }
-    // },
-    // userName: {
-    //   type: String,
-    //   unique: true,
-    //   validate: {
-    //     validator: validateUsername,
-    //     message: error.userName
-    //   }
+    //   required: false,
     // },
     password: {
       type: String,
-      // validate: {
-      //   validator: validatePassword,
-      //   message: error.password
-      // }
     },
     confirmationCode: {
       type: String,
