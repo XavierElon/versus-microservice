@@ -73,7 +73,7 @@ export const checkIfUserExists = async (email: string) => {
 
 export const checkIfGoogleFirebaseUserExists = async (email: string) => {
   console.log(email)
-  const existingGoogleUser = await User.findOne({ firebaseGoogle : { email: email}})
+  const existingGoogleUser = await User.findOne({ 'firebaseGoogle.email': email })
   console.log('existing google user = ' + existingGoogleUser)
   if (existingGoogleUser) {
     return true

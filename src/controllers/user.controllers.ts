@@ -17,22 +17,18 @@ export const CreateUser = async (req: Request, res: Response) => {
   console.log(req.body)
   const userData = req.body
   const localEmail: string = userData?.local?.email || ''
-  const googleFirebaseEmail: string = userData?.firebaseGoogle?.email || ''
-  let userExists: any
-  let googleFirebaseUserExists: any
-  if (localEmail) {
-    userExists = await checkIfUserExists(localEmail)
-  } else {
-    googleFirebaseUserExists = await checkIfGoogleFirebaseUserExists(googleFirebaseEmail)
-  }
+  console.log('local email = ' + localEmail)
+  let userExists: any = await checkIfUserExists(localEmail)
+  let googleFirebaseUserExists: any = await checkIfGoogleFirebaseUserExists(localEmail)
+  
+  console.log('user exists ' + userExists)
+  console.log('google user exists ' + googleFirebaseUserExists)
 //   const userExists = await checkIfUserExists(userData.email)
   if (userExists) {
-    console.log('user exists')
-    res.status(400).json({ message: 'Local user with that email already exists' })
+    res.status(400).json({ error: 'Local user with that email already exists' })
     return
   } else if (googleFirebaseUserExists) {
-    console.log('user exists')
-    res.status(400).json({ message: 'Google auth user already exists with that email' })
+    res.status(400).json({ error: 'Google auth user already exists with that email' })
     return
   } else {
     console.log('create')
