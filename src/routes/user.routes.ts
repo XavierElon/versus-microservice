@@ -1,7 +1,7 @@
 import express, { Request, Response, Router } from 'express'
 import { User } from '../models/user.model'
 import { createGoogleAuthToken, validateToken } from '../utils/jwt'
-import { ChangePassword, CreateUser, DeleteUserByEmail, GoogleAuthLoginAndSignup, LoginUser, UpdateUserById, ValidateAccountCreation } from '../controllers/user.controllers'
+import { ChangePassword, CreateUser, DeleteUserByEmail, GoogleAuthLoginAndSignup, LoginUser, ResetPassword, UpdateUserById, ValidateAccountCreation } from '../controllers/user.controllers'
 
 export const userRouter: Router = express.Router()
 export const googleAuthRouter: Router = express.Router()
@@ -28,5 +28,8 @@ userRouter.get('/validate-account-creation/:userID', ValidateAccountCreation)
 
 // Update user's password
 userRouter.put('/changepassword', validateToken, ChangePassword)
+
+// Reset user's password
+userRouter.put('/resetpassword', ResetPassword)
 
 userRouter.post('/auth/firebase/google', GoogleAuthLoginAndSignup)
