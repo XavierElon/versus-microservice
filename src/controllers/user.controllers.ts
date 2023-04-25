@@ -1,12 +1,10 @@
 import { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
-import cookieParser from 'cookie-parser'
 import { User } from '../models/user.model'
 import {
   createUser,
   checkIfUserExists,
   updateUser,
-  verifyUser,
   deleteUser,
   confirmUser,
   checkIfGoogleFirebaseUserExists
@@ -31,8 +29,6 @@ export const CreateUser = async (req: Request, res: Response) => {
     res.status(400).json({ error: 'Google auth user already exists with that email' })
     return
   } else {
-    console.log('create')
-    console.log(userData)
     createUser(userData)
       .then((result) => {
         console.log('User created successfully: ', result)
@@ -127,16 +123,28 @@ export const ChangePassword = async (req: Request, res: Response) => {
   console.log(req)
 
   // const user = await User.findOne({ where: { username: req.user.username }})
-  const user = await User.findOne({ where: { email: email }})
+  const user = await User.findOne({  'local.email': email })
 
   bcrypt.compare(oldPassword, user.local.password).then(async (match) => {
     if (!match) res.json({ error: 'Wrong Password Entered!' })
 
-    bcrypt.hash(newPassword, 10).then((hash) => {
-      User.update({password: hash}, {where: { email: email }})
-      res.json('success')
+    bcrypt.hash(newPassword, 10).then(async (hash) => {
+      user.local.password = hash
+      await user.save()
+      res.status(200).send({ message: 'Pasword successfully reset'})
     })
   })
+}
+
+export const ResetPassword = async (req: Request, res: Response) => {
+  const { password, recipientEmail } = req.body
+
+  const user = await User.findOne({ 'local.email': recipientEmail })
+  console.log(user)
+  bcrypt.hash(password, 10).then(async (hash) => {
+    user.local.password = hash
+    await user.save()
+    res.status(200).send({ message: 'Pasword successfully reset'})})
 }
 
 export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
