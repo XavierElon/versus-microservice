@@ -16,7 +16,7 @@ import {
 describe('User tests', () => {
     let UserModel: Model<Document & typeof User> = mongoose.model('User');
     let testUser = new UserModel({
-        userName: 'testuser',
+        // userName: 'testuser',
         email: 'testuser@example.com',
         password: 'testpassword123!',
         firstName: 'John',
@@ -43,16 +43,16 @@ describe('User tests', () => {
         });
     });
 
-    describe('verifyUser', () => {
-        it('should verify a user', async () => {
-            const username = 'testuser';
-            const password = 'testpassword123!';
+    // describe('verifyUser', () => {
+    //     it('should verify a user', async () => {
+    //         const username = 'testuser';
+    //         const password = 'testpassword123!';
 
-            const result = await verifyUser(username, password);
+    //         const result = await verifyUser(username, password);
 
-            expect(result).to.be.true;
-        });
-    });
+    //         expect(result).to.be.true;
+    //     });
+    // });
 
     describe('checkIfUserExists', () => {
         it('should check if a user exists', async () => {

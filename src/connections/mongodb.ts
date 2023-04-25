@@ -12,14 +12,11 @@ export const connectToDatabase = async (dbUri: string) => {
     mongoose.set('strictQuery', false)
     await mongoose.connect(dbUri, options)
 
-    User.collection.createIndex({ username: 1 }, { unique: true })
   } catch (error: any) {
     throw new Error(`Mongodb connection failed: ${error}`)
   }
 
   const db = mongoose.connection
-  console.log(db.collections)
-  // db?.user.dropIndex("username_1");
 
   console.log(`Successfully connected to database: ${db.name}`)
 }

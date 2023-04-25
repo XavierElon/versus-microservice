@@ -20,8 +20,11 @@ export const createUser = async (userData: typeof User): Promise<any> => {
   const hash = await bcrypt.hash(password, 10)
   userData.local.password = hash
   userData = { ...userData }
+  console.log('user data')
+  console.log(userData)
   let user = new User(userData)
-  
+  console.log('user')
+  console.log(user)
   // const baseUrl = host;
   const baseUrl = process.env.HOST + process.env.PORT
   try {
@@ -144,11 +147,13 @@ export const deleteUnconfirmedUsers = async (): Promise<void> => {
 
 /*  Find the user with the provided confirmation code */
 export const confirmUser = async (confirmationCode: string) => {
-  const user = await User.findOne({ confirmationCode: confirmationCode }).exec()
+  const user = await User.findOne({ "local.confirmationCode": confirmationCode }).exec()
   if (!user) {
+    console.log('no user found')
     return null
   }
   user.local.active = true
+  console.log(user)
   user.local.confirmationTokenExpirationTime = undefined
   await user.save()
   return user
