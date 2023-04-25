@@ -148,8 +148,8 @@ export const confirmUser = async (confirmationCode: string) => {
   if (!user) {
     return null
   }
-  user.active = true
-  user.confirmationTokenExpirationTime = undefined
+  user.local.active = true
+  user.local.confirmationTokenExpirationTime = undefined
   await user.save()
   return user
 }

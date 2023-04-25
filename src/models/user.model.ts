@@ -42,14 +42,9 @@ const userSchema = new mongoose.Schema({
     //     message: error.mobileNumber
     //   }
     // },
-    // userName: {
-    //   type: String,
-    //   unique: true,
-    //   validate: {
-    //     validator: validateUsername,
-    //     message: error.userName
-    //   }
-    // },
+    userName: {
+      type: String,
+    },
     password: {
       type: String,
       // validate: {

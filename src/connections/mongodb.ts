@@ -18,6 +18,8 @@ export const connectToDatabase = async (dbUri: string) => {
   }
 
   const db = mongoose.connection
+  console.log(db.collections)
+  // db?.user.dropIndex("username_1");
 
   console.log(`Successfully connected to database: ${db.name}`)
 }
