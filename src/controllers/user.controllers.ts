@@ -60,6 +60,7 @@ export const LoginUser = async (req: Request, res: Response) => {
       return
     } else {
       const accessToken = createLocalToken(user)
+      console.log(accessToken)
       res.cookie('access-token', accessToken, {
         maxAge: 60 * 60 * 24 * 1000,
         httpOnly: true
