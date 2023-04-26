@@ -10,6 +10,7 @@ import {
   checkIfGoogleFirebaseUserExists
 } from '../services/user.service'
 import { createGoogleAuthToken, createLocalToken } from '../utils/jwt'
+import { sendOTPEmail } from '../utils/email.helper'
 
 export const CreateUser = async (req: Request, res: Response) => {
   console.log(req.body)
@@ -68,6 +69,54 @@ export const LoginUser = async (req: Request, res: Response) => {
   })
 }
 
+export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
+  console.log(req.body)
+try {
+  const { accessToken, displayName, email, firebaseUid, photoURL, refreshToken } = req.body.firebaseGoogle
+  
+  if (!firebaseUid) {
+    return res.status(400).json({ message: 'Missing firebaseUid' })
+  }
+
+  let user = await User.findOne({ firebaseGoogle: {
+    firebaseUid }})
+
+  if (!user) {
+    user = new User({
+      local: {
+        active: true,
+      },
+      firebaseGoogle: {
+        firebaseUid: firebaseUid,
+        accessToken: accessToken, 
+        email: email,
+        displayName: displayName, 
+        photoURL: photoURL,
+        refreshToken: refreshToken
+      },
+      provider: 'firebaseGoogle'
+    })
+    await user.save()
+  }
+
+  const token = createGoogleAuthToken(firebaseUid)
+
+  res.json({
+    token,
+    user: {
+      _id: user.id,
+      firebaseUid: user.firebaseGoogle.firebaseUid,
+      email,
+      provider: user.provider
+    }
+  })
+
+} catch (error) {
+  console.error(error)
+  res.status(500).json({ message: 'Internal server error' })
+}
+}
+
 export const UpdateUserById = async (req: Request, res: Response) => {
     try {
         const id = req.params.id
@@ -100,12 +149,8 @@ export const DeleteUserByEmail = async (req: Request, res: Response) => {
 }
 
 export const ValidateAccountCreation = async (req: Request, res: Response) => {
-  console.log('here')
     try {
-      console.log('try')
         const { confirmed, token } = req.query
-        console.log(token)
-        console.log(confirmed)
         if (confirmed === 'true' && typeof token === 'string') {
           res.send('Your account has been successfully created and confirmed.')
           await confirmUser(token)
@@ -136,6 +181,13 @@ export const ChangePassword = async (req: Request, res: Response) => {
   })
 }
 
+export const SendOTPEmail = async (req: Request, res: Response) => {
+    const { OTP, recipientEmail } = req.body
+    sendOTPEmail(OTP, recipientEmail)
+      .then((response: any) => res.status(200).send({message: 'Email successfully sent.'}))
+      .catch((error) => res.status(500).send(error.message))
+}
+
 export const ResetPassword = async (req: Request, res: Response) => {
   const { password, recipientEmail } = req.body
 
@@ -147,50 +199,3 @@ export const ResetPassword = async (req: Request, res: Response) => {
     res.status(200).send({ message: 'Pasword successfully reset'})})
 }
 
-export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
-    console.log(req.body)
-  try {
-    const { accessToken, displayName, email, firebaseUid, photoURL, refreshToken } = req.body.firebaseGoogle
-    
-    if (!firebaseUid) {
-      return res.status(400).json({ message: 'Missing firebaseUid' })
-    }
-
-    let user = await User.findOne({ firebaseGoogle: {
-      firebaseUid }})
-
-    if (!user) {
-      user = new User({
-        local: {
-          active: true,
-        },
-        firebaseGoogle: {
-          firebaseUid: firebaseUid,
-          accessToken: accessToken, 
-          email: email,
-          displayName: displayName, 
-          photoURL: photoURL,
-          refreshToken: refreshToken
-        },
-        provider: 'firebaseGoogle'
-      })
-      await user.save()
-    }
-
-    const token = createGoogleAuthToken(firebaseUid)
-
-    res.json({
-      token,
-      user: {
-        _id: user.id,
-        firebaseUid: user.firebaseGoogle.firebaseUid,
-        email,
-        provider: user.provider
-      }
-    })
-  
-  } catch (error) {
-    console.error(error)
-    res.status(500).json({ message: 'Internal server error' })
-  }
-}

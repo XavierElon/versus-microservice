@@ -1,7 +1,8 @@
 import express, { Request, Response, Router } from 'express'
 import { User } from '../models/user.model'
 import { createGoogleAuthToken, validateToken } from '../utils/jwt'
-import { ChangePassword, CreateUser, DeleteUserByEmail, GoogleAuthLoginAndSignup, LoginUser, ResetPassword, UpdateUserById, ValidateAccountCreation } from '../controllers/user.controllers'
+import { ChangePassword, CreateUser, DeleteUserByEmail, GoogleAuthLoginAndSignup, LoginUser, ResetPassword, SendOTPEmail, UpdateUserById, ValidateAccountCreation } from '../controllers/user.controllers'
+import { sendOTPEmail } from '../utils/email.helper'
 
 export const userRouter: Router = express.Router()
 export const googleAuthRouter: Router = express.Router()
@@ -31,5 +32,8 @@ userRouter.put('/changepassword', validateToken, ChangePassword)
 
 // Reset user's password
 userRouter.put('/resetpassword', ResetPassword)
+
+// Send OTP Email for password recovery
+userRouter.post('/send_recovery_email', SendOTPEmail)
 
 userRouter.post('/auth/firebase/google', GoogleAuthLoginAndSignup)
