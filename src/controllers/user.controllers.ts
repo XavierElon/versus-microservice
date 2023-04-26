@@ -59,63 +59,74 @@ export const LoginUser = async (req: Request, res: Response) => {
       res.status(400).json({ error: 'Wrong username or password.'})
       return
     } else {
+      console.log('bcrypt compare')
       const accessToken = createLocalToken(user)
+      console.log('login access token')
       console.log(accessToken)
       res.cookie('access-token', accessToken, {
         maxAge: 60 * 60 * 24 * 1000,
-        httpOnly: true
+        httpOnly: true,
       })
+      // res.cookie('test', accessToken)
       res.status(200).json({ message: 'Login successful', accessToken, user })
     }
   })
 }
 
 export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
-  console.log(req.body)
-try {
-  const { accessToken, displayName, email, firebaseUid, photoURL, refreshToken } = req.body.firebaseGoogle
-  
-  if (!firebaseUid) {
-    return res.status(400).json({ message: 'Missing firebaseUid' })
-  }
-
-  let user = await User.findOne({ firebaseGoogle: {
-    firebaseUid }})
-
-  if (!user) {
-    user = new User({
-      local: {
-        active: true,
-      },
-      firebaseGoogle: {
-        firebaseUid: firebaseUid,
-        accessToken: accessToken, 
-        email: email,
-        displayName: displayName, 
-        photoURL: photoURL,
-        refreshToken: refreshToken
-      },
-      provider: 'firebaseGoogle'
-    })
-    await user.save()
-  }
-
-  const token = createGoogleAuthToken(firebaseUid)
-
-  res.json({
-    token,
-    user: {
-      _id: user.id,
-      firebaseUid: user.firebaseGoogle.firebaseUid,
-      email,
-      provider: user.provider
+  try {
+    const { accessToken, displayName, email, firebaseUid, photoURL, refreshToken } = req.body.firebaseGoogle
+    
+    if (!firebaseUid) {
+      return res.status(400).json({ message: 'Missing firebaseUid' })
     }
-  })
 
-} catch (error) {
-  console.error(error)
-  res.status(500).json({ message: 'Internal server error' })
-}
+    let user = await User.findOne({ 'firebaseGoogle.email': email })
+
+    if (!user || user === null) {
+      console.log('saving new user')
+      user = new User({
+        local: {
+          active: true,
+        },
+        firebaseGoogle: {
+          firebaseUid: firebaseUid,
+          accessToken: accessToken, 
+          email: email,
+          displayName: displayName, 
+          photoURL: photoURL,
+          refreshToken: refreshToken
+        },
+        provider: 'firebaseGoogle'
+      })
+      await user.save()
+      const token = createGoogleAuthToken(firebaseUid)
+      res.json({
+        token,
+        user: {
+          _id: user.id,
+          firebaseUid: user.firebaseGoogle.firebaseUid,
+          email,
+          provider: user.provider
+        }
+      })
+      return
+    } else {
+      const token = createGoogleAuthToken(firebaseUid)
+      res.status(200).json({
+        token,
+        user: {
+          _id: user.id,
+          firebaseUid: user.firebaseGoogle.firebaseUid,
+          email,
+          provider: user.provider
+        }
+      })
+    }
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: 'Internal server error' })
+  }
 }
 
 export const UpdateUserById = async (req: Request, res: Response) => {

@@ -11,6 +11,12 @@ userRouter.post('/signup', CreateUser)
 /*Verify user credentials against the database and login*/
 userRouter.post('/login', LoginUser)
 
+// // Log out the user and clear local storage and cookies
+userRouter.post('/logout', (req, res) => {
+  res.clearCookie(('access-token'))
+  res.status(200).send({ message: 'Logged out successfully' })
+})
+
 // Test route for token/cookie
 userRouter.get('/profile', validateToken, (req, res) => {
   res.json('profile')
