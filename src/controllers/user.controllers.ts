@@ -177,10 +177,12 @@ export const ValidateAccountCreation = async (req: Request, res: Response) => {
 
 export const ChangePassword = async (req: Request, res: Response) => {
   const { oldPassword, newPassword, email } = req.body
-  console.log(req)
+  // console.log(req)
+  console.log(req.body)
 
   // const user = await User.findOne({ where: { username: req.user.username }})
-  const user = await User.findOne({  'local.email': email })
+  const user = await User.findOne({ 'local.email': email })
+  console.log(user)
 
   bcrypt.compare(oldPassword, user.local.password).then(async (match) => {
     if (!match) res.json({ error: 'Wrong Password Entered!' })
