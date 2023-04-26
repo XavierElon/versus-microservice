@@ -64,7 +64,7 @@ export const LoginUser = async (req: Request, res: Response) => {
         maxAge: 60 * 60 * 24 * 1000,
         httpOnly: true
       })
-      res.status(200).json({ message: 'Login successful' })
+      res.status(200).json({ message: 'Login successful', accessToken, user })
     }
   })
 }
