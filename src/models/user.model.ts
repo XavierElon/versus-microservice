@@ -52,12 +52,12 @@ const userSchema = new mongoose.Schema({
     active: { type: Boolean, default: false },
   },
   firebaseGoogle: {
-    firebaseUid: String,
     accessToken: String,
-    refreshToken: String,
-    email: String,
     displayName: String,
+    email: String,
+    firebaseUid: String,
     photoURL: String,
+    refreshToken: String,
   },
   provider: {
     type: String,

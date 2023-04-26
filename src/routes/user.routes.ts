@@ -1,7 +1,6 @@
-import express, { Request, Response, Router } from 'express'
-import { User } from '../models/user.model'
-import { createGoogleAuthToken, validateToken } from '../utils/jwt'
-import { ChangePassword, CreateUser, DeleteUserByEmail, GoogleAuthLoginAndSignup, LoginUser, ResetPassword, UpdateUserById, ValidateAccountCreation } from '../controllers/user.controllers'
+import express, { Router } from 'express'
+import { validateToken } from '../utils/jwt'
+import { ChangePassword, CreateUser, DeleteUserByEmail, GoogleAuthLoginAndSignup, LoginUser, ResetPassword, SendOTPEmail, UpdateUserById, ValidateAccountCreation } from '../controllers/user.controllers'
 
 export const userRouter: Router = express.Router()
 export const googleAuthRouter: Router = express.Router()
@@ -11,6 +10,12 @@ userRouter.post('/signup', CreateUser)
 
 /*Verify user credentials against the database and login*/
 userRouter.post('/login', LoginUser)
+
+// // Log out the user and clear local storage and cookies
+userRouter.post('/logout', (req, res) => {
+  res.clearCookie(('access-token'))
+  res.status(200).send({ message: 'Logged out successfully' })
+})
 
 // Test route for token/cookie
 userRouter.get('/profile', validateToken, (req, res) => {
@@ -32,4 +37,8 @@ userRouter.put('/changepassword', validateToken, ChangePassword)
 // Reset user's password
 userRouter.put('/resetpassword', ResetPassword)
 
+// Send OTP Email for password recovery
+userRouter.post('/send_recovery_email', SendOTPEmail)
+
+// Google Firebase Auth Login and Signup
 userRouter.post('/auth/firebase/google', GoogleAuthLoginAndSignup)

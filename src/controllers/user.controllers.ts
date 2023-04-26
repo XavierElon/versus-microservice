@@ -10,6 +10,7 @@ import {
   checkIfGoogleFirebaseUserExists
 } from '../services/user.service'
 import { createGoogleAuthToken, createLocalToken } from '../utils/jwt'
+import { sendOTPEmail } from '../utils/email.helper'
 
 export const CreateUser = async (req: Request, res: Response) => {
   console.log(req.body)
@@ -58,14 +59,74 @@ export const LoginUser = async (req: Request, res: Response) => {
       res.status(400).json({ error: 'Wrong username or password.'})
       return
     } else {
+      console.log('bcrypt compare')
       const accessToken = createLocalToken(user)
+      console.log('login access token')
+      console.log(accessToken)
       res.cookie('access-token', accessToken, {
         maxAge: 60 * 60 * 24 * 1000,
-        httpOnly: true
+        httpOnly: true,
       })
-      res.status(200).json({ message: 'Login successful' })
+      // res.cookie('test', accessToken)
+      res.status(200).json({ message: 'Login successful', accessToken, user })
     }
   })
+}
+
+export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
+  try {
+    const { accessToken, displayName, email, firebaseUid, photoURL, refreshToken } = req.body.firebaseGoogle
+    
+    if (!firebaseUid) {
+      return res.status(400).json({ message: 'Missing firebaseUid' })
+    }
+
+    let user = await User.findOne({ 'firebaseGoogle.email': email })
+
+    if (!user || user === null) {
+      console.log('saving new user')
+      user = new User({
+        local: {
+          active: true,
+        },
+        firebaseGoogle: {
+          firebaseUid: firebaseUid,
+          accessToken: accessToken, 
+          email: email,
+          displayName: displayName, 
+          photoURL: photoURL,
+          refreshToken: refreshToken
+        },
+        provider: 'firebaseGoogle'
+      })
+      await user.save()
+      const token = createGoogleAuthToken(firebaseUid)
+      res.json({
+        token,
+        user: {
+          _id: user.id,
+          firebaseUid: user.firebaseGoogle.firebaseUid,
+          email,
+          provider: user.provider
+        }
+      })
+      return
+    } else {
+      const token = createGoogleAuthToken(firebaseUid)
+      res.status(200).json({
+        token,
+        user: {
+          _id: user.id,
+          firebaseUid: user.firebaseGoogle.firebaseUid,
+          email,
+          provider: user.provider
+        }
+      })
+    }
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: 'Internal server error' })
+  }
 }
 
 export const UpdateUserById = async (req: Request, res: Response) => {
@@ -100,12 +161,8 @@ export const DeleteUserByEmail = async (req: Request, res: Response) => {
 }
 
 export const ValidateAccountCreation = async (req: Request, res: Response) => {
-  console.log('here')
     try {
-      console.log('try')
         const { confirmed, token } = req.query
-        console.log(token)
-        console.log(confirmed)
         if (confirmed === 'true' && typeof token === 'string') {
           res.send('Your account has been successfully created and confirmed.')
           await confirmUser(token)
@@ -120,10 +177,12 @@ export const ValidateAccountCreation = async (req: Request, res: Response) => {
 
 export const ChangePassword = async (req: Request, res: Response) => {
   const { oldPassword, newPassword, email } = req.body
-  console.log(req)
+  // console.log(req)
+  console.log(req.body)
 
   // const user = await User.findOne({ where: { username: req.user.username }})
-  const user = await User.findOne({  'local.email': email })
+  const user = await User.findOne({ 'local.email': email })
+  console.log(user)
 
   bcrypt.compare(oldPassword, user.local.password).then(async (match) => {
     if (!match) res.json({ error: 'Wrong Password Entered!' })
@@ -134,6 +193,13 @@ export const ChangePassword = async (req: Request, res: Response) => {
       res.status(200).send({ message: 'Pasword successfully reset'})
     })
   })
+}
+
+export const SendOTPEmail = async (req: Request, res: Response) => {
+    const { OTP, recipientEmail } = req.body
+    sendOTPEmail(OTP, recipientEmail)
+      .then((response: any) => res.status(200).send({message: 'Email successfully sent.'}))
+      .catch((error) => res.status(500).send(error.message))
 }
 
 export const ResetPassword = async (req: Request, res: Response) => {
@@ -147,50 +213,3 @@ export const ResetPassword = async (req: Request, res: Response) => {
     res.status(200).send({ message: 'Pasword successfully reset'})})
 }
 
-export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
-    console.log(req.body)
-  try {
-    const { accessToken, displayName, email, firebaseUid, photoURL, refreshToken } = req.body.firebaseGoogle
-    
-    if (!firebaseUid) {
-      return res.status(400).json({ message: 'Missing firebaseUid' })
-    }
-
-    let user = await User.findOne({ firebaseGoogle: {
-      firebaseUid }})
-
-    if (!user) {
-      user = new User({
-        local: {
-          active: true,
-        },
-        firebaseGoogle: {
-          firebaseUid: firebaseUid,
-          accessToken: accessToken, 
-          email: email,
-          displayName: displayName, 
-          photoURL: photoURL,
-          refreshToken: refreshToken
-        },
-        provider: 'firebaseGoogle'
-      })
-      await user.save()
-    }
-
-    const token = createGoogleAuthToken(firebaseUid)
-
-    res.json({
-      token,
-      user: {
-        _id: user.id,
-        firebaseUid: user.firebaseGoogle.firebaseUid,
-        email,
-        provider: user.provider
-      }
-    })
-  
-  } catch (error) {
-    console.error(error)
-    res.status(500).json({ message: 'Internal server error' })
-  }
-}
