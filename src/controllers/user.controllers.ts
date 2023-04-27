@@ -7,22 +7,41 @@ import {
   updateUser,
   deleteUser,
   confirmUser,
-  checkIfGoogleFirebaseUserExists
+  checkIfGoogleFirebaseUserExists,
+  getLocalUser,
+  getGoogleUser
 } from '../services/user.service'
 import { createGoogleAuthToken, createLocalToken } from '../utils/jwt'
 import { sendOTPEmail } from '../utils/email.helper'
 
+export const GetUser = async (req: Request, res: Response) => {
+  res.setHeader('Access-Control-Allow-Credentials', 'true')
+  const id = req.params.id
+  let user 
+
+  if (id.length == 28) {
+    user = await getGoogleUser(req.params.id)
+  } else {
+    user = await getLocalUser(req.params.id) 
+  }
+
+  let accessToken: string
+  if (user) {
+    accessToken = req.cookies['access-token']
+    res.status(200).json({ user: user, authToken: accessToken })
+  } else {
+    console.log('No user found')
+    res.status(400).json({ error: 'No user found' })
+  }
+  
+}
+
 export const CreateUser = async (req: Request, res: Response) => {
-  console.log(req.body)
   const userData = req.body
   const localEmail: string = userData?.local?.email || ''
-  console.log('local email = ' + localEmail)
   let userExists: any = await checkIfUserExists(localEmail)
   let googleFirebaseUserExists: any = await checkIfGoogleFirebaseUserExists(localEmail)
   
-  console.log('user exists ' + userExists)
-  console.log('google user exists ' + googleFirebaseUserExists)
-//   const userExists = await checkIfUserExists(userData.email)
   if (userExists) {
     res.status(400).json({ error: 'Local user with that email already exists' })
     return
@@ -73,6 +92,11 @@ export const LoginUser = async (req: Request, res: Response) => {
   })
 }
 
+export const LogoutUser = async (req: Request, res: Response) => {
+  res.clearCookie(('access-token'))
+  res.status(200).send({ message: 'Logged out successfully' })
+}
+
 export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
   try {
     const { accessToken, displayName, email, firebaseUid, photoURL, refreshToken } = req.body.firebaseGoogle
@@ -100,8 +124,8 @@ export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
         provider: 'firebaseGoogle'
       })
       await user.save()
-      const token = createGoogleAuthToken(firebaseUid)
-      res.cookie('access-token', accessToken, {
+      const token = createGoogleAuthToken(user)
+      res.cookie('access-token', token, {
         maxAge: 60 * 60 * 24 * 1000,
         httpOnly: true,
       })
@@ -115,8 +139,8 @@ export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
         }
       })
     } else {
-      const token = createGoogleAuthToken(firebaseUid)
-      res.cookie('access-token', accessToken, {
+      const token = createGoogleAuthToken(user)
+      res.cookie('access-token', token, {
         maxAge: 60 * 60 * 24 * 1000,
         httpOnly: true,
       })
@@ -202,13 +226,6 @@ export const ChangePassword = async (req: Request, res: Response) => {
   })
 }
 
-export const SendOTPEmail = async (req: Request, res: Response) => {
-    const { OTP, recipientEmail } = req.body
-    sendOTPEmail(OTP, recipientEmail)
-      .then((response: any) => res.status(200).send({message: 'Email successfully sent.'}))
-      .catch((error) => res.status(500).send(error.message))
-}
-
 export const ResetPassword = async (req: Request, res: Response) => {
   const { password, recipientEmail } = req.body
 
@@ -220,3 +237,9 @@ export const ResetPassword = async (req: Request, res: Response) => {
     res.status(200).send({ message: 'Pasword successfully reset'})})
 }
 
+export const SendOTPEmail = async (req: Request, res: Response) => {
+    const { OTP, recipientEmail } = req.body
+    sendOTPEmail(OTP, recipientEmail)
+      .then((response: any) => res.status(200).send({message: 'Email successfully sent.'}))
+      .catch((error) => res.status(500).send(error.message))
+}

@@ -1,9 +1,11 @@
 import express, { Router } from 'express'
 import { validateToken } from '../utils/jwt'
-import { ChangePassword, CreateUser, DeleteUserByEmail, GoogleAuthLoginAndSignup, LoginUser, ResetPassword, SendOTPEmail, UpdateUserById, ValidateAccountCreation } from '../controllers/user.controllers'
-
+import { ChangePassword, CreateUser, DeleteUserByEmail, GetUser, GoogleAuthLoginAndSignup, LoginUser, LogoutUser, ResetPassword, SendOTPEmail, UpdateUserById, ValidateAccountCreation } from '../controllers/user.controllers'
 export const userRouter: Router = express.Router()
 export const googleAuthRouter: Router = express.Router()
+
+// Get Single User's data by id
+userRouter.get('/profile/:id', validateToken, GetUser)
 
 // Create a User
 userRouter.post('/signup', CreateUser)
@@ -12,15 +14,15 @@ userRouter.post('/signup', CreateUser)
 userRouter.post('/login', LoginUser)
 
 // // Log out the user and clear local storage and cookies
-userRouter.post('/logout', (req, res) => {
-  res.clearCookie(('access-token'))
-  res.status(200).send({ message: 'Logged out successfully' })
-})
+userRouter.post('/logout', LogoutUser)
 
-// Test route for token/cookie
-userRouter.get('/profile', validateToken, (req, res) => {
-  res.json('profile')
-})
+// Google Firebase Auth Login and Signup
+userRouter.post('/auth/firebase/google', GoogleAuthLoginAndSignup)
+
+// // Test route for token/cookie
+// userRouter.get('/profile', validateToken, (req, res) => {
+//   res.json('profile')
+// })
 
 // Update a user by ID
 userRouter.put('/update/:id', validateToken, UpdateUserById)
@@ -40,5 +42,3 @@ userRouter.put('/resetpassword', ResetPassword)
 // Send OTP Email for password recovery
 userRouter.post('/send_recovery_email', SendOTPEmail)
 
-// Google Firebase Auth Login and Signup
-userRouter.post('/auth/firebase/google', GoogleAuthLoginAndSignup)

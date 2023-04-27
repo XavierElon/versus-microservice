@@ -4,26 +4,22 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 export const createLocalToken = (user) => {
-    console.log('create local token')
-    console.log(user)
     const accessToken = sign({ email: user.local.email, id: user._id }, process.env.JWT_SECRET, { expiresIn: '24h' })
-    console.log(accessToken)
     return accessToken
 }
 
-export const createGoogleAuthToken = (firebaseUid) => {
-    const accessToken = sign({ firebaseUid: firebaseUid }, process.env.JWT_SECRET, { expiresIn: '24h'})
+export const createGoogleAuthToken = (user) => {
+    const accessToken = sign({ email: user.firebaseGoogle.email, id: user._id }, process.env.JWT_SECRET, { expiresIn: '24h'})
     return accessToken
 }
 
 export const validateToken = (req, res, next) => {
-    console.log(req.cookies)
-    console.log('in validateToken')
-    // console.log(req)
     const accessToken = req.cookies['access-token']
-
+    console.log(req.cookies)
+    console.log('validateToken')
+    console.log(accessToken)
     if (!accessToken) return res.status(400).json({ error: 'User not authenticated' })
-
+    console.log('fail')
     try {
         const validToken = verify(accessToken, process.env.JWT_SECRET)
         req.use = validToken
@@ -32,6 +28,8 @@ export const validateToken = (req, res, next) => {
             return next()
         }
     } catch (err) {
+        console.log('error here')
+        console.log(err)
         return res.status(400).json({ error: err })
     }
 }
