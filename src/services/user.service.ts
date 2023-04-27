@@ -11,6 +11,16 @@ const host = config.HOST
 dotenv.config()
 
 /*
+GET USER
+This function gets a user using the id
+*/
+export const getUser = async (id: any) => {
+  const user = await User.findOne({ _id: id })
+  return user
+}
+
+
+/*
 CREATE USER
 This function creates a new user using the userSchema and saves it to the database
 */
