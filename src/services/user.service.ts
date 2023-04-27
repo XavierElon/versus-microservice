@@ -11,11 +11,21 @@ const host = config.HOST
 dotenv.config()
 
 /*
-GET USER
-This function gets a user using the id
+GET LOCAL USER
+This function gets a local user using the mongo id
 */
-export const getUser = async (id: any) => {
+export const getLocalUser = async (id: any) => {
+  console.log('get local user')
   const user = await User.findOne({ _id: id })
+  return user
+}
+
+/*
+GET GOOGLE USER
+This function gets a Google auth user using the firebase id
+*/
+export const getGoogleUser = async (id: any) => {
+  const user = await User.findOne({ 'firebaseGoogle.firebaseUid': id })
   return user
 }
 
@@ -30,13 +40,9 @@ export const createUser = async (userData: typeof User): Promise<any> => {
   const hash = await bcrypt.hash(password, 10)
   userData.local.password = hash
   userData = { ...userData }
-  console.log('user data')
-  console.log(userData)
   let user = new User(userData)
-  console.log('user')
-  console.log(user)
-  // const baseUrl = host;
   const baseUrl = process.env.HOST + process.env.PORT
+
   try {
     user.confirmationTokenExpirationTime = new Date(Date.now())
     const savedUser = await user.save()
@@ -72,7 +78,6 @@ CHECK IF USER EXISTS
 check the username against the database for duplicates before proceeding with creation of new user
 */
 export const checkIfUserExists = async (email: string) => {
-  console.log(email)
   const existingUser = await User.findOne({ 'local.email': email })
   console.log('existing user = ' + existingUser)
   if (existingUser) {
@@ -82,7 +87,6 @@ export const checkIfUserExists = async (email: string) => {
 }
 
 export const checkIfGoogleFirebaseUserExists = async (email: string) => {
-  console.log(email)
   const existingGoogleUser = await User.findOne({ 'firebaseGoogle.email': email })
   console.log('existing google user = ' + existingGoogleUser)
   if (existingGoogleUser) {
