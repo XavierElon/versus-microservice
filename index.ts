@@ -1,13 +1,10 @@
 import cors from 'cors'
-import config from './src/config/config'
 import express, { Express, Request, Response } from 'express'
-import bcrypt from 'bcrypt'
 import dotenv from 'dotenv'
 import cookieParser from 'cookie-parser'
 import { connectToDatabase } from './src/connections/mongodb'
 import { userRouter } from './src/routes/user.routes'
-import { sendOTPEmail } from './src/utils/email.helper'
-import { validateToken } from './src/utils/jwt'
+
 
 dotenv.config()
 

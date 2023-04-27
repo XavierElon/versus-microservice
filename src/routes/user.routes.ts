@@ -11,6 +11,9 @@ userRouter.post('/signup', CreateUser)
 /*Verify user credentials against the database and login*/
 userRouter.post('/login', LoginUser)
 
+// Google Firebase Auth Login and Signup
+userRouter.post('/auth/firebase/google', GoogleAuthLoginAndSignup)
+
 // // Log out the user and clear local storage and cookies
 userRouter.post('/logout', (req, res) => {
   res.clearCookie(('access-token'))
@@ -20,6 +23,11 @@ userRouter.post('/logout', (req, res) => {
 // Test route for token/cookie
 userRouter.get('/profile', validateToken, (req, res) => {
   res.json('profile')
+})
+
+userRouter.get('/profile/:id', (req, res) => {
+  console.log(req.body)
+  console.log(req.params.id)
 })
 
 // Update a user by ID
@@ -40,5 +48,3 @@ userRouter.put('/resetpassword', ResetPassword)
 // Send OTP Email for password recovery
 userRouter.post('/send_recovery_email', SendOTPEmail)
 
-// Google Firebase Auth Login and Signup
-userRouter.post('/auth/firebase/google', GoogleAuthLoginAndSignup)
