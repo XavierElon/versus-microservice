@@ -5,7 +5,6 @@ dotenv.config()
 
 export const createLocalToken = (user) => {
     const accessToken = sign({ email: user.local.email, id: user._id }, process.env.JWT_SECRET, { expiresIn: '24h' })
-    console.log(accessToken)
     return accessToken
 }
 
@@ -15,7 +14,6 @@ export const createGoogleAuthToken = (firebaseUid) => {
 }
 
 export const validateToken = (req, res, next) => {
-    console.log(req.cookies)
     const accessToken = req.cookies['access-token']
 
     if (!accessToken) return res.status(400).json({ error: 'User not authenticated' })

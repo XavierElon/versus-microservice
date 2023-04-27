@@ -7,22 +7,29 @@ import {
   updateUser,
   deleteUser,
   confirmUser,
-  checkIfGoogleFirebaseUserExists
+  checkIfGoogleFirebaseUserExists,
+  getUser
 } from '../services/user.service'
 import { createGoogleAuthToken, createLocalToken } from '../utils/jwt'
 import { sendOTPEmail } from '../utils/email.helper'
 
+export const GetUser = async (req: Request, res: Response) => {
+  const user = await getUser(req.params.id) 
+  let accessToken: string
+  if (user) {
+    accessToken = req.cookies['access-token']
+    console.log('cookie')
+    console.log(accessToken)
+  }
+  res.status(200).json({ user: user, authToken: accessToken })
+}
+
 export const CreateUser = async (req: Request, res: Response) => {
-  console.log(req.body)
   const userData = req.body
   const localEmail: string = userData?.local?.email || ''
-  console.log('local email = ' + localEmail)
   let userExists: any = await checkIfUserExists(localEmail)
   let googleFirebaseUserExists: any = await checkIfGoogleFirebaseUserExists(localEmail)
   
-  console.log('user exists ' + userExists)
-  console.log('google user exists ' + googleFirebaseUserExists)
-//   const userExists = await checkIfUserExists(userData.email)
   if (userExists) {
     res.status(400).json({ error: 'Local user with that email already exists' })
     return

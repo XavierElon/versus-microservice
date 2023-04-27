@@ -1,6 +1,6 @@
 import express, { Router } from 'express'
 import { createLocalToken, validateToken } from '../utils/jwt'
-import { ChangePassword, CreateUser, DeleteUserByEmail, GoogleAuthLoginAndSignup, LoginUser, ResetPassword, SendOTPEmail, UpdateUserById, ValidateAccountCreation } from '../controllers/user.controllers'
+import { ChangePassword, CreateUser, DeleteUserByEmail, GetUser, GoogleAuthLoginAndSignup, LoginUser, ResetPassword, SendOTPEmail, UpdateUserById, ValidateAccountCreation } from '../controllers/user.controllers'
 import { getUser } from '../services/user.service'
 export const userRouter: Router = express.Router()
 export const googleAuthRouter: Router = express.Router()
@@ -25,16 +25,7 @@ userRouter.get('/profile', validateToken, (req, res) => {
   res.json('profile')
 })
 
-userRouter.get('/profile/:id', async (req, res) => {
-  const user = await getUser(req.params.id) 
-  let accessToken: string
-  if (user) {
-    accessToken = req.cookies['access-token']
-    console.log('cookie')
-    console.log(accessToken)
-  }
-  res.status(200).json({ user: user, authToken: accessToken })
-})
+userRouter.get('/profile/:id', validateToken,  GetUser)
 
 // Update a user by ID
 userRouter.put('/update/:id', validateToken, UpdateUserById)
