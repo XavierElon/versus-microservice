@@ -49,7 +49,7 @@ export const createConfirmationLink = async (
 /*
 Send OTP Email for password recovery
 */
-export const sendOTPEmail = ( OTP, recipientEmail) => {
+export const sendOTPEmail = (OTP, recipientEmail) => {
   console.log(OTP)
   return new Promise((resolve, reject) => {
       const transporter = nodemailer.createTransport({

@@ -101,7 +101,11 @@ export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
       })
       await user.save()
       const token = createGoogleAuthToken(firebaseUid)
-      res.json({
+      res.cookie('access-token', accessToken, {
+        maxAge: 60 * 60 * 24 * 1000,
+        httpOnly: true,
+      })
+      res.status(200).json({
         token,
         user: {
           _id: user.id,
@@ -110,9 +114,12 @@ export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
           provider: user.provider
         }
       })
-      return
     } else {
       const token = createGoogleAuthToken(firebaseUid)
+      res.cookie('access-token', accessToken, {
+        maxAge: 60 * 60 * 24 * 1000,
+        httpOnly: true,
+      })
       res.status(200).json({
         token,
         user: {
