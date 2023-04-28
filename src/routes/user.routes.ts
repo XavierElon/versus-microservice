@@ -19,11 +19,6 @@ userRouter.post('/logout', LogoutUser)
 // Google Firebase Auth Login and Signup
 userRouter.post('/auth/firebase/google', GoogleAuthLoginAndSignup)
 
-// // Test route for token/cookie
-// userRouter.get('/profile', validateToken, (req, res) => {
-//   res.json('profile')
-// })
-
 // Update a user by ID
 userRouter.put('/update/:id', validateToken, UpdateUserById)
 

@@ -3,11 +3,8 @@ import { User } from '../models/user.model'
 import mongoose, { Model } from 'mongoose'
 import dotenv from 'dotenv'
 import bcrypt from 'bcrypt'
-import cookieParser from 'cookie-parser'
 import { sendConfirmationGmail, createConfirmationLink } from '../utils/email.helper'
-import config from '../config/config'
 
-const host = config.HOST
 dotenv.config()
 
 /*
@@ -15,7 +12,6 @@ GET LOCAL USER
 This function gets a local user using the mongo id
 */
 export const getLocalUser = async (id: any) => {
-  console.log('get local user')
   const user = await User.findOne({ _id: id })
   return user
 }
@@ -41,7 +37,7 @@ export const createUser = async (userData: typeof User): Promise<any> => {
   userData.local.password = hash
   userData = { ...userData }
   let user = new User(userData)
-  const baseUrl = process.env.HOST + process.env.PORT
+  const baseUrl = process.env.HOST + process.env.FRONT_END_PORT + '/verified'
 
   try {
     user.confirmationTokenExpirationTime = new Date(Date.now())
@@ -167,7 +163,6 @@ export const confirmUser = async (confirmationCode: string) => {
     return null
   }
   user.local.active = true
-  console.log(user)
   user.local.confirmationTokenExpirationTime = undefined
   await user.save()
   return user

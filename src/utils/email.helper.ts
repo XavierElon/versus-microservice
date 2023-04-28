@@ -7,8 +7,9 @@ import config from '../config/config'
 dotenv.config()
 
 const Gmail_SMTP = config.Gmail_SMTP
-const Gmail_ACCOUNT = config.Gmail_ACCOUNT
-const Gmail_PASSWORD = config.Gmail_PASSWORD
+const GMAIL_ACCOUNT = process.env.GMAIL_ACCOUNT
+const GMAIL_PASSWORD = process.env.GMAIL_PASSWORD
+const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD
 const Gmail_PORT = config.Gmail_PORT
 
 /*
@@ -22,11 +23,11 @@ export const sendConfirmationGmail = async (
     Gmail_SMTP,
     Gmail_PORT,
     true,
-    Gmail_ACCOUNT,
-    Gmail_PASSWORD
+    GMAIL_ACCOUNT,
+    GMAIL_PASSWORD
   )
 
-  const mailOptions = new MailOptions(Gmail_ACCOUNT, endUserEmail, confirmationLink)
+  const mailOptions = new MailOptions(GMAIL_ACCOUNT, endUserEmail, confirmationLink)
 
   await GmailTransporter.sendMail(mailOptions)
 }
@@ -51,12 +52,13 @@ Send OTP Email for password recovery
 */
 export const sendOTPEmail = (OTP, recipientEmail) => {
   console.log(OTP)
+  console.log(GMAIL_APP_PASSWORD)
   return new Promise((resolve, reject) => {
       const transporter = nodemailer.createTransport({
           service: 'gmail',
           auth: {
               user: process.env.GMAIL_ACCOUNT,
-              pass: process.env.GMAIL_PASSWORD
+              pass: GMAIL_APP_PASSWORD
           }
       })
 
