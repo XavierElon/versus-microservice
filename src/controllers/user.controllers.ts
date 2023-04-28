@@ -52,7 +52,14 @@ export const CreateUser = async (req: Request, res: Response) => {
     createUser(userData)
       .then((result) => {
         console.log('User created successfully: ', result)
-        res.status(201).json({ message: 'User created', data: userData })
+        const accessToken = createLocalToken(userData)
+      console.log('login access token')
+      console.log(accessToken)
+      res.cookie('access-token', accessToken, {
+        maxAge: 60 * 60 * 24 * 1000,
+        httpOnly: true,
+      })
+        res.status(201).json({ message: 'User created', accessToken, user: result})
       })
       .catch((error) => {
         console.log('Error creating user: ', error)

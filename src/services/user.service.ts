@@ -37,7 +37,7 @@ export const createUser = async (userData: typeof User): Promise<any> => {
   userData.local.password = hash
   userData = { ...userData }
   let user = new User(userData)
-  const baseUrl = process.env.HOST + process.env.FRONT_END_PORT + '/verified'
+  const baseUrl = process.env.HOST + process.env.PORT
 
   try {
     user.confirmationTokenExpirationTime = new Date(Date.now())

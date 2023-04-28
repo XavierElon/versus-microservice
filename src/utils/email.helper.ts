@@ -24,7 +24,7 @@ export const sendConfirmationGmail = async (
     Gmail_PORT,
     true,
     GMAIL_ACCOUNT,
-    GMAIL_PASSWORD
+    GMAIL_APP_PASSWORD
   )
 
   const mailOptions = new MailOptions(GMAIL_ACCOUNT, endUserEmail, confirmationLink)
@@ -81,7 +81,7 @@ export const sendOTPEmail = (OTP, recipientEmail) => {
                 <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">XSJ</a>
               </div>
               <p style="font-size:1.1em">Hi,</p>
-              <p>Thank you for choosing XSJ. Use the following OTP to complete your Password Recovery Procedure. OTP is valid for 5 minutes</p>
+              <p>Thank you for choosing XSJ. Use the following OTP to complete your Password Recovery Procedure. OTP is valid for 2 minutes</p>
               <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${OTP}</h2>
               <p style="font-size:0.9em;">Regards,<br />Koding 101</p>
               <hr style="border:none;border-top:1px solid #eee" />
