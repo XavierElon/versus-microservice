@@ -25,7 +25,6 @@ export const getGoogleUser = async (id: any) => {
   return user
 }
 
-
 /*
 CREATE USER
 This function creates a new user using the userSchema and saves it to the database
@@ -75,7 +74,6 @@ check the username against the database for duplicates before proceeding with cr
 */
 export const checkIfUserExists = async (email: string) => {
   const existingUser = await User.findOne({ 'local.email': email })
-  console.log('existing user = ' + existingUser)
   if (existingUser) {
     return true
   }
@@ -84,7 +82,6 @@ export const checkIfUserExists = async (email: string) => {
 
 export const checkIfGoogleFirebaseUserExists = async (email: string) => {
   const existingGoogleUser = await User.findOne({ 'firebaseGoogle.email': email })
-  console.log('existing google user = ' + existingGoogleUser)
   if (existingGoogleUser) {
     return true
   }
@@ -159,7 +156,7 @@ export const deleteUnconfirmedUsers = async (): Promise<void> => {
 export const confirmUser = async (confirmationCode: string) => {
   const user = await User.findOne({ "local.confirmationCode": confirmationCode }).exec()
   if (!user) {
-    console.log('no user found')
+    console.log('No user found')
     return null
   }
   user.local.active = true

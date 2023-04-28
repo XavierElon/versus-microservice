@@ -53,8 +53,7 @@ export const CreateUser = async (req: Request, res: Response) => {
       .then((result) => {
         console.log('User created successfully: ', result)
         const accessToken = createLocalToken(userData)
-      console.log('login access token')
-      console.log(accessToken)
+
       res.cookie('access-token', accessToken, {
         maxAge: 60 * 60 * 24 * 1000,
         httpOnly: true,
@@ -85,15 +84,11 @@ export const LoginUser = async (req: Request, res: Response) => {
       res.status(400).json({ error: 'Wrong username or password.'})
       return
     } else {
-      console.log('bcrypt compare')
       const accessToken = createLocalToken(user)
-      console.log('login access token')
-      console.log(accessToken)
       res.cookie('access-token', accessToken, {
         maxAge: 60 * 60 * 24 * 1000,
         httpOnly: true,
       })
-      // res.cookie('test', accessToken)
       res.status(200).json({ message: 'Login successful', accessToken, user })
     }
   })
