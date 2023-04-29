@@ -42,6 +42,10 @@ const userSchema = new mongoose.Schema({
     password: {
       type: String,
     },
+    profilePicture: {
+      data: Buffer,
+      contentType: String
+    },
     confirmationCode: {
       type: String,
       default: uuidv4()
