@@ -43,6 +43,7 @@ const userSchema = new mongoose.Schema({
       type: String,
     },
     profilePicture: {
+      name: String,
       data: Buffer,
       contentType: String
     },
