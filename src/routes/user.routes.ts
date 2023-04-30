@@ -1,11 +1,39 @@
 import express, { Request, Router } from 'express'
 import fs from 'fs'
+import path from 'path'
 import { validateToken } from '../utils/jwt'
 import { ChangePassword, CreateUser, DeleteUserByEmail, GetUser, GoogleAuthLoginAndSignup, LoginUser, LogoutUser, ResetPassword, SendOTPEmail, UpdateUserById, ValidateAccountCreation } from '../controllers/user.controllers'
 import { User } from '../models/user.model'
-import { uploadMiddleWare } from '../middleware/storage'
+// import { uploadMiddleWare } from '../middleware/storage'
 export const userRouter: Router = express.Router()
 export const googleAuthRouter: Router = express.Router()
+import multer from 'multer'
+
+const storage = multer.diskStorage({
+    
+    destination: (req, file, cb) => {
+        console.log('dest')
+        cb(null, 'uploads')
+    },
+    filename: function (req, file, cb) {
+        console.log(file)
+        cb(null, Date.now() + path.extname(file.originalname))
+    }
+})
+
+const upload = multer({ storage: storage })
+
+// const uploadMiddleWare = (req, res, next) => {
+
+//     console.log('here')
+//     upload.single('image')(req, res, err => {
+//         console.log('here')
+//         if (err) {
+//             return res.status(400).json({ error: 'Failed to upload file '})
+//         }
+//         next()
+//     })
+// }
 
 // Get Single User's data by id
 userRouter.get('/profile/:id', validateToken, GetUser)
@@ -26,9 +54,9 @@ userRouter.post('/auth/firebase/google', GoogleAuthLoginAndSignup)
 userRouter.put('/update/:id', validateToken, UpdateUserById)
 
 // Update local  user profile pic by ID 
-userRouter.post('/upload-profile-picture', uploadMiddleWare, async (req: Request<any>, res) => {
-    console.log(req.body)
-    console.log(req.body.file)
+userRouter.post('/upload-profile-picture', upload.single('image'), async (req: Request<any>, res) => {
+    // console.log(req.body)
+    console.log(req.file)
     const user = await User.findById(req.body.id)
     console.log(user)
 
@@ -40,7 +68,7 @@ userRouter.post('/upload-profile-picture', uploadMiddleWare, async (req: Request
         data: req.body.file.buffer,
         contentType: req.body.file.mimetype
     }
-    console.log(user.local.profilePicture)
+    // console.log(user.local.profilePicture)
     await user.save()
 
 })
