@@ -12,7 +12,7 @@ const storage = multer.diskStorage({
     }
 })
 
-const upload = multer({ storage })
+export const upload = multer({ storage: storage })
 
 export const uploadMiddleWare = (req, res, next) => {
     upload.single('file')(req, res, err => {

@@ -24,10 +24,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 // const uploadMiddleWare = (req, res, next) => {
-
-//     console.log('here')
 //     upload.single('image')(req, res, err => {
-//         console.log('here')
 //         if (err) {
 //             return res.status(400).json({ error: 'Failed to upload file '})
 //         }
@@ -54,22 +51,25 @@ userRouter.post('/auth/firebase/google', GoogleAuthLoginAndSignup)
 userRouter.put('/update/:id', validateToken, UpdateUserById)
 
 // Update local  user profile pic by ID 
-userRouter.post('/upload-profile-picture', upload.single('image'), async (req: Request<any>, res) => {
-    // console.log(req.body)
+userRouter.post('/upload-profile-picture/:id', upload.single('image'), async (req: Request<any>, res) => {
     console.log(req.file)
-    const user = await User.findById(req.body.id)
-    console.log(user)
+    const user = await User.findById(req.params.id)
 
     if (!user) {
         return res.status(404).json({ error: 'User not found' });
     }
+    const data = fs.readFileSync(req.file.path);
+    const contentType = req.file.mimetype;
     
     user.local.profilePicture = { 
-        data: req.body.file.buffer,
-        contentType: req.body.file.mimetype
+        data: data,
+        contentType: contentType
     }
-    // console.log(user.local.profilePicture)
     await user.save()
+
+    fs.unlinkSync(req.file.path)
+
+    res.status(200).send({ message: 'Profile picture uploaded successfully.'})
 
 })
 
