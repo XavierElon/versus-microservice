@@ -1,8 +1,36 @@
-import express, { Router } from 'express'
+import express, { Request, Router } from 'express'
+import fs from 'fs'
+import path from 'path'
 import { validateToken } from '../utils/jwt'
 import { ChangePassword, CreateUser, DeleteUserByEmail, GetUser, GoogleAuthLoginAndSignup, LoginUser, LogoutUser, ResetPassword, SendOTPEmail, UpdateUserById, ValidateAccountCreation } from '../controllers/user.controllers'
+import { User } from '../models/user.model'
+// import { uploadMiddleWare } from '../middleware/storage'
 export const userRouter: Router = express.Router()
 export const googleAuthRouter: Router = express.Router()
+import multer from 'multer'
+
+const storage = multer.diskStorage({
+    
+    destination: (req, file, cb) => {
+        console.log('dest')
+        cb(null, 'uploads')
+    },
+    filename: function (req, file, cb) {
+        console.log(file)
+        cb(null, Date.now() + path.extname(file.originalname))
+    }
+})
+
+const upload = multer({ storage: storage })
+
+// const uploadMiddleWare = (req, res, next) => {
+//     upload.single('image')(req, res, err => {
+//         if (err) {
+//             return res.status(400).json({ error: 'Failed to upload file '})
+//         }
+//         next()
+//     })
+// }
 
 // Get Single User's data by id
 userRouter.get('/profile/:id', validateToken, GetUser)
@@ -21,6 +49,33 @@ userRouter.post('/auth/firebase/google', GoogleAuthLoginAndSignup)
 
 // Update a user by ID
 userRouter.put('/update/:id', validateToken, UpdateUserById)
+
+// Get user local user profile picture
+userRouter.get('/profile-picture/:id', async (req, res) => {
+})
+
+// Update local  user profile pic by ID 
+userRouter.post('/upload-profile-picture/:id', upload.single('image'), async (req: Request<any>, res) => {
+    console.log(req.file)
+    const user = await User.findById(req.params.id)
+
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+    const data = fs.readFileSync(req.file.path);
+    const contentType = req.file.mimetype;
+    
+    user.local.profilePicture = { 
+        data: data,
+        contentType: contentType
+    }
+    await user.save()
+
+    // fs.unlinkSync(req.file.path)
+
+    res.status(200).send({ message: 'Profile picture uploaded successfully.'})
+
+})
 
 // Delete user by email endpoint
 userRouter.delete('/delete/:email', validateToken, DeleteUserByEmail)

@@ -5,10 +5,10 @@ import cookieParser from 'cookie-parser'
 import { connectToDatabase } from './src/connections/mongodb'
 import { userRouter } from './src/routes/user.routes'
 
-
 dotenv.config()
 
 const app: Express = express()
+app.set('view engine', 'ejs')
 
 const port = process.env.PORT
 const dbName: string = process.env.DB_NAME
@@ -27,6 +27,7 @@ app.use(cors({
 }))
 app.use(cookieParser())
 app.use(userRouter)
+
 
 app.get('/', async (req: Request, res: Response): Promise<Response> => {
     return res.status(200).send({ message: 'Typescript node server running!' })

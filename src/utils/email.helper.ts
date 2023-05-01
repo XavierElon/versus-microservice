@@ -8,7 +8,6 @@ dotenv.config()
 
 const Gmail_SMTP = config.Gmail_SMTP
 const GMAIL_ACCOUNT = process.env.GMAIL_ACCOUNT
-const GMAIL_PASSWORD = process.env.GMAIL_PASSWORD
 const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD
 const Gmail_PORT = config.Gmail_PORT
 
