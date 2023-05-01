@@ -8,6 +8,7 @@ import { userRouter } from './src/routes/user.routes'
 dotenv.config()
 
 const app: Express = express()
+app.set('view engine', 'ejs')
 
 const port = process.env.PORT
 const dbName: string = process.env.DB_NAME
