@@ -12,7 +12,6 @@ import multer from 'multer'
 const storage = multer.diskStorage({
     
     destination: (req, file, cb) => {
-        console.log('dest')
         cb(null, 'uploads')
     },
     filename: function (req, file, cb) {
@@ -71,7 +70,7 @@ userRouter.post('/upload-profile-picture/:id', upload.single('image'), async (re
     }
     await user.save()
 
-    // fs.unlinkSync(req.file.path)
+    fs.unlinkSync(req.file.path)
 
     res.status(200).send({ message: 'Profile picture uploaded successfully.'})
 
