@@ -11,7 +11,6 @@ export const connectToDatabase = async (dbUri: string) => {
   try {
     mongoose.set('strictQuery', false)
     await mongoose.connect(dbUri, options)
-
   } catch (error: any) {
     throw new Error(`Mongodb connection failed: ${error}`)
   }

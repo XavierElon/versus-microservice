@@ -31,7 +31,7 @@ This function creates a new user using the userSchema and saves it to the databa
 */
 export const createUser = async (userData: typeof User): Promise<any> => {
   const { password } = userData.local
-  
+
   const hash = await bcrypt.hash(password, 10)
   userData.local.password = hash
   userData = { ...userData }
@@ -42,7 +42,7 @@ export const createUser = async (userData: typeof User): Promise<any> => {
     user.confirmationTokenExpirationTime = new Date(Date.now())
     const savedUser = await user.save()
     console.log('Result:', savedUser)
-    
+
     const confirmationLink = await createConfirmationLink(userData, baseUrl)
     await sendConfirmationGmail(user.local.email, confirmationLink)
     console.log(`Sent email to user ${user.email}`)
@@ -154,7 +154,7 @@ export const deleteUnconfirmedUsers = async (): Promise<void> => {
 
 /*  Find the user with the provided confirmation code */
 export const confirmUser = async (confirmationCode: string) => {
-  const user = await User.findOne({ "local.confirmationCode": confirmationCode }).exec()
+  const user = await User.findOne({ 'local.confirmationCode': confirmationCode }).exec()
   if (!user) {
     console.log('No user found')
     return null

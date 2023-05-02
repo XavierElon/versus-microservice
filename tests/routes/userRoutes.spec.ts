@@ -1,14 +1,14 @@
 import { expect } from 'chai';
 import request from 'supertest';
 import express, { Express } from 'express';
-import { signupRouter } from '../../src/routes/user.routes';
+import { userRouter } from '../../src/routes/user.routes';
 import mongoose, { Model } from 'mongoose';
 import sinon from 'sinon';
 import { User } from '../../src/models/user.model'
 
 const app: Express = express();
 app.use(express.json());
-app.use('/', signupRouter);
+app.use('/', userRouter);
 
 describe('User Controller', () => {
 

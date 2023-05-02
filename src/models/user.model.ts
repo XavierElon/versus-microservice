@@ -12,7 +12,7 @@ import { v4 as uuidv4 } from 'uuid'
 const error = new ErrorMessage()
 
 const userSchema = new mongoose.Schema({
-  local:  {
+  local: {
     firstName: {
       type: String,
       validate: {
@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema({
     //   required: false,
     // },
     password: {
-      type: String,
+      type: String
     },
     profilePicture: {
       name: String,
@@ -54,7 +54,7 @@ const userSchema = new mongoose.Schema({
     confirmationTokenExpirationTime: {
       type: Date || null
     },
-    active: { type: Boolean, default: false },
+    active: { type: Boolean, default: false }
   },
   firebaseGoogle: {
     accessToken: String,
@@ -62,11 +62,12 @@ const userSchema = new mongoose.Schema({
     email: String,
     firebaseUid: String,
     photoURL: String,
-    refreshToken: String,
+    refreshToken: String
   },
   provider: {
     type: String,
-    enum: ['local', 'firebaseGoogle'], required: true
+    enum: ['local', 'firebaseGoogle'],
+    required: true
   },
   date: { type: Date, default: Date.now }
 })

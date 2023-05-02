@@ -2,14 +2,13 @@ import nodemailer from 'nodemailer'
 import dotenv from 'dotenv'
 import { MailOptions, CustomTransporter } from '../structures/types'
 import { User } from '../models/user.model'
-import config from '../config/config'
 
 dotenv.config()
 
-const Gmail_SMTP = config.Gmail_SMTP
+const GMAIL_SMTP = process.env.GMAIL_SMTP
 const GMAIL_ACCOUNT = process.env.GMAIL_ACCOUNT
-const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD
-const Gmail_PORT = config.Gmail_PORT
+const GMAIL_APP_PASSWORD: string = process.env.GMAIL_APP_PASSWORD
+const GMAIL_PORT: number = parseInt(process.env.GMAIL_PORT)
 
 /*
 SEND GMAIL CONFIRMATION
@@ -19,8 +18,8 @@ export const sendConfirmationGmail = async (
   confirmationLink: string
 ): Promise<void> => {
   const GmailTransporter = new CustomTransporter(
-    Gmail_SMTP,
-    Gmail_PORT,
+    GMAIL_SMTP,
+    GMAIL_PORT,
     true,
     GMAIL_ACCOUNT,
     GMAIL_APP_PASSWORD
@@ -53,19 +52,19 @@ export const sendOTPEmail = (OTP, recipientEmail) => {
   console.log(OTP)
   console.log(GMAIL_APP_PASSWORD)
   return new Promise((resolve, reject) => {
-      const transporter = nodemailer.createTransport({
-          service: 'gmail',
-          auth: {
-              user: process.env.GMAIL_ACCOUNT,
-              pass: GMAIL_APP_PASSWORD
-          }
-      })
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.GMAIL_ACCOUNT,
+        pass: GMAIL_APP_PASSWORD
+      }
+    })
 
-      const mail_configs = {
-          from: process.env.GMAIL_ACCOUNT,
-          to: recipientEmail,
-          subject: 'Recover Password',
-          html: `<!DOCTYPE html>
+    const mail_configs = {
+      from: process.env.GMAIL_ACCOUNT,
+      to: recipientEmail,
+      subject: 'Recover Password',
+      html: `<!DOCTYPE html>
           <html lang="en" >
           <head>
             <meta charset="UTF-8">
@@ -92,14 +91,14 @@ export const sendOTPEmail = (OTP, recipientEmail) => {
           <!-- partial -->
             
           </body>
-          </html>`,
+          </html>`
+    }
+    transporter.sendMail(mail_configs, (error, info) => {
+      if (error) {
+        console.log(error)
+        return reject({ message: 'An error has occurred' })
       }
-      transporter.sendMail(mail_configs, (error, info) => {
-          if (error) {
-              console.log(error)
-              return reject({ message: 'An error has occurred' })
-          }
-          return resolve({ message: 'Email sent successfully' })
-      })
+      return resolve({ message: 'Email sent successfully' })
+    })
   })
 }

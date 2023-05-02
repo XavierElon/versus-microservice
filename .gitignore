@@ -109,3 +109,6 @@ dist
 
 # Local multer images
 uploads
+
+# Build
+build
