@@ -4,32 +4,10 @@ import path from 'path'
 import { validateToken } from '../utils/jwt'
 import { ChangePassword, CreateUser, DeleteUserByEmail, GetUser, GoogleAuthLoginAndSignup, LoginUser, LogoutUser, ResetPassword, SendOTPEmail, UpdateUserById, ValidateAccountCreation } from '../controllers/user.controllers'
 import { User } from '../models/user.model'
-// import { uploadMiddleWare } from '../middleware/storage'
+import { upload } from '../middleware/storage'
 export const userRouter: Router = express.Router()
 export const googleAuthRouter: Router = express.Router()
-import multer from 'multer'
 
-const storage = multer.diskStorage({
-    
-    destination: (req, file, cb) => {
-        cb(null, 'uploads')
-    },
-    filename: function (req, file, cb) {
-        console.log(file)
-        cb(null, Date.now() + path.extname(file.originalname))
-    }
-})
-
-const upload = multer({ storage: storage })
-
-// const uploadMiddleWare = (req, res, next) => {
-//     upload.single('image')(req, res, err => {
-//         if (err) {
-//             return res.status(400).json({ error: 'Failed to upload file '})
-//         }
-//         next()
-//     })
-// }
 
 // Get Single User's data by id
 userRouter.get('/profile/:id', validateToken, GetUser)
