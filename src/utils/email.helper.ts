@@ -2,14 +2,13 @@ import nodemailer from 'nodemailer'
 import dotenv from 'dotenv'
 import { MailOptions, CustomTransporter } from '../structures/types'
 import { User } from '../models/user.model'
-import config from '../config/config'
 
 dotenv.config()
 
-const Gmail_SMTP = config.Gmail_SMTP
+const GMAIL_SMTP = process.env.GMAIL_SMTP
 const GMAIL_ACCOUNT = process.env.GMAIL_ACCOUNT
 const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD
-const Gmail_PORT = config.Gmail_PORT
+const GMAIL_PORT = process.env.GMAIL_PORT
 
 /*
 SEND GMAIL CONFIRMATION
@@ -19,8 +18,8 @@ export const sendConfirmationGmail = async (
   confirmationLink: string
 ): Promise<void> => {
   const GmailTransporter = new CustomTransporter(
-    Gmail_SMTP,
-    Gmail_PORT,
+    GMAIL_SMTP,
+    GMAIL_PORT,
     true,
     GMAIL_ACCOUNT,
     GMAIL_APP_PASSWORD
