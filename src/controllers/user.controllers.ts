@@ -180,8 +180,7 @@ export const UpdateUserById = async (req: Request, res: Response) => {
       }
 }
 
-export const UploadProfilePictureById = async(req: Request, res: Response) => {
-  console.log(req.file)
+export const UploadProfilePictureById = async(req: Request, res: Response) => {  
     const user = await User.findById(req.params.id)
 
     if (!user) {
