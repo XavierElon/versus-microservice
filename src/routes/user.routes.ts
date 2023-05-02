@@ -1,9 +1,6 @@
 import express, { Request, Router } from 'express'
-import fs from 'fs'
-import path from 'path'
 import { validateToken } from '../utils/jwt'
-import { ChangePassword, CreateUser, DeleteUserByEmail, GetUser, GoogleAuthLoginAndSignup, LoginUser, LogoutUser, ResetPassword, SendOTPEmail, UpdateUserById, ValidateAccountCreation } from '../controllers/user.controllers'
-import { User } from '../models/user.model'
+import { ChangePassword, CreateUser, DeleteUserByEmail, GetUser, GoogleAuthLoginAndSignup, LoginUser, LogoutUser, ResetPassword, SendOTPEmail, UpdateUserById, UploadProfilePictureById, ValidateAccountCreation } from '../controllers/user.controllers'
 import { upload } from '../middleware/storage'
 export const userRouter: Router = express.Router()
 export const googleAuthRouter: Router = express.Router()
@@ -32,27 +29,7 @@ userRouter.get('/profile-picture/:id', async (req, res) => {
 })
 
 // Update local  user profile pic by ID 
-userRouter.post('/upload-profile-picture/:id', upload.single('image'), async (req: Request<any>, res) => {
-    console.log(req.file)
-    const user = await User.findById(req.params.id)
-
-    if (!user) {
-        return res.status(404).json({ error: 'User not found' });
-    }
-    const data = fs.readFileSync(req.file.path);
-    const contentType = req.file.mimetype;
-    
-    user.local.profilePicture = { 
-        data: data,
-        contentType: contentType
-    }
-    await user.save()
-
-    fs.unlinkSync(req.file.path)
-
-    res.status(200).send({ message: 'Profile picture uploaded successfully.'})
-
-})
+userRouter.post('/upload-profile-picture/:id', upload.single('image'), UploadProfilePictureById)
 
 // Delete user by email endpoint
 userRouter.delete('/delete/:email', validateToken, DeleteUserByEmail)

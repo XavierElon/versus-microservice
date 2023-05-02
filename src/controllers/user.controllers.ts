@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
+import fs from 'fs'
 import { User } from '../models/user.model'
 import {
   createUser,
@@ -177,6 +178,27 @@ export const UpdateUserById = async (req: Request, res: Response) => {
         console.error(`Error updating user: ${error}`)
         return res.status(500).send({ error: 'Server error' })
       }
+}
+
+export const UploadProfilePictureById = async(req: Request, res: Response) => {
+  console.log(req.file)
+    const user = await User.findById(req.params.id)
+
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+    const data = fs.readFileSync(req.file.path);
+    const contentType = req.file.mimetype;
+    
+    user.local.profilePicture = { 
+        data: data,
+        contentType: contentType
+    }
+    await user.save()
+
+    fs.unlinkSync(req.file.path)
+
+    res.status(200).send({ message: 'Profile picture uploaded successfully.'})
 }
 
 export const DeleteUserByEmail = async (req: Request, res: Response) => {
