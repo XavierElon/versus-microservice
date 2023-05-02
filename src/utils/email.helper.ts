@@ -53,19 +53,19 @@ export const sendOTPEmail = (OTP, recipientEmail) => {
   console.log(OTP)
   console.log(GMAIL_APP_PASSWORD)
   return new Promise((resolve, reject) => {
-      const transporter = nodemailer.createTransport({
-          service: 'gmail',
-          auth: {
-              user: process.env.GMAIL_ACCOUNT,
-              pass: GMAIL_APP_PASSWORD
-          }
-      })
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.GMAIL_ACCOUNT,
+        pass: GMAIL_APP_PASSWORD
+      }
+    })
 
-      const mail_configs = {
-          from: process.env.GMAIL_ACCOUNT,
-          to: recipientEmail,
-          subject: 'Recover Password',
-          html: `<!DOCTYPE html>
+    const mail_configs = {
+      from: process.env.GMAIL_ACCOUNT,
+      to: recipientEmail,
+      subject: 'Recover Password',
+      html: `<!DOCTYPE html>
           <html lang="en" >
           <head>
             <meta charset="UTF-8">
@@ -92,14 +92,14 @@ export const sendOTPEmail = (OTP, recipientEmail) => {
           <!-- partial -->
             
           </body>
-          </html>`,
+          </html>`
+    }
+    transporter.sendMail(mail_configs, (error, info) => {
+      if (error) {
+        console.log(error)
+        return reject({ message: 'An error has occurred' })
       }
-      transporter.sendMail(mail_configs, (error, info) => {
-          if (error) {
-              console.log(error)
-              return reject({ message: 'An error has occurred' })
-          }
-          return resolve({ message: 'Email sent successfully' })
-      })
+      return resolve({ message: 'Email sent successfully' })
+    })
   })
 }

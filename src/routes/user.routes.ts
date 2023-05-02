@@ -1,10 +1,22 @@
 import express, { Request, Router } from 'express'
 import { validateToken } from '../utils/jwt'
-import { ChangePassword, CreateUser, DeleteUserByEmail, GetUser, GoogleAuthLoginAndSignup, LoginUser, LogoutUser, ResetPassword, SendOTPEmail, UpdateUserById, UploadProfilePictureById, ValidateAccountCreation } from '../controllers/user.controllers'
+import {
+  ChangePassword,
+  CreateUser,
+  DeleteUserByEmail,
+  GetUser,
+  GoogleAuthLoginAndSignup,
+  LoginUser,
+  LogoutUser,
+  ResetPassword,
+  SendOTPEmail,
+  UpdateUserById,
+  UploadProfilePictureById,
+  ValidateAccountCreation
+} from '../controllers/user.controllers'
 import { upload } from '../middleware/storage'
 export const userRouter: Router = express.Router()
 export const googleAuthRouter: Router = express.Router()
-
 
 // Get Single User's data by id
 userRouter.get('/profile/:id', validateToken, GetUser)
@@ -25,10 +37,9 @@ userRouter.post('/auth/firebase/google', GoogleAuthLoginAndSignup)
 userRouter.put('/update/:id', validateToken, UpdateUserById)
 
 // Get user local user profile picture
-userRouter.get('/profile-picture/:id', async (req, res) => {
-})
+userRouter.get('/profile-picture/:id', async (req, res) => {})
 
-// Update local  user profile pic by ID 
+// Update local  user profile pic by ID
 userRouter.post('/upload-profile-picture/:id', upload.single('image'), UploadProfilePictureById)
 
 // Delete user by email endpoint
@@ -45,4 +56,3 @@ userRouter.put('/resetpassword', ResetPassword)
 
 // Send OTP Email for password recovery
 userRouter.post('/send_recovery_email', SendOTPEmail)
-
