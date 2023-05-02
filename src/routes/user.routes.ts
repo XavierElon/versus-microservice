@@ -24,10 +24,6 @@ userRouter.post('/auth/firebase/google', GoogleAuthLoginAndSignup)
 // Update a user by ID
 userRouter.put('/update/:id', validateToken, UpdateUserById)
 
-// Get user local user profile picture
-userRouter.get('/profile-picture/:id', async (req, res) => {
-})
-
 // Update local  user profile pic by ID 
 userRouter.post('/upload-profile-picture/:id', upload.single('image'), UploadProfilePictureById)
 
