@@ -17,19 +17,19 @@ const stripe =  new Stripe(STRIPE_KEY, {
 
 const app: Express = express()
 
-const port = process.env.PORT
-const dbName: string = process.env.DB_NAME
-const dbUri: string = process.env.MONGO_ATLAS_URI
-const UriQueryParam: string = process.env.QUERY_PARAMETERS
-const host: string = process.env.HOST
-
-// console.log(dbUri + dbName + UriQueryParam)
+const PORT = process.env.PORT
+const DB_NAME: string = process.env.DB_NAME
+const DB_URI: string = process.env.MONGO_ATLAS_URI
+const URI_QUERY_PARAM: string = process.env.QUERY_PARAMETERS
+const HOST: string = process.env.HOST
+const FRONT_END_PORT: string = process.env.FRONT_END_PORT
+const FRONT_END_URL: string = HOST + FRONT_END_PORT
 
 // Body parsing Middleware
 app.use(express.json({ limit: '25mb' }))
 app.use(express.urlencoded({ extended: true, limit: '25mb' }))
 app.use(cors({
-    origin: 'http://localhost:4269',
+    origin: `${FRONT_END_URL}`,
     credentials: true
 }))
 app.use(cookieParser())
@@ -46,18 +46,18 @@ app.post('/checkout', async (req: Request, res: Response): Promise<any> => {
     console.log(items)
     let lineItems: any[] = []
     items.forEach((item: any) => {
-        
+
     })
 })
 
 try{
-    app.listen(port, (): void => {
+    app.listen(PORT, (): void => {
         /* eslint-disable no-console */
-        console.log(`Successfully connected to ${host}/${port}`)
+        console.log(`Successfully connected to ${HOST}${PORT}`)
     })
 } catch (error: any) {
     console.error(`Error occurred: ${error.message}`)
     /* eslint-enable no-console */
 }
 
-connectToDatabase(dbUri + dbName + UriQueryParam)
+connectToDatabase(DB_URI + DB_NAME + URI_QUERY_PARAM)
