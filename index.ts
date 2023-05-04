@@ -9,7 +9,6 @@ import { userRouter } from './src/routes/user.routes'
 dotenv.config()
 
 const STRIPE_KEY: string = process.env.STRIPE_SECRET_KEY || ''
-console.log(STRIPE_KEY)
 
 const stripe =  new Stripe(STRIPE_KEY, {
     apiVersion: '2022-11-15'
@@ -43,11 +42,25 @@ app.get('/', async (req: Request, res: Response): Promise<Response> => {
 app.post('/checkout', async (req: Request, res: Response): Promise<any> => {
     console.log(req.body)
     const items = req.body.items
-    console.log(items)
     let lineItems: any[] = []
     items.forEach((item: any) => {
-
+        lineItems.push(
+            {
+                price: item.id,
+                quantity: item.quantity
+            }
+        )
     })
+    console.log(lineItems)
+
+    const session = await stripe.checkout.sessions.create({
+        line_items: lineItems,
+        mode: 'payment',
+        success_url: `${HOST}/success`,
+        cancel_url: `${HOST}/cancel`
+    })
+
+    res.status(200).send(JSON.stringify({ url: session.url }))
 })
 
 try{
