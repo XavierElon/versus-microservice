@@ -7,11 +7,11 @@
 <code>cp .env.example .env</code>
 
 <p>Then you will need to setup the following environment variables found in .env.example to your corresponding MongoDB credentials/info:
-MONGO_ATLAS_URI
-QUERY_PARAMETERS
-DB_NAME
-DB_USER_PASSWORD
-DB_USER
+MONGO_ATLAS_URI,
+QUERY_PARAMETERS,
+DB_NAME,
+DB_USER_PASSWORD,
+DB_USER,
 DB_USERS_COLLECTION_USERS
 </p>
 <br/>
@@ -25,3 +25,4 @@ DB_USERS_COLLECTION_USERS
 <code>npm run dev</code>
 <br></br>
 
+<p>The microservice will be running locally at <a>http://localhost:1017/</a> </p>
