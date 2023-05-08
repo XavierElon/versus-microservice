@@ -25,4 +25,4 @@ DB_USERS_COLLECTION_USERS
 <code>npm run dev</code>
 <br></br>
 
-<p>The microservice will be running locally at <a>http://localhost:1017/</a> </p>
+<p>The microservice will be running locally at [http://localhost:1017/]('http://localhost:1017/') </p>
