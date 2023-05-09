@@ -19,7 +19,7 @@ export const userRouter: Router = express.Router()
 export const googleAuthRouter: Router = express.Router()
 
 // Get Single User's data by id
-userRouter.post('/profile/:id', validateToken, GetUser)
+userRouter.get('/profile/:id', validateToken, GetUser)
 
 // Create a User
 userRouter.post('/signup', CreateUser)
