@@ -53,12 +53,13 @@ export const CreateUser = async (req: Request, res: Response) => {
       .then((result) => {
         console.log('User created successfully: ', result)
         const accessToken = createLocalToken(userData)
-
+        console.log(process.env.DOMAIN)
         res.cookie('access-token', accessToken, {
           maxAge: 60 * 60 * 24 * 1000,
           httpOnly: true,
-          secure: false,
-          // sameSite: true
+          secure: true,
+          sameSite: 'none',
+          domain: process.env.DOMAIN
         })
         res.status(201).json({ message: 'User created', accessToken, user: result })
       })
@@ -89,7 +90,7 @@ export const LoginUser = async (req: Request, res: Response) => {
     } else {
       const accessToken = createLocalToken(user)
       console.log(accessToken)
-      res.cookie('access-token', accessToken, {
+      res.cookie('user-token', accessToken, {
         maxAge: 60 * 60 * 24 * 1000,
         httpOnly: true,
         secure: true,
