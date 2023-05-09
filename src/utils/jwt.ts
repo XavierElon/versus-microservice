@@ -4,7 +4,7 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 export const createLocalToken = (user) => {
-  console.log(user)
+  console.log(user._id)
   const accessToken = sign({ email: user.local.email, id: user._id }, process.env.JWT_SECRET, {
     expiresIn: '24h'
   })
