@@ -18,6 +18,7 @@ import { sendOTPEmail } from '../utils/email.helper'
 export const GetUser = async (req: Request, res: Response) => {
   res.setHeader('Access-Control-Allow-Credentials', 'true')
   const id = req.params.id
+  console.log(id)
   let user
 
   if (id.length == 28) {
@@ -89,14 +90,14 @@ export const LoginUser = async (req: Request, res: Response) => {
       return
     } else {
       const accessToken = createLocalToken(user)
-      console.log(accessToken)
-      res.cookie('user-token', accessToken, {
-        maxAge: 60 * 60 * 24 * 1000,
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none',
-        domain: process.env.DOMAIN
-      })
+      // console.log(accessToken)
+      // res.cookie('user-token', accessToken, {
+      //   maxAge: 60 * 60 * 24 * 1000,
+      //   httpOnly: true,
+      //   secure: true,
+      //   sameSite: 'none',
+      //   domain: process.env.DOMAIN
+      // })
       res.status(200).json({ message: 'Login successful', accessToken, user })
     }
   })
@@ -104,6 +105,7 @@ export const LoginUser = async (req: Request, res: Response) => {
 
 export const LogoutUser = async (req: Request, res: Response) => {
   res.clearCookie('access-token')
+  res.clearCookie('user-token')
   res.status(200).send({ message: 'Logged out successfully' })
 }
 
