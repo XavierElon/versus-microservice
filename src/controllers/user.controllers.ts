@@ -81,6 +81,7 @@ export const LoginUser = async (req: Request, res: Response) => {
   }
 
   const hashedPassword = user?.local.password
+  console.log(process.env.DOMAIN)
   bcrypt.compare(password, hashedPassword).then((match) => {
     if (!match) {
       res.status(400).json({ error: 'Wrong username or password.' })
