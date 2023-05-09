@@ -88,7 +88,7 @@ export const LoginUser = async (req: Request, res: Response) => {
     } else {
       const accessToken = createLocalToken(user)
       res.cookie('access-token', accessToken, {
-        domain: process.env.NEXT_PUBLIC_DOMAIN,
+        domain: process.env.DOMAIN,
         maxAge: 60 * 60 * 24 * 1000,
         httpOnly: true
       })
