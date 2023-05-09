@@ -56,7 +56,9 @@ export const CreateUser = async (req: Request, res: Response) => {
 
         res.cookie('access-token', accessToken, {
           maxAge: 60 * 60 * 24 * 1000,
-          httpOnly: true
+          httpOnly: true,
+          secure: true,
+          sameSite: true
         })
         res.status(201).json({ message: 'User created', accessToken, user: result })
       })
@@ -86,6 +88,7 @@ export const LoginUser = async (req: Request, res: Response) => {
     } else {
       const accessToken = createLocalToken(user)
       res.cookie('access-token', accessToken, {
+        domain: process.env.NEXT_PUBLIC_DOMAIN,
         maxAge: 60 * 60 * 24 * 1000,
         httpOnly: true
       })
