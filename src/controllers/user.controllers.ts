@@ -90,14 +90,14 @@ export const LoginUser = async (req: Request, res: Response) => {
       return
     } else {
       const accessToken = createLocalToken(user)
-      // console.log(accessToken)
-      // res.cookie('user-token', accessToken, {
-      //   maxAge: 60 * 60 * 24 * 1000,
-      //   httpOnly: true,
-      //   secure: true,
-      //   sameSite: 'none',
-      //   domain: process.env.DOMAIN
-      // })
+      console.log(accessToken)
+      res.cookie('user-token', accessToken, {
+        maxAge: 60 * 60 * 24 * 1000,
+        // httpOnly: true,
+        secure: false,
+        // sameSite: 'none',
+        // domain: process.env.DOMAIN
+      })
       res.status(200).json({ message: 'Login successful', accessToken, user })
     }
   })
@@ -140,7 +140,8 @@ export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
       const token = createGoogleAuthToken(user)
       res.cookie('access-token', token, {
         maxAge: 60 * 60 * 24 * 1000,
-        httpOnly: true
+        httpOnly: true,
+        secure: true
       })
       res.status(200).json({
         token,

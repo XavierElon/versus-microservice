@@ -20,7 +20,7 @@ export const createGoogleAuthToken = (user) => {
 }
 
 export const validateToken = (req, res, next) => {
-  const accessToken = req.cookies['access-token']
+  const accessToken = req.cookies['user-token']
   // const accessToken = req.body.accessToken
   console.log(accessToken)
   if (!accessToken) return res.status(400).json({ error: 'User not authenticated' })
