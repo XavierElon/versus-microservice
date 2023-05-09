@@ -29,7 +29,7 @@ app.use(express.json({ limit: '25mb' }))
 app.use(express.urlencoded({ extended: true, limit: '25mb' }))
 console.log(FRONT_END_URL)
 app.use(cors({
-    origin: [`${FRONT_END_URL}`, 'https://xsj-ui.vercel.app', 'http://localhost:3000'],
+    origin: 'https://xsj-ui.vercel.app',
     credentials: true
 }))
 app.use(cookieParser())
