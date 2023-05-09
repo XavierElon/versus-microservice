@@ -18,7 +18,6 @@ import { sendOTPEmail } from '../utils/email.helper'
 export const GetUser = async (req: Request, res: Response) => {
   res.setHeader('Access-Control-Allow-Credentials', 'true')
   const id = req.params.id
-  console.log(id)
   let user
 
   if (id.length == 28) {
@@ -54,13 +53,12 @@ export const CreateUser = async (req: Request, res: Response) => {
       .then((result) => {
         console.log('User created successfully: ', result)
         const accessToken = createLocalToken(userData)
-        console.log(process.env.DOMAIN)
         res.cookie('access-token', accessToken, {
           maxAge: 60 * 60 * 24 * 1000,
           httpOnly: true,
           secure: true,
           sameSite: 'none',
-          domain: process.env.DOMAIN
+          // domain: process.env.DOMAIN
         })
         res.status(201).json({ message: 'User created', accessToken, user: result })
       })
@@ -83,7 +81,6 @@ export const LoginUser = async (req: Request, res: Response) => {
   }
 
   const hashedPassword = user?.local.password
-  console.log(process.env.DOMAIN)
   bcrypt.compare(password, hashedPassword).then((match) => {
     if (!match) {
       res.status(400).json({ error: 'Wrong username or password.' })

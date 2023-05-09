@@ -4,8 +4,6 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 export const createLocalToken = (user) => {
-  console.log(user._id)
-  console.log(user.local.email)
   const accessToken = sign({ email: user.local.email, id: user._id }, process.env.JWT_SECRET, {
     expiresIn: '24h'
   })
@@ -23,8 +21,6 @@ export const createGoogleAuthToken = (user) => {
 
 export const validateToken = (req, res, next) => {
   const accessToken = req.cookies['user-token']
-  console.log(req.cookies)
-  // const accessToken = req.body.accessToken
   console.log(accessToken)
   if (!accessToken) return res.status(400).json({ error: 'User not authenticated' })
   try {
