@@ -1,5 +1,4 @@
 import mongoose, { ConnectOptions } from 'mongoose'
-import { User } from '../models/user.model'
 
 export const connectToDatabase = async (dbUri: string) => {
   const options: ConnectOptions = {

@@ -15,8 +15,8 @@ import {
   ValidateAccountCreation
 } from '../controllers/user.controllers'
 import { upload } from '../middleware/storage'
+
 export const userRouter: Router = express.Router()
-export const googleAuthRouter: Router = express.Router()
 
 // Get Single User's data by id
 userRouter.get('/profile/:id', validateToken, GetUser)

@@ -53,10 +53,14 @@ export const CreateUser = async (req: Request, res: Response) => {
       .then((result) => {
         console.log('User created successfully: ', result)
         const accessToken = createLocalToken(userData)
+        let secure = true
+        if (process.env.NODE_ENV === 'dev') {
+          secure = false
+        }
         res.cookie('access-token', accessToken, {
           maxAge: 60 * 60 * 24 * 1000,
           httpOnly: true,
-          secure: true,
+          secure: secure,
           sameSite: 'none',
           // domain: process.env.DOMAIN
         })
@@ -87,11 +91,15 @@ export const LoginUser = async (req: Request, res: Response) => {
       return
     } else {
       const accessToken = createLocalToken(user)
-      console.log(accessToken)
+
+      let secure = true
+      if (process.env.NODE_ENV === 'dev') {
+        secure = false
+      }
       res.cookie('user-token', accessToken, {
         maxAge: 60 * 60 * 24 * 1000,
-        httpOnly: true,
-        secure: true,
+        httpOnly: false,
+        secure: secure,
         sameSite: 'none',
         // domain: process.env.DOMAIN
       })
