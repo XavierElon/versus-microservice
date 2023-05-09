@@ -22,7 +22,7 @@ const DB_URI: string = process.env.MONGO_ATLAS_URI
 const URI_QUERY_PARAM: string = process.env.QUERY_PARAMETERS
 const HOST: string = process.env.HOST
 const FRONT_END_PORT: string = process.env.FRONT_END_PORT
-const FRONT_END_URL: string = HOST + FRONT_END_PORT
+const FRONT_END_URL: string = process.env.FRONT_END_URL
 
 // Body parsing Middleware
 app.use(express.json({ limit: '25mb' }))
