@@ -11,7 +11,8 @@ import { User } from '../../src/models/user.model'
 import {
     createUser, verifyUser, checkIfUserExists, updateUser, getUserByEmail,
     deleteUser,
-    getAllUsers
+    getAllUsers,
+    getUserById
 } from '../../src/services/user.service';
 import { connectToDatabase } from '../../src/connections/mongodb';
 
@@ -39,6 +40,7 @@ describe('User service test suite', function() {
       provider: "local"
     });
     const userEmail: string = 'testuser@gmail.com'
+    let userId: string
 
 
     this.timeout(5000);
@@ -79,7 +81,16 @@ describe('User service test suite', function() {
 
         it('should return a single user by email', async () => {
           const res = await getUserByEmail(userEmail)
+          console.log(res)
+          userId = res._id
           expect(res.local.email).to.equal(userEmail)
+        })
+
+        it('should return a single user by id', async () => {
+          console.log(userId)
+          const res = await getUserById(userId)
+          console.log(res)
+          expect(res._id.toString()).to.equal(userId.toString())
         })
 
 

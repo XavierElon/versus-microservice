@@ -18,6 +18,26 @@ export const getAllUsers = async (): Promise<any | null> => {
   }
 }
 
+export const getUserByEmail = async (email: string): Promise<typeof User | null> => {
+  try {
+    const user = await User.findOne({ 'local.email': email })
+    return user || null
+  } catch (error) {
+    console.error(`Error while getting user by email: ${error}`)
+    return null
+  }
+}
+
+export const getUserById =  async (id: string): Promise<typeof User | null>  => {
+  try {
+    const user = await User.findById(id);
+    return user || null;
+  } catch (error) {
+    console.error(`Error while getting User by email: ${error}`);
+    return null;
+  }
+}
+
 /*
 GET LOCAL USER
 This function gets a local user using the mongo id
@@ -126,16 +146,6 @@ export const deleteUser = async (email: string): Promise<typeof User | null> => 
     return deletedUser
   } catch (err) {
     console.error(err)
-    return null
-  }
-}
-
-export const getUserByEmail = async (email: string): Promise<typeof User | null> => {
-  try {
-    const user = await User.findOne({ 'local.email': email })
-    return user || null
-  } catch (error) {
-    console.error(`Error while getting user by email: ${error}`)
     return null
   }
 }
