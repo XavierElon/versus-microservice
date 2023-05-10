@@ -47,7 +47,6 @@ describe('User service test suite', function() {
     });
     const dateString = '2023-05-08T00:00:00.000Z';
     const date = new Date(dateString);
-    console.log(date); // Output: 2023-05-10T00:00:00.000Z
 
     let testUser3 = new UserModel({
       local: {

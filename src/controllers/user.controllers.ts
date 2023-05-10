@@ -52,7 +52,6 @@ export const CreateUser = async (req: Request, res: Response) => {
   } else {
     createUser(userData)
       .then((result) => {
-        console.log('User created successfully: ', result)
         const accessToken = createLocalToken(userData)
         let secure = true
         if (process.env.NODE_ENV === 'dev') {
@@ -62,7 +61,7 @@ export const CreateUser = async (req: Request, res: Response) => {
           maxAge: 60 * 60 * 24 * 1000,
           httpOnly: true,
           secure: secure,
-          sameSite: 'none',
+          sameSite: 'none'
           // domain: process.env.DOMAIN
         })
         res.status(201).json({ message: 'User created', accessToken, user: result })
@@ -101,7 +100,7 @@ export const LoginUser = async (req: Request, res: Response) => {
         maxAge: 60 * 60 * 24 * 1000,
         httpOnly: false,
         secure: secure,
-        sameSite: 'none',
+        sameSite: 'none'
         // domain: process.env.DOMAIN
       })
       res.status(200).json({ message: 'Login successful', accessToken, user })
@@ -110,7 +109,6 @@ export const LoginUser = async (req: Request, res: Response) => {
 }
 
 export const LogoutUser = async (req: Request, res: Response) => {
-  res.clearCookie('access-token')
   res.clearCookie('user-token')
   res.status(200).send({ message: 'Logged out successfully' })
 }
