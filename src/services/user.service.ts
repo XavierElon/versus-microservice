@@ -28,13 +28,13 @@ export const getUserByEmail = async (email: string): Promise<typeof User | null>
   }
 }
 
-export const getUserById =  async (id: string): Promise<typeof User | null>  => {
+export const getUserById = async (id: string): Promise<typeof User | null> => {
   try {
-    const user = await User.findById(id);
-    return user || null;
+    const user = await User.findById(id)
+    return user || null
   } catch (error) {
-    console.error(`Error while getting User by email: ${error}`);
-    return null;
+    console.error(`Error while getting User by email: ${error}`)
+    return null
   }
 }
 
@@ -68,7 +68,7 @@ export const createUser = async (userData: typeof User): Promise<any> => {
   userData.local.password = hash
 
   let user = new User(userData)
- 
+
   const baseUrl = process.env.HOST + process.env.PORT
 
   try {
@@ -121,22 +121,26 @@ export const checkIfGoogleFirebaseUserExists = async (email: string) => {
   return false
 }
 
-export const updateUserByEmail = async (email: string, update: Partial<any>): Promise<any | null> => {
+export const updateUserByEmail = async (
+  email: string,
+  update: Partial<any>
+): Promise<any | null> => {
   try {
-    const updatedUser = await User.findOneAndUpdate({ 'local.email': email }, update, { new: true });
+    const updatedUser = await User.findOneAndUpdate({ 'local.email': email }, update, { new: true })
     return updatedUser
   } catch (error) {
-    console.error(`Error updating user: ${error}`);
-    return null;
+    console.error(`Error updating user: ${error}`)
+    return null
   }
-};
+}
 
-export const updateUserById = async (
-  id: string,
-  update: Partial<>
-): Promise<typeof any | null> => {
+export const updateUserById = async (id: string, update: Partial<>): Promise<typeof any | null> => {
   try {
-    const updatedUser = await User.findOneAndUpdate({ _id: id }, { ...update, date: Date.now() }, { new: true })
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: id },
+      { ...update, date: Date.now() },
+      { new: true }
+    )
     return updatedUser
   } catch (error) {
     console.error(`Error updating user: ${error}`)
@@ -147,7 +151,7 @@ export const updateUserById = async (
 /*
 DELETE USER
 */
-export const deleteUserByEmail = async (email: string): Promise<typeof any| null> => {
+export const deleteUserByEmail = async (email: string): Promise<typeof any | null> => {
   try {
     const deletedUser = await User.findOneAndDelete({ 'local.email': email })
     return deletedUser
@@ -157,7 +161,7 @@ export const deleteUserByEmail = async (email: string): Promise<typeof any| null
   }
 }
 
-export const deleteUserById = async (id: string): Promise<typeof any| null> => {
+export const deleteUserById = async (id: string): Promise<typeof any | null> => {
   try {
     const deletedUser = await User.findOneAndDelete({ _id: id })
     return deletedUser

@@ -30,6 +30,7 @@ describe('User Controller', function () {
   const agent = supertest.agent(app) // Create an agent instance
   this.timeout(5000)
   let userId: string
+
   before(async () => {
     try {
       await connectToDatabase(testDbUri as string)
@@ -120,12 +121,33 @@ describe('User Controller', function () {
     const logoutRes = await agent // Use agent instead of request
       .post('/logout')
 
-    console.log(logoutRes)
     expect(logoutRes.status).to.equal(200)
 
     // Check if the 'set-cookie' header is present and if it contains the expired 'user-token' cookie
     expect(logoutRes.headers['set-cookie']).to.be.an('array')
     const logoutCookie = logoutRes.headers['set-cookie'][0].split(';')[0]
     expect(logoutCookie).to.equal('user-token=')
+  })
+
+  it('should logout a user with 200 status code', async () => {
+    const res = await agent.post('/login').send({
+      email: 'testuser@example.com',
+      password: 'testpassword12334343!'
+    })
+    expect(res.status).to.equal(200)
+
+    // Make sure the cookie is set
+    expect(res.headers['set-cookie']).to.be.an('array')
+    const cookie = res.headers['set-cookie'][0].split(';')[0]
+    expect(cookie.startsWith('user-token=')).to.be.true
+
+    const updateRes = await agent.put(`/update/${userId}`).send({
+      local: {
+        firstName: 'Achilles'
+      }
+    })
+    console.log(updateRes.body.updatedUser)
+    expect(updateRes.status).to.equal(200)
+    expect(updateRes.body.updatedUser.local.firstName).to.equal('Achilles')
   })
 })
