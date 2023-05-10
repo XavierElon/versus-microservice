@@ -5,8 +5,9 @@ import { User } from '../models/user.model'
 import {
   createUser,
   checkIfUserExists,
-  updateUser,
-  deleteUser,
+  updateUserByEmail,
+  updateUserById,
+  deleteUserByEmail,
   confirmUser,
   checkIfGoogleFirebaseUserExists,
   getLocalUser,
@@ -184,7 +185,7 @@ export const UpdateUserById = async (req: Request, res: Response) => {
     const id = req.params.id
     const update = req.body
     // Find the user by ID and update its properties
-    const updatedUser = updateUser(id, update)
+    const updatedUser = updateUserById(id, update)
     if (!updatedUser) {
       return res.status(404).send({ error: 'User not found' })
     } else {
@@ -219,7 +220,7 @@ export const UploadProfilePictureById = async (req: Request, res: Response) => {
 export const DeleteUserByEmail = async (req: Request, res: Response) => {
   const email = req.params.email
   try {
-    const deletedUser = await deleteUser(email)
+    const deletedUser = await deleteUserByEmail(email)
     if (!deletedUser) {
       return res.status(404).send(`User with email ${email} not found`)
     }

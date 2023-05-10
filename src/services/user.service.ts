@@ -120,10 +120,17 @@ export const checkIfGoogleFirebaseUserExists = async (email: string) => {
   return false
 }
 
-/*
-UPDATE USER INFORMATION
-*/
-export const updateUser = async (
+export const updateUserByEmail = async (email: string, update: Partial<any>): Promise<any | null> => {
+  try {
+    const updatedUser = await User.findOneAndUpdate({ 'local.email': email }, update, { new: true });
+    return updatedUser
+  } catch (error) {
+    console.error(`Error updating user: ${error}`);
+    return null;
+  }
+};
+
+export const updateUserById = async (
   id: string,
   update: Partial<>
 ): Promise<typeof any | null> => {
@@ -139,10 +146,19 @@ export const updateUser = async (
 /*
 DELETE USER
 */
-export const deleteUser = async (email: string): Promise<typeof User | null> => {
-  const UserModel: Model<Document & typeof User> = mongoose.model('User')
+export const deleteUserByEmail = async (email: string): Promise<typeof any| null> => {
   try {
-    const deletedUser = await UserModel.findOneAndDelete({ 'local.email': email })
+    const deletedUser = await User.findOneAndDelete({ 'local.email': email })
+    return deletedUser
+  } catch (err) {
+    console.error(err)
+    return null
+  }
+}
+
+export const deleteUserById = async (id: string): Promise<typeof any| null> => {
+  try {
+    const deletedUser = await User.findOneAndDelete({ _id: id })
     return deletedUser
   } catch (err) {
     console.error(err)

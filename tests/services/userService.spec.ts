@@ -9,12 +9,14 @@ import mongoose, { Model } from 'mongoose';
 import sinon from 'sinon';
 import { User } from '../../src/models/user.model'
 import {
-    createUser, verifyUser, checkIfUserExists, updateUser, getUserByEmail,
-    deleteUser,
+    createUser, verifyUser, checkIfUserExists,  getUserByEmail,
+    deleteUserByEmail,
+    deleteUserById,
     getAllUsers,
     getUserById,
     getLocalUser,
-    getGoogleUser
+    getGoogleUser,
+    updateUserById
 } from '../../src/services/user.service';
 import { connectToDatabase } from '../../src/connections/mongodb';
 
@@ -43,8 +45,6 @@ describe('User service test suite', function() {
     });
     const userEmail: string = 'testuser@gmail.com'
     let userId: string
-    const userPassword: string =  'Testpassword123!'
-
     let updatedTesttUser = new UserModel({
       local: {
         firstName: 'Achilles',
@@ -121,11 +121,31 @@ describe('User service test suite', function() {
         //   expect(res).to.equal(true)
         // })
 
-        it('should update a user first name to Achilles', async () => {
-          const res = await updateUser(userId, {'local.firstName': 'Achilles'})
-          console.log(res.local.firstName)
-          expect(res.local.firstName).to.equal("Achilles")
+        it('should update a user by id last name to Musk', async () => {
+          const res = await updateUserById(userId, {'local.lastName': 'Musk'})
+          console.log(res.local.lastName)
+          expect(res.local.lastName).to.equal('Musk')
         })
+
+        it('should update a user by id first name to Achilles', async () => {
+          const res = await updateUserById(userId, {'local.firstName': 'Achilles'})
+          console.log(res.local.firstName)
+          expect(res.local.firstName).to.equal('Achilles')
+        })
+
+        it('should delete a user by email', async () => {
+          await deleteUserByEmail(userEmail)
+          const result = await getAllUsers()
+          expect(result.length).to.equal(1)
+          userId = result[0]._id
+          expect(result[0].email).to.not.equal(userEmail)
+      })
+  
+      it('should delete a user by id', async () => {
+          await deleteUserById(userId)
+          const result = await getAllUsers()
+          expect(result.length).to.equal(0)
+      })
 
 });
 
