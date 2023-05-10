@@ -13,7 +13,8 @@
     "test": "mocha --require ts-node/register --exit tests/**/*.spec.ts",
     "test:controllers": "mocha --require ts-node/register --exit tests/controllers/userControllers.spec.ts",
     "test:routes": "mocha --require ts-node/register --exit tests/routes/userRoutes.spec.ts",
-    "test:services": "nyc mocha --require ts-node/register --exit tests/services/userService.spec.ts",
+    "test:services": "mocha --require ts-node/register --exit tests/services/userService.spec.ts",
+    "test:utils": "mocha --require ts-node/register --exit tests/utils/*.spec.ts",
     "test:coverage": "nyc npm run test",
     "lint": "yarn eslint .",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write"

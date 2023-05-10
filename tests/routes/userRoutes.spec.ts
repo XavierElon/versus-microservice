@@ -209,7 +209,6 @@ describe('User Controller', function () {
       password: 'Heyachilles123!'
     })
 
-    console.log(resetPassRes)
     expect(resetPassRes.status).to.equal(200)
   })
 
