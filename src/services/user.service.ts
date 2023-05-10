@@ -7,6 +7,17 @@ import { sendConfirmationGmail, createConfirmationLink } from '../utils/email.he
 
 dotenv.config()
 
+// GET All users
+export const getAllUsers = async (): Promise<any | null> => {
+  try {
+    const all = await User.find()
+    return all
+  } catch (error) {
+    console.error(`Error retrieving all newsletter users: ${error}`)
+    throw new Error('No users found')
+  }
+}
+
 /*
 GET LOCAL USER
 This function gets a local user using the mongo id
@@ -34,14 +45,14 @@ export const createUser = async (userData: typeof User): Promise<any> => {
 
   const hash = await bcrypt.hash(password, 10)
   userData.local.password = hash
-  userData = { ...userData }
+
   let user = new User(userData)
+ 
   const baseUrl = process.env.HOST + process.env.PORT
 
   try {
     user.confirmationTokenExpirationTime = new Date(Date.now())
     const savedUser = await user.save()
-    console.log('Result:', savedUser)
 
     const confirmationLink = await createConfirmationLink(userData, baseUrl)
     await sendConfirmationGmail(user.local.email, confirmationLink)

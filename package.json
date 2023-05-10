@@ -10,7 +10,10 @@
     "dev": "ts-node-dev ./index.ts",
     "build": "npx tsc",
     "start": "node dist/index.js",
-    "test": "mocha --require ts-node/register tests/**/*.spec.ts",
+    "test": "mocha --require ts-node/register --exit tests/**/*.spec.ts",
+    "test:controllers": "mocha --require ts-node/register --exit tests/controllers/userControllers.spec.ts",
+    "test:routes": "mocha --require ts-node/register --exit tests/routes/userRoutes.spec.ts",
+    "test:services": "nyc mocha --require ts-node/register --exit tests/services/userService.spec.ts",
     "test:coverage": "nyc npm run test",
     "lint": "yarn eslint .",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write"

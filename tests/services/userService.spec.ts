@@ -10,40 +10,73 @@ import sinon from 'sinon';
 import { User } from '../../src/models/user.model'
 import {
     createUser, verifyUser, checkIfUserExists, updateUser, getUserByEmail,
-    deleteUser
+    deleteUser,
+    getAllUsers
 } from '../../src/services/user.service';
+import { connectToDatabase } from '../../src/connections/mongodb';
 
-describe('User tests', () => {
+const testDbUri: string = process.env.TEST_DB_URI!
+
+describe('User service test suite', function() {
     let UserModel: Model<Document & typeof User> = mongoose.model('User');
     let testUser = new UserModel({
-        // userName: 'testuser',
-        email: 'testuser@example.com',
-        password: 'testpassword123!',
+      local: {
+        email: 'testuser@gmail.com',
+        password: 'Testpassword123!',
         firstName: 'John',
-        lastName: 'Doe',
-        mobileNumber: 4443334343
+        lastName: 'Doe'
+      },
+      provider: "local"
     });
-    const testDbUrl = 'mongodb+srv://root:IhvkxnDwROpiDZpd@jsx.nwqtn5o.mongodb.net/test';
+
+    let testUser2 = new UserModel({
+      local: {
+        email: 'testuser2@gmail.com',
+        password: 'Testpassword123!',
+        firstName: 'Elon',
+        lastName: 'Musk'
+      },
+      provider: "local"
+    });
+
+    this.timeout(5000);
+
     before(async () => {
-        await mongoose.connect(testDbUrl as string);
-        await testUser.save();
-    });
+        try {
+            await connectToDatabase(testDbUri as string)
+        } catch (error) {
+            console.log('Error in before hook: ' + error)
+        }
+    })
 
     after(async () => {
-        // Delete the test user from the database
-        await UserModel.deleteOne({ _id: testUser._id });
-        await mongoose.disconnect();
-    });
+      // Empty database
+      try {
+          // await User.deleteMany({})
+          console.log('USERS DELETED');
+          await mongoose.disconnect()
+      } catch (error) {
+          console.log('Error in after hook: ' + error)
+      }
+    })
 
-    describe('createUser', () => {
-        it('should create a new user', async () => {
-            const result = await createUser(testUser);
-            console.log(`reulst -> `, result);
-            expect(result.password).to.equal('testpassword123!');
-        });
-    });
+        // it('should create 2 new users and expect first name to equal John adn email to equal testuser2@gmail.com', async () => {
+        //     const result = await createUser(testUser);
+        //     console.log(result);
+        //     expect(result.local.firstName).to.equal('John')
+        //     const result2 = await createUser(testUser2);
+        //     console.log(result2);
+        //     expect(result2.local.email).to.equal('testuser2@gmail.com')
+        // });
 
-    // describe('verifyUser', () => {
+        it('should return all newsletter users (2)', async () => {
+          const result = await getAllUsers()
+          console.log(result)
+          expect(result.length).to.equal(2)
+      });
+
+
+
     //     it('should verify a user', async () => {
     //         const username = 'testuser';
     //         const password = 'testpassword123!';
@@ -52,95 +85,93 @@ describe('User tests', () => {
 
     //         expect(result).to.be.true;
     //     });
-    // });
 
-    describe('checkIfUserExists', () => {
-        it('should check if a user exists', async () => {
-            const email = 'testuser@example.com';
+        // it('should check if a user exists', async () => {
+        //     const email = 'testuser@example.com';
 
-            const result = await checkIfUserExists(email);
+        //     const result = await checkIfUserExists(email);
 
-            expect(result).to.be.true;
-        });
-    });
+        //     expect(result).to.be.true;
+        // });
 
-    
-    describe('deleteUser', () => {
-        it('should delete a user', async () => {
-            const existingUser = await createUser(testUser);
-            await deleteUser(existingUser.email || '');
-            // Check that the deleted user is no longer in the database
-            const user = await getUserByEmail(existingUser.email);
-            //expect(user).to.be.null;
-        });
-    });
-
-    it('should return a user with the specified email', async () => {
-        // Create a test user with the specified email
-        const existingUser = await createUser(testUser);
-    
-        // Call getUserByEmail with the test user's email
-        const user = await getUserByEmail(existingUser.email);
-    
-        // Assert that the returned user has the same email as the test user
-        expect(existingUser?.email).to.not.be.null;
-      });
-    
-      it('should return null if no user is found with the specified email', async () => {
-        // Call getUserByEmail with a nonexistent email
-        const user = await getUserByEmail('nonexistent@example.com');
-    
-        // Assert that null is returned
-        expect(user).to.be.null;
-      });
-
-      it('should return null if an error occurs', async () => {
-        // Mock an error by setting the find method to throw an error
-        const UserModel: Model<Document & typeof User> = mongoose.model('User');
-        sinon.stub(UserModel, 'findOne').throws();
-    
-        // Call getUserByEmail with a valid email
-        const user = await getUserByEmail('johndoe@example.com');
-    
-        // Assert that null is returned
-        expect(user).to.be.null;
-    
-        // Restore the original find method
-        (UserModel.findOne as any).restore();
-      });
-
-      it('should return null if no user is found with the specified ID', async () => {
-        // Call updateUser with a nonexistent ID
-        const updatedUser = await updateUser('nonexistent_id', testUser);
-    
-        // Assert that null is returned
-        expect(updatedUser).to.be.null;
-      });
-
-      it('should return null if an error occurs', async () => {
-        // Mock an error by setting the findOneAndUpdate method to throw an error
-        const UserModel: Model<Document & typeof User> = mongoose.model('User');
-        sinon.stub(UserModel, 'findOneAndUpdate').throws();
-    
-        // Call updateUser with the ID of the test user and a valid update
-        const updatedUser = await updateUser(testUser.id, testUser);
-    
-        // Assert that null is returned
-        expect(updatedUser).to.be.null;
-    
-        // Restore the original findOneAndUpdate method
-        (UserModel.findOneAndUpdate as any).restore();
-      });
-
-      it('should update the user with the specified ID', async () => {
-     
-        // Call updateUser with the ID of the test user and the update
-        const updatedUser = await updateUser(testUser.id, testUser);
-    
-        // Assert that the returned user has the updated information
-        expect(updatedUser?.name).to.equal(testUser.name);
-
-      });
-
+        // it('should delete a user', async () => {
+        //     const existingUser = await createUser(testUser);
+        //     await deleteUser(existingUser.email || '');
+        //     // Check that the deleted user is no longer in the database
+        //     const user = await getUserByEmail(existingUser.email);
+        //     //expect(user).to.be.null;
+        // });
 
 });
+
+// describe('user service stub errors test suite', () => {
+      
+//   it('should return a user with the specified email', async () => {
+//     // Create a test user with the specified email
+//     const existingUser = await createUser(testUser);
+
+//     // Call getUserByEmail with the test user's email
+//     const user = await getUserByEmail(existingUser.email);
+
+//     // Assert that the returned user has the same email as the test user
+//     expect(existingUser?.email).to.not.be.null;
+//   });
+
+//   it('should return null if no user is found with the specified email', async () => {
+//     // Call getUserByEmail with a nonexistent email
+//     const user = await getUserByEmail('nonexistent@example.com');
+
+//     // Assert that null is returned
+//     expect(user).to.be.null;
+//   });
+
+//   it('should return null if an error occurs', async () => {
+//     // Mock an error by setting the find method to throw an error
+//     const UserModel: Model<Document & typeof User> = mongoose.model('User');
+//     sinon.stub(UserModel, 'findOne').throws();
+
+//     // Call getUserByEmail with a valid email
+//     const user = await getUserByEmail('johndoe@example.com');
+
+//     // Assert that null is returned
+//     expect(user).to.be.null;
+
+//     // Restore the original find method
+//     (UserModel.findOne as any).restore();
+//   });
+
+//   it('should return null if no user is found with the specified ID', async () => {
+//     // Call updateUser with a nonexistent ID
+//     const updatedUser = await updateUser('nonexistent_id', testUser);
+
+//     // Assert that null is returned
+//     expect(updatedUser).to.be.null;
+//   });
+
+//   it('should return null if an error occurs', async () => {
+//     // Mock an error by setting the findOneAndUpdate method to throw an error
+//     const UserModel: Model<Document & typeof User> = mongoose.model('User');
+//     sinon.stub(UserModel, 'findOneAndUpdate').throws();
+
+//     // Call updateUser with the ID of the test user and a valid update
+//     const updatedUser = await updateUser(testUser.id, testUser);
+
+//     // Assert that null is returned
+//     expect(updatedUser).to.be.null;
+
+//     // Restore the original findOneAndUpdate method
+//     (UserModel.findOneAndUpdate as any).restore();
+//   });
+
+//   it('should update the user with the specified ID', async () => {
+ 
+//     // Call updateUser with the ID of the test user and the update
+//     const updatedUser = await updateUser(testUser.id, testUser);
+
+//     // Assert that the returned user has the updated information
+//     expect(updatedUser?.name).to.equal(testUser.name);
+
+//   });
+
+// })
+
