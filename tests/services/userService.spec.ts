@@ -38,6 +38,8 @@ describe('User service test suite', function() {
       },
       provider: "local"
     });
+    const userEmail: string = 'testuser@gmail.com'
+
 
     this.timeout(5000);
 
@@ -73,7 +75,12 @@ describe('User service test suite', function() {
           const result = await getAllUsers()
           console.log(result)
           expect(result.length).to.equal(2)
-      });
+        });
+
+        it('should return a single user by email', async () => {
+          const res = await getUserByEmail(userEmail)
+          expect(res.local.email).to.equal(userEmail)
+        })
 
 
 

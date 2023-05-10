@@ -122,7 +122,7 @@ DELETE USER
 export const deleteUser = async (email: string): Promise<typeof User | null> => {
   const UserModel: Model<Document & typeof User> = mongoose.model('User')
   try {
-    const deletedUser = await UserModel.findOneAndDelete({ email })
+    const deletedUser = await UserModel.findOneAndDelete({ 'local.email': email })
     return deletedUser
   } catch (err) {
     console.error(err)
@@ -131,9 +131,8 @@ export const deleteUser = async (email: string): Promise<typeof User | null> => 
 }
 
 export const getUserByEmail = async (email: string): Promise<typeof User | null> => {
-  const UserModel: Model<Document & typeof User> = mongoose.model('User')
   try {
-    const user = await UserModel.findOne({ email })
+    const user = await User.findOne({ 'local.email': email })
     return user || null
   } catch (error) {
     console.error(`Error while getting user by email: ${error}`)
