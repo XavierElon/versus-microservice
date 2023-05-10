@@ -169,4 +169,43 @@ describe('User Controller', function () {
     expect(uploadRes.status).to.equal(200)
     expect(uploadRes.body.message).to.equal('Profile picture uploaded successfully.')
   })
+
+  it('should change users passcode with status code 200', async () => {
+    const res = await agent.post('/login').send({
+      email: 'testuser@example.com',
+      password: 'testpassword12334343!'
+    })
+    expect(res.status).to.equal(200)
+
+    // Make sure the cookie is set
+    expect(res.headers['set-cookie']).to.be.an('array')
+    const cookie = res.headers['set-cookie'][0].split(';')[0]
+    expect(cookie.startsWith('user-token=')).to.be.true
+
+    const changePassRes = await agent.put('/changePassword').send({
+      email: 'testuser@example.com',
+      oldPassword: 'testpassword12334343!',
+      newPassword: 'Heyachilles123!'
+    })
+
+    expect(changePassRes.status).to.equal(200)
+    expect(changePassRes.body.message).to.equal('Password successfully reset')
+  })
+
+  it('should delete a user by id with status code 200', async () => {
+    const res = await agent.post('/login').send({
+      email: 'testuser@example.com',
+      password: 'Heyachilles123!'
+    })
+    expect(res.status).to.equal(200)
+
+    // Make sure the cookie is set
+    expect(res.headers['set-cookie']).to.be.an('array')
+    const cookie = res.headers['set-cookie'][0].split(';')[0]
+    expect(cookie.startsWith('user-token=')).to.be.true
+
+    const deleteRes = await agent.delete(`/delete/${userId}`)
+
+    expect(deleteRes.status).to.equal(200)
+  })
 })

@@ -11,7 +11,8 @@ import {
   confirmUser,
   checkIfGoogleFirebaseUserExists,
   getLocalUser,
-  getGoogleUser
+  getGoogleUser,
+  deleteUserById
 } from '../services/user.service'
 import { createGoogleAuthToken, createLocalToken } from '../utils/jwt'
 import { sendOTPEmail } from '../utils/email.helper'
@@ -229,6 +230,20 @@ export const DeleteUserByEmail = async (req: Request, res: Response) => {
   }
 }
 
+export const DeleteUserById = async (req: Request, res: Response) => {
+  const id = req.params.id
+  try {
+    const deletedUser = await deleteUserById(id)
+    if (!deletedUser) {
+      return res.status(404).send(`User not found`)
+    }
+    return res.send(`Deleted user: ${deletedUser}`)
+  } catch (err) {
+    console.error(`Error deleting user with id ${id}:`, err)
+    return res.status(500).send('Error deleting user')
+  }
+}
+
 export const ValidateAccountCreation = async (req: Request, res: Response) => {
   try {
     const { confirmed, token } = req.query
@@ -246,12 +261,9 @@ export const ValidateAccountCreation = async (req: Request, res: Response) => {
 
 export const ChangePassword = async (req: Request, res: Response) => {
   const { oldPassword, newPassword, email } = req.body
-  // console.log(req)
-  console.log(req.body)
 
   // const user = await User.findOne({ where: { username: req.user.username }})
   const user = await User.findOne({ 'local.email': email })
-  console.log(user)
 
   bcrypt.compare(oldPassword, user.local.password).then(async (match) => {
     if (!match) res.json({ error: 'Wrong Password Entered!' })
@@ -259,7 +271,7 @@ export const ChangePassword = async (req: Request, res: Response) => {
     bcrypt.hash(newPassword, 10).then(async (hash) => {
       user.local.password = hash
       await user.save()
-      res.status(200).send({ message: 'Pasword successfully reset' })
+      res.status(200).send({ message: 'Password successfully reset' })
     })
   })
 }

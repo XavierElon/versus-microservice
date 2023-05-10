@@ -4,6 +4,7 @@ import {
   ChangePassword,
   CreateUser,
   DeleteUserByEmail,
+  DeleteUserById,
   GetUser,
   GoogleAuthLoginAndSignup,
   LoginUser,
@@ -39,8 +40,8 @@ userRouter.put('/update/:id', validateToken, UpdateUserById)
 // Update local  user profile pic by ID
 userRouter.post('/upload-profile-picture/:id', validateToken, upload.single('image'), UploadProfilePictureById)
 
-// Delete user by email endpoint
-userRouter.delete('/delete/:email', validateToken, DeleteUserByEmail)
+// Delete user by id endpoint
+userRouter.delete('/delete/:id', validateToken, DeleteUserById)
 
 //Confirm the user has created an account
 userRouter.get('/validate-account-creation/:userID', ValidateAccountCreation)
