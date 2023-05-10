@@ -12,7 +12,9 @@ import {
     createUser, verifyUser, checkIfUserExists, updateUser, getUserByEmail,
     deleteUser,
     getAllUsers,
-    getUserById
+    getUserById,
+    getLocalUser,
+    getGoogleUser
 } from '../../src/services/user.service';
 import { connectToDatabase } from '../../src/connections/mongodb';
 
@@ -41,6 +43,7 @@ describe('User service test suite', function() {
     });
     const userEmail: string = 'testuser@gmail.com'
     let userId: string
+    const userPassword: string =  'Testpassword123!',
 
 
     this.timeout(5000);
@@ -87,38 +90,24 @@ describe('User service test suite', function() {
         })
 
         it('should return a single user by id', async () => {
-          console.log(userId)
           const res = await getUserById(userId)
-          console.log(res)
           expect(res._id.toString()).to.equal(userId.toString())
         })
 
+        it('should return a local user', async () => {
+          const res = await getLocalUser(userId)
+          expect(res._id.toString()).to.equal(userId.toString())
+        })
 
+        // it('should return a google user', async () => {
+        //   const res = await getGoogleUser(userId)
+        //   expect(res._id.toString()).to.equal(userId.toString())
+        // })
 
-    //     it('should verify a user', async () => {
-    //         const username = 'testuser';
-    //         const password = 'testpassword123!';
-
-    //         const result = await verifyUser(username, password);
-
-    //         expect(result).to.be.true;
-    //     });
-
-        // it('should check if a user exists', async () => {
-        //     const email = 'testuser@example.com';
-
-        //     const result = await checkIfUserExists(email);
-
-        //     expect(result).to.be.true;
-        // });
-
-        // it('should delete a user', async () => {
-        //     const existingUser = await createUser(testUser);
-        //     await deleteUser(existingUser.email || '');
-        //     // Check that the deleted user is no longer in the database
-        //     const user = await getUserByEmail(existingUser.email);
-        //     //expect(user).to.be.null;
-        // });
+        it('should verify a user and return true', async () => {
+          const res = await checkIfUserExists(userEmail)
+          expect(res).to.equal(true)
+        })
 
 });
 

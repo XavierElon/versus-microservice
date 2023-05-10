@@ -89,10 +89,11 @@ export const createUser = async (userData: typeof User): Promise<any> => {
 
 /*
 VERIFY USER
-check the username and password against the database to approve login
+check the username 
 */
-export const verifyUser = async (email: string, password: string) => {
-  const existingUser = await User.findOne({ email, password })
+export const verifyUser = async (email: string) => {
+  const existingUser = await User.findOne({ 'local.email': email })
+  console.log(existingUser)
   if (existingUser && existingUser.active === true) {
     return true
   }
