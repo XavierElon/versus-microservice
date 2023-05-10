@@ -88,17 +88,17 @@ export const createUser = async (userData: typeof User): Promise<any> => {
 }
 
 /*
-VERIFY USER
-check the username 
-*/
-export const verifyUser = async (email: string) => {
-  const existingUser = await User.findOne({ 'local.email': email })
-  console.log(existingUser)
-  if (existingUser && existingUser.active === true) {
-    return true
-  }
-  return false
-}
+// VERIFY USER
+// check the username 
+// */
+// export const verifyUser = async (email: string) => {
+//   const existingUser = await User.findOne({ 'local.email': email })
+//   console.log(existingUser)
+//   if (existingUser && existingUser.active === true) {
+//     return true
+//   }
+//   return false
+// }
 
 /*
 CHECK IF USER EXISTS 
@@ -125,11 +125,10 @@ UPDATE USER INFORMATION
 */
 export const updateUser = async (
   id: string,
-  update: Partial<typeof User>
-): Promise<typeof User | null> => {
-  const UserModel: Model<Document & typeof User> = mongoose.model('User')
+  update: Partial<>
+): Promise<typeof any | null> => {
   try {
-    const updatedUser = await UserModel.findOneAndUpdate({ _id: id }, update, { new: true })
+    const updatedUser = await User.findOneAndUpdate({ _id: id }, { ...update, date: Date.now() }, { new: true })
     return updatedUser
   } catch (error) {
     console.error(`Error updating user: ${error}`)

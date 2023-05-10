@@ -43,7 +43,14 @@ describe('User service test suite', function() {
     });
     const userEmail: string = 'testuser@gmail.com'
     let userId: string
-    const userPassword: string =  'Testpassword123!',
+    const userPassword: string =  'Testpassword123!'
+
+    let updatedTesttUser = new UserModel({
+      local: {
+        firstName: 'Achilles',
+      
+      }
+    });
 
 
     this.timeout(5000);
@@ -104,9 +111,20 @@ describe('User service test suite', function() {
         //   expect(res._id.toString()).to.equal(userId.toString())
         // })
 
-        it('should verify a user and return true', async () => {
+        it('should verify a local user exists and return true', async () => {
           const res = await checkIfUserExists(userEmail)
           expect(res).to.equal(true)
+        })
+
+        // it('should verify a google user exists and return true', async () => {
+        //   const res = await checkIfUserExists(userEmail)
+        //   expect(res).to.equal(true)
+        // })
+
+        it('should update a user first name to Achilles', async () => {
+          const res = await updateUser(userId, {'local.firstName': 'Achilles'})
+          console.log(res.local.firstName)
+          expect(res.local.firstName).to.equal("Achilles")
         })
 
 });
