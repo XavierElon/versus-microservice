@@ -121,10 +121,7 @@ export const checkIfGoogleFirebaseUserExists = async (email: string) => {
   return false
 }
 
-export const updateUserByEmail = async (
-  email: string,
-  update: Partial<any>
-): Promise<any | null> => {
+export const updateUserByEmail = async (email: string, update: Partial<any>): Promise<any | null> => {
   try {
     const updatedUser = await User.findOneAndUpdate({ 'local.email': email }, update, { new: true })
     return updatedUser
@@ -136,11 +133,7 @@ export const updateUserByEmail = async (
 
 export const updateUserById = async (id: string, update: Partial<>): Promise<typeof any | null> => {
   try {
-    const updatedUser = await User.findOneAndUpdate(
-      { _id: id },
-      { ...update, date: Date.now() },
-      { new: true }
-    )
+    const updatedUser = await User.findOneAndUpdate({ _id: id }, { ...update, date: Date.now() }, { new: true })
     return updatedUser
   } catch (error) {
     console.error(`Error updating user: ${error}`)

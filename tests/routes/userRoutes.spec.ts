@@ -6,6 +6,7 @@ import express, { Express } from 'express'
 import { userRouter } from '../../src/routes/user.routes'
 import mongoose, { Model } from 'mongoose'
 import sinon from 'sinon'
+import path from 'path'
 import supertest from 'supertest'
 import chai from 'chai'
 import chaiHttp from 'chai-http'
@@ -30,6 +31,8 @@ describe('User Controller', function () {
   const agent = supertest.agent(app) // Create an agent instance
   this.timeout(5000)
   let userId: string
+  const imageFilePath = path.join(__dirname, 'uploads', '1682955817554.jpg')
+  console.log(imageFilePath)
 
   before(async () => {
     try {
@@ -129,7 +132,7 @@ describe('User Controller', function () {
     expect(logoutCookie).to.equal('user-token=')
   })
 
-  it('should logout a user with 200 status code', async () => {
+  it('should update a users first name to Achilles with 200 status code', async () => {
     const res = await agent.post('/login').send({
       email: 'testuser@example.com',
       password: 'testpassword12334343!'
@@ -142,12 +145,28 @@ describe('User Controller', function () {
     expect(cookie.startsWith('user-token=')).to.be.true
 
     const updateRes = await agent.put(`/update/${userId}`).send({
-      local: {
-        firstName: 'Achilles'
-      }
+      'local.firstName': 'Achilles'
     })
-    console.log(updateRes.body.updatedUser)
+
     expect(updateRes.status).to.equal(200)
     expect(updateRes.body.updatedUser.local.firstName).to.equal('Achilles')
+  })
+
+  it('should upload a profile picture with status code 200', async () => {
+    const res = await agent.post('/login').send({
+      email: 'testuser@example.com',
+      password: 'testpassword12334343!'
+    })
+    expect(res.status).to.equal(200)
+
+    // Make sure the cookie is set
+    expect(res.headers['set-cookie']).to.be.an('array')
+    const cookie = res.headers['set-cookie'][0].split(';')[0]
+    expect(cookie.startsWith('user-token=')).to.be.true
+
+    const uploadRes = await agent.post(`/upload-profile-picture/${userId}`).attach('image', imageFilePath)
+
+    expect(uploadRes.status).to.equal(200)
+    expect(uploadRes.body.message).to.equal('Profile picture uploaded successfully.')
   })
 })

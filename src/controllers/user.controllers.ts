@@ -115,8 +115,7 @@ export const LogoutUser = async (req: Request, res: Response) => {
 
 export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
   try {
-    const { accessToken, displayName, email, firebaseUid, photoURL, refreshToken } =
-      req.body.firebaseGoogle
+    const { accessToken, displayName, email, firebaseUid, photoURL, refreshToken } = req.body.firebaseGoogle
 
     if (!firebaseUid) {
       return res.status(400).json({ message: 'Missing firebaseUid' })
@@ -195,24 +194,6 @@ export const UpdateUserById = async (req: Request, res: Response) => {
     return res.status(500).send({ error: 'Server error' })
   }
 }
-
-// export const UpdateUserByEmail = async (req: Request, res: Response) => {
-//   try {
-//     const id = req.params.id
-//     const update = req.body
-
-//     // Find the user by ID and update its properties
-//     const updatedUser = await updateUserById(id, update)
-//     if (!updatedUser) {
-//       return res.status(404).send({ error: 'User not found' })
-//     } else {
-//       return res.status(200).send({ updatedUser, message: 'User updated' })
-//     }
-//   } catch (error) {
-//     console.error(`Error updating user: ${error}`)
-//     return res.status(500).send({ error: 'Server error' })
-//   }
-// }
 
 export const UploadProfilePictureById = async (req: Request, res: Response) => {
   const user = await User.findById(req.params.id)
