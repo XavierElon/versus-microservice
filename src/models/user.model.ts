@@ -52,7 +52,7 @@ const userSchema = new mongoose.Schema({
       default: uuidv4()
     },
     confirmationTokenExpirationTime: {
-      type: Date || null
+      type: Date, default: Date.now
     },
     active: { type: Boolean, default: false }
   },

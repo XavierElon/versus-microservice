@@ -74,8 +74,8 @@ export const createUser = async (userData: typeof User): Promise<any> => {
     user.confirmationTokenExpirationTime = new Date(Date.now())
     const savedUser = await user.save()
 
-    const confirmationLink = await createConfirmationLink(userData, baseUrl)
-    await sendConfirmationGmail(user.local.email, confirmationLink)
+    // const confirmationLink = await createConfirmationLink(userData, baseUrl)
+    // await sendConfirmationGmail(user.local.email, confirmationLink)
     console.log(`Sent email to user ${user.email}`)
     return savedUser
   } catch (error) {
@@ -176,8 +176,8 @@ export const deleteUnconfirmedUsers = async (): Promise<void> => {
   // Find all users that are unconfirmed and have a confirmation token expiration time
   // earlier than 24 hours ago
   const unconfirmedUsers = await User.find({
-    active: false,
-    confirmationTokenExpirationTime: { $lt: twentyFourHoursAgo }
+    'local.active': false,
+    'local.confirmationTokenExpirationTime': { $lt: twentyFourHoursAgo }
   }).exec()
 
   // Delete each unconfirmed user from the database

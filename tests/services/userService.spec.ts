@@ -16,7 +16,9 @@ import {
     getUserById,
     getLocalUser,
     getGoogleUser,
-    updateUserById
+    updateUserById,
+    confirmUser,
+    deleteUnconfirmedUsers
 } from '../../src/services/user.service';
 import { connectToDatabase } from '../../src/connections/mongodb';
 
@@ -43,14 +45,23 @@ describe('User service test suite', function() {
       },
       provider: "local"
     });
+    const dateString = '2023-05-08T00:00:00.000Z';
+    const date = new Date(dateString);
+    console.log(date); // Output: 2023-05-10T00:00:00.000Z
+
+    let testUser3 = new UserModel({
+      local: {
+        email: 'testuser3@gmail.com',
+        password: 'Testpassword123!',
+        firstName: 'Elon',
+        lastName: 'Musk',
+        confirmationTokenExpirationTime: date
+      },
+      provider: "local"
+    });
     const userEmail: string = 'testuser@gmail.com'
     let userId: string
-    let updatedTesttUser = new UserModel({
-      local: {
-        firstName: 'Achilles',
-      
-      }
-    });
+    let confirmationCode
 
 
     this.timeout(5000);
@@ -66,7 +77,7 @@ describe('User service test suite', function() {
     after(async () => {
       // Empty database
       try {
-          // await User.deleteMany({})
+          await User.deleteMany({})
           console.log('USERS DELETED');
           await mongoose.disconnect()
       } catch (error) {
@@ -74,14 +85,15 @@ describe('User service test suite', function() {
       }
     })
 
-        // it('should create 2 new users and expect first name to equal John adn email to equal testuser2@gmail.com', async () => {
-        //     const result = await createUser(testUser);
-        //     console.log(result);
-        //     expect(result.local.firstName).to.equal('John')
-        //     const result2 = await createUser(testUser2);
-        //     console.log(result2);
-        //     expect(result2.local.email).to.equal('testuser2@gmail.com')
-        // });
+        it('should create 2 new users and expect first name to equal John adn email to equal testuser2@gmail.com', async () => {
+            const result = await createUser(testUser);
+            console.log(result);
+            confirmationCode = result.local.confirmationCode
+            expect(result.local.firstName).to.equal('John')
+            const result2 = await createUser(testUser2);
+            console.log(result2);
+            expect(result2.local.email).to.equal('testuser2@gmail.com')
+        });
 
         it('should return all newsletter users (2)', async () => {
           const result = await getAllUsers()
@@ -133,6 +145,11 @@ describe('User service test suite', function() {
           expect(res.local.firstName).to.equal('Achilles')
         })
 
+        it('should confirm user with confirmation code', async () => {
+          const res = await confirmUser(confirmationCode)
+          expect(res.local.confirmationCode).to.equal(confirmationCode)
+        })
+
         it('should delete a user by email', async () => {
           await deleteUserByEmail(userEmail)
           const result = await getAllUsers()
@@ -146,6 +163,15 @@ describe('User service test suite', function() {
           const result = await getAllUsers()
           expect(result.length).to.equal(0)
       })
+
+      it('should delete unconfirmed users', async () => {
+        await createUser(testUser3);
+        await deleteUnconfirmedUsers()
+        const allUsers = await getAllUsers()
+        expect(allUsers.length).to.equal(0)
+    })
+
+      
 
 });
 
