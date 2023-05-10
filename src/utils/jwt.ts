@@ -15,6 +15,9 @@ export const createLocalToken = (user) => {
 }
 
 export const createGoogleAuthToken = (user) => {
+  if (!user || Object.keys(user).length === 0) {
+    return null
+  }
   const accessToken = sign({ email: user.firebaseGoogle.email, id: user._id }, process.env.JWT_SECRET, { expiresIn: '24h' })
   return accessToken
 }
