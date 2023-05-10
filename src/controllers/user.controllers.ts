@@ -262,7 +262,6 @@ export const ValidateAccountCreation = async (req: Request, res: Response) => {
 export const ChangePassword = async (req: Request, res: Response) => {
   const { oldPassword, newPassword, email } = req.body
 
-  // const user = await User.findOne({ where: { username: req.user.username }})
   const user = await User.findOne({ 'local.email': email })
 
   bcrypt.compare(oldPassword, user.local.password).then(async (match) => {
@@ -280,7 +279,6 @@ export const ResetPassword = async (req: Request, res: Response) => {
   const { password, recipientEmail } = req.body
 
   const user = await User.findOne({ 'local.email': recipientEmail })
-  console.log(user)
   bcrypt.hash(password, 10).then(async (hash) => {
     user.local.password = hash
     await user.save()

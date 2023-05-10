@@ -192,6 +192,27 @@ describe('User Controller', function () {
     expect(changePassRes.body.message).to.equal('Password successfully reset')
   })
 
+  it('should reset users password via email OTP with status code 200', async () => {
+    const res = await agent.post('/login').send({
+      email: 'testuser@example.com',
+      password: 'Heyachilles123!'
+    })
+    expect(res.status).to.equal(200)
+
+    // Make sure the cookie is set
+    expect(res.headers['set-cookie']).to.be.an('array')
+    const cookie = res.headers['set-cookie'][0].split(';')[0]
+    expect(cookie.startsWith('user-token=')).to.be.true
+
+    const resetPassRes = await agent.put('/resetpassword').send({
+      recipientEmail: 'testuser@example.com',
+      password: 'Heyachilles123!'
+    })
+
+    console.log(resetPassRes)
+    expect(resetPassRes.status).to.equal(200)
+  })
+
   it('should delete a user by id with status code 200', async () => {
     const res = await agent.post('/login').send({
       email: 'testuser@example.com',
