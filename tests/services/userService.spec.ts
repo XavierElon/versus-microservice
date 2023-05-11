@@ -13,6 +13,7 @@ import {
   deleteUserById,
   getAllUsers,
   getUserById,
+  getGoogleUser,
   getLocalUser,
   updateUserById,
   confirmUser,
@@ -167,6 +168,82 @@ describe('User service test suite', function () {
     }
 
     findStub.restore()
+    consoleErrorStub.restore()
+  })
+
+  it('should catch error in getUserByEmail and throw an error', async () => {
+    const error = new Error('Test error')
+    const findOneStub = sinon.stub(User, 'findOne').throws(error)
+    const consoleErrorStub = sinon.stub(console, 'error')
+
+    try {
+      await getUserByEmail()
+      // If the function doesn't throw an error, fail the test
+      expect.fail('No error thrown')
+    } catch (err) {
+      expect(findOneStub.calledOnce).to.be.true
+      expect(consoleErrorStub.calledOnce).to.be.true
+      expect(err.message).to.equal('No user found with that email')
+    }
+
+    findOneStub.restore()
+    consoleErrorStub.restore()
+  })
+
+  it('should catch error in getUserByID and throw an error', async () => {
+    const error = new Error('Test error')
+    const findByIdStub = sinon.stub(User, 'findById').throws(error)
+    const consoleErrorStub = sinon.stub(console, 'error')
+
+    try {
+      await getUserById()
+      // If the function doesn't throw an error, fail the test
+      expect.fail('No error thrown')
+    } catch (err) {
+      expect(findByIdStub.calledOnce).to.be.true
+      expect(consoleErrorStub.calledOnce).to.be.true
+      expect(err.message).to.equal('No user found with that id')
+    }
+
+    findByIdStub.restore()
+    consoleErrorStub.restore()
+  })
+
+  it('should catch error in getLocalUser and throw an error', async () => {
+    const error = new Error('Test error')
+    const findOneStub = sinon.stub(User, 'findOne').throws(error)
+    const consoleErrorStub = sinon.stub(console, 'error')
+
+    try {
+      await getLocalUser()
+      // If the function doesn't throw an error, fail the test
+      expect.fail('No error thrown')
+    } catch (err) {
+      expect(findOneStub.calledOnce).to.be.true
+      expect(consoleErrorStub.calledOnce).to.be.true
+      expect(err.message).to.equal('No local user found with that id')
+    }
+
+    findOneStub.restore()
+    consoleErrorStub.restore()
+  })
+
+  it('should catch error in getGoogleUser and throw an error', async () => {
+    const error = new Error('Test error')
+    const findOneStub = sinon.stub(User, 'findOne').throws(error)
+    const consoleErrorStub = sinon.stub(console, 'error')
+
+    try {
+      await getGoogleUser('google-user-id')
+      // If the function doesn't throw an error, fail the test
+      expect.fail('No error thrown')
+    } catch (err) {
+      expect(findOneStub.calledOnce).to.be.true
+      expect(consoleErrorStub.calledOnce).to.be.true
+      expect(err.message).to.equal('No google auth user found with that id')
+    }
+
+    findOneStub.restore()
     consoleErrorStub.restore()
   })
 

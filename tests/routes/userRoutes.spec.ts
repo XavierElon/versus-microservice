@@ -97,22 +97,6 @@ describe('User Controller', function () {
     expect(res.status).to.equal(400)
   })
 
-  it('should not add duplicate google user and return 400 status code for both', async () => {
-    const res = await request(app)
-      .post('/signup')
-      .send({
-        local: {
-          email: 'testuser@example.com',
-          password: 'testpassword12334343!',
-          firstName: 'John',
-          lastName: 'Doe'
-        },
-        provider: 'local'
-      })
-
-    expect(res.status).to.equal(400)
-  })
-
   it('should validate account creation and return 201 status code', async () => {
     const res = await request(app).get(`/validate-account-creation/${userId}`)
 
@@ -187,7 +171,6 @@ describe('User Controller', function () {
         },
         provider: 'local'
       })
-    console.log(res)
     expect(res.status).to.equal(400)
   })
 
@@ -226,13 +209,11 @@ describe('User Controller', function () {
     })
     expect(res.status).to.equal(200)
 
-    // Make sure the cookie is set
     expect(res.headers['set-cookie']).to.be.an('array')
     const cookie = res.headers['set-cookie'][0].split(';')[0]
     expect(cookie.startsWith('user-token=')).to.be.true
 
-    const logoutRes = await agent // Use agent instead of request
-      .post('/logout')
+    const logoutRes = await agent.post('/logout')
 
     expect(logoutRes.status).to.equal(200)
 

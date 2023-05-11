@@ -24,7 +24,7 @@ export const getUserByEmail = async (email: string): Promise<typeof User | null>
     return user || null
   } catch (error) {
     console.error(`Error while getting user by email: ${error}`)
-    return null
+    throw new Error('No user found with that email')
   }
 }
 
@@ -33,8 +33,8 @@ export const getUserById = async (id: string): Promise<typeof User | null> => {
     const user = await User.findById(id)
     return user || null
   } catch (error) {
-    console.error(`Error while getting User by email: ${error}`)
-    return null
+    console.error(`Error while getting User by id: ${error}`)
+    throw new Error('No user found with that id')
   }
 }
 
@@ -43,17 +43,27 @@ GET LOCAL USER
 This function gets a local user using the mongo id
 */
 export const getLocalUser = async (id: any) => {
-  const user = await User.findOne({ _id: id })
-  return user || null
+  try {
+    const user = await User.findOne({ _id: id })
+    return user || null
+  } catch (error) {
+    console.error(`Error while getting User by id: ${error}`)
+    throw new Error('No local user found with that id')
+  }
 }
 
 /*
 GET GOOGLE USER
 This function gets a Google auth user using the firebase id
 */
-export const getGoogleUser = async (id: any) => {
-  const user = await User.findOne({ 'firebaseGoogle.firebaseUid': id })
-  return user || null
+export const getGoogleUser = async (id: any): Promise<typeof User | null> => {
+  try {
+    const user = await User.findOne({ 'firebaseGoogle.firebaseUid': id })
+    return user || null
+  } catch (error) {
+    console.error(`Error while getting User by id: ${error}`)
+    throw new Error('No google auth user found with that id')
+  }
 }
 
 /*
