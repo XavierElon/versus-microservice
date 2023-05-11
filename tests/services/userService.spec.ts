@@ -3,10 +3,10 @@
 import { expect } from 'chai'
 import mongoose, { Model } from 'mongoose'
 import sinon from 'sinon'
+import jest, { spyOn } from 'jest'
 import { User } from '../../src/models/user.model'
 import {
   createUser,
-  verifyUser,
   checkIfUserExists,
   getUserByEmail,
   deleteUserByEmail,
@@ -14,7 +14,6 @@ import {
   getAllUsers,
   getUserById,
   getLocalUser,
-  getGoogleUser,
   updateUserById,
   confirmUser,
   deleteUnconfirmedUsers
@@ -111,20 +110,10 @@ describe('User service test suite', function () {
     expect(res._id.toString()).to.equal(userId.toString())
   })
 
-  // it('should return a google user', async () => {
-  //   const res = await getGoogleUser(userId)
-  //   expect(res._id.toString()).to.equal(userId.toString())
-  // })
-
   it('should verify a local user exists and return true', async () => {
     const res = await checkIfUserExists(userEmail)
     expect(res).to.equal(true)
   })
-
-  // it('should verify a google user exists and return true', async () => {
-  //   const res = await checkIfUserExists(userEmail)
-  //   expect(res).to.equal(true)
-  // })
 
   it('should update a user by id last name to Musk', async () => {
     const res = await updateUserById(userId, { 'local.lastName': 'Musk' })
@@ -160,5 +149,35 @@ describe('User service test suite', function () {
     await deleteUnconfirmedUsers()
     const allUsers = await getAllUsers()
     expect(allUsers.length).to.equal(0)
+  })
+
+  it('should catch error in deleUserById and return null', async () => {
+    const error = new Error('Test error')
+    const findOneAndDeleteStub = sinon.stub(User, 'findOneAndDelete').throws(error)
+    const consoleErrorStub = sinon.stub(console, 'error')
+
+    const result = await deleteUserById('user-id')
+
+    expect(findOneAndDeleteStub.calledOnceWith({ _id: 'user-id' })).to.be.true
+    expect(consoleErrorStub.calledOnceWith(error)).to.be.true
+    expect(result).to.be.null
+
+    findOneAndDeleteStub.restore()
+    consoleErrorStub.restore()
+  })
+
+  it('should catch error in deleteUserByEmail and return null', async () => {
+    const error = new Error('Test error')
+    const findOneAndDeleteStub = sinon.stub(User, 'findOneAndDelete').throws(error)
+    const consoleErrorStub = sinon.stub(console, 'error')
+
+    const result = await deleteUserByEmail('email')
+
+    expect(findOneAndDeleteStub.calledOnceWith({ 'local.email': 'email' })).to.be.true
+    expect(consoleErrorStub.calledOnceWith(error)).to.be.true
+    expect(result).to.be.null
+
+    findOneAndDeleteStub.restore()
+    consoleErrorStub.restore()
   })
 })
