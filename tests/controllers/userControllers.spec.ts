@@ -77,5 +77,6 @@ describe('User service test suite', function () {
 
     // Check that json was called with the correct error message
     expect(mockResponse.json.calledWith({ error: 'No user found' })).to.be.true
+    sinon.restore()
   })
 })

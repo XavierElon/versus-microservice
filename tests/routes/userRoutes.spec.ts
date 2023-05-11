@@ -11,6 +11,7 @@ import chai from 'chai'
 import chaiHttp from 'chai-http'
 import { User } from '../../src/models/user.model'
 import { connectToDatabase } from '../../src/connections/mongodb'
+import { getGoogleUser } from '../../src/services/user.service'
 
 const FRONT_END_URL: string = process.env.FRONT_END_URL!
 chai.use(chaiHttp)
@@ -157,6 +158,12 @@ describe('User Controller', function () {
 
     expect(res.status).to.equal(200)
     expect(res.body.message).to.equal('Google user logged in')
+  })
+
+  it('should get google user and return a user', async () => {
+    const id = 'a'.repeat(28)
+    const response = await getGoogleUser(id)
+    expect(response.firebaseGoogle.firebaseUid).to.equal(id)
   })
 
   it('should not add duplicate google user and return 400 status code for both', async () => {

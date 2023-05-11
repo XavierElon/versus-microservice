@@ -56,7 +56,7 @@ export const getLocalUser = async (id: any) => {
 GET GOOGLE USER
 This function gets a Google auth user using the firebase id
 */
-export const getGoogleUser = async (id: any): Promise<typeof User | null> => {
+export const getGoogleUser = async (id: any) => {
   try {
     const user = await User.findOne({ 'firebaseGoogle.firebaseUid': id })
     return user || null
