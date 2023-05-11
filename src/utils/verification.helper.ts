@@ -27,6 +27,7 @@ EMAIL VALIDATION
 export const validateEmail = (value: string): boolean => {
   const regex =
     /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.com$/
+  // const regex = /^\S+@\S+\.com$/
   return regex.test(value)
 }
 
@@ -48,6 +49,6 @@ for a string that contains only letters
 (uppercase or lowercase). Additionally, the length of the name must be between 2 and 30 characters.
 */
 export const validateName = (value: string): boolean => {
-  const regex = /^[a-zA-Z0-9_]{2,20}$/
+  const regex = /^[a-zA-Z]{2,20}$/
   return regex.test(value)
 }

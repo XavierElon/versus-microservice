@@ -7,13 +7,44 @@ import { sendConfirmationGmail, createConfirmationLink } from '../utils/email.he
 
 dotenv.config()
 
+// GET All users
+export const getAllUsers = async (): Promise<any | null> => {
+  try {
+    const all = await User.find()
+    return all
+  } catch (error) {
+    console.error(`Error retrieving all newsletter users: ${error}`)
+    throw new Error('No users found')
+  }
+}
+
+export const getUserByEmail = async (email: string): Promise<typeof User | null> => {
+  try {
+    const user = await User.findOne({ 'local.email': email })
+    return user || null
+  } catch (error) {
+    console.error(`Error while getting user by email: ${error}`)
+    return null
+  }
+}
+
+export const getUserById = async (id: string): Promise<typeof User | null> => {
+  try {
+    const user = await User.findById(id)
+    return user || null
+  } catch (error) {
+    console.error(`Error while getting User by email: ${error}`)
+    return null
+  }
+}
+
 /*
 GET LOCAL USER
 This function gets a local user using the mongo id
 */
 export const getLocalUser = async (id: any) => {
   const user = await User.findOne({ _id: id })
-  return user
+  return user || null
 }
 
 /*
@@ -22,7 +53,7 @@ This function gets a Google auth user using the firebase id
 */
 export const getGoogleUser = async (id: any) => {
   const user = await User.findOne({ 'firebaseGoogle.firebaseUid': id })
-  return user
+  return user || null
 }
 
 /*
@@ -34,17 +65,17 @@ export const createUser = async (userData: typeof User): Promise<any> => {
 
   const hash = await bcrypt.hash(password, 10)
   userData.local.password = hash
-  userData = { ...userData }
+
   let user = new User(userData)
+
   const baseUrl = process.env.HOST + process.env.PORT
 
   try {
     user.confirmationTokenExpirationTime = new Date(Date.now())
     const savedUser = await user.save()
-    console.log('Result:', savedUser)
 
-    const confirmationLink = await createConfirmationLink(userData, baseUrl)
-    await sendConfirmationGmail(user.local.email, confirmationLink)
+    // const confirmationLink = await createConfirmationLink(userData, baseUrl)
+    // await sendConfirmationGmail(user.local.email, confirmationLink)
     console.log(`Sent email to user ${user.email}`)
     return savedUser
   } catch (error) {
@@ -52,20 +83,8 @@ export const createUser = async (userData: typeof User): Promise<any> => {
     if (user._id) {
       await User.deleteOne({ _id: user._id }) // Rollback by deleting the saved user if it was because the email
     }
-    throw error
+    throw new Error('Error creating new user')
   }
-}
-
-/*
-VERIFY USER
-check the username and password against the database to approve login
-*/
-export const verifyUser = async (email: string, password: string) => {
-  const existingUser = await User.findOne({ email, password })
-  if (existingUser && existingUser.active === true) {
-    return true
-  }
-  return false
 }
 
 /*
@@ -88,16 +107,9 @@ export const checkIfGoogleFirebaseUserExists = async (email: string) => {
   return false
 }
 
-/*
-UPDATE USER INFORMATION
-*/
-export const updateUser = async (
-  id: string,
-  update: Partial<typeof User>
-): Promise<typeof User | null> => {
-  const UserModel: Model<Document & typeof User> = mongoose.model('User')
+export const updateUserById = async (id: string, update: Partial<>): Promise<typeof any | null> => {
   try {
-    const updatedUser = await UserModel.findOneAndUpdate({ _id: id }, update, { new: true })
+    const updatedUser = await User.findOneAndUpdate({ _id: id }, { ...update, date: Date.now() }, { new: true })
     return updatedUser
   } catch (error) {
     console.error(`Error updating user: ${error}`)
@@ -108,10 +120,9 @@ export const updateUser = async (
 /*
 DELETE USER
 */
-export const deleteUser = async (email: string): Promise<typeof User | null> => {
-  const UserModel: Model<Document & typeof User> = mongoose.model('User')
+export const deleteUserByEmail = async (email: string): Promise<typeof any | null> => {
   try {
-    const deletedUser = await UserModel.findOneAndDelete({ email })
+    const deletedUser = await User.findOneAndDelete({ 'local.email': email })
     return deletedUser
   } catch (err) {
     console.error(err)
@@ -119,13 +130,12 @@ export const deleteUser = async (email: string): Promise<typeof User | null> => 
   }
 }
 
-export const getUserByEmail = async (email: string): Promise<typeof User | null> => {
-  const UserModel: Model<Document & typeof User> = mongoose.model('User')
+export const deleteUserById = async (id: string): Promise<typeof any | null> => {
   try {
-    const user = await UserModel.findOne({ email })
-    return user || null
-  } catch (error) {
-    console.error(`Error while getting user by email: ${error}`)
+    const deletedUser = await User.findOneAndDelete({ _id: id })
+    return deletedUser
+  } catch (err) {
+    console.error(err)
     return null
   }
 }
@@ -140,8 +150,8 @@ export const deleteUnconfirmedUsers = async (): Promise<void> => {
   // Find all users that are unconfirmed and have a confirmation token expiration time
   // earlier than 24 hours ago
   const unconfirmedUsers = await User.find({
-    active: false,
-    confirmationTokenExpirationTime: { $lt: twentyFourHoursAgo }
+    'local.active': false,
+    'local.confirmationTokenExpirationTime': { $lt: twentyFourHoursAgo }
   }).exec()
 
   // Delete each unconfirmed user from the database
@@ -155,9 +165,9 @@ export const deleteUnconfirmedUsers = async (): Promise<void> => {
 /*  Find the user with the provided confirmation code */
 export const confirmUser = async (confirmationCode: string) => {
   const user = await User.findOne({ 'local.confirmationCode': confirmationCode }).exec()
-  if (!user) {
+  if (!user || Object.keys(user).length === 0) {
     console.log('No user found')
-    return null
+    throw new Error('No user found')
   }
   user.local.active = true
   user.local.confirmationTokenExpirationTime = undefined

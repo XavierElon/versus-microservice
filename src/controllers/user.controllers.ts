@@ -5,12 +5,13 @@ import { User } from '../models/user.model'
 import {
   createUser,
   checkIfUserExists,
-  updateUser,
-  deleteUser,
+  updateUserById,
+  deleteUserByEmail,
   confirmUser,
   checkIfGoogleFirebaseUserExists,
   getLocalUser,
-  getGoogleUser
+  getGoogleUser,
+  deleteUserById
 } from '../services/user.service'
 import { createGoogleAuthToken, createLocalToken } from '../utils/jwt'
 import { sendOTPEmail } from '../utils/email.helper'
@@ -51,7 +52,6 @@ export const CreateUser = async (req: Request, res: Response) => {
   } else {
     createUser(userData)
       .then((result) => {
-        console.log('User created successfully: ', result)
         const accessToken = createLocalToken(userData)
         let secure = true
         if (process.env.NODE_ENV === 'dev') {
@@ -61,7 +61,7 @@ export const CreateUser = async (req: Request, res: Response) => {
           maxAge: 60 * 60 * 24 * 1000,
           httpOnly: true,
           secure: secure,
-          sameSite: 'none',
+          sameSite: 'none'
           // domain: process.env.DOMAIN
         })
         res.status(201).json({ message: 'User created', accessToken, user: result })
@@ -100,7 +100,7 @@ export const LoginUser = async (req: Request, res: Response) => {
         maxAge: 60 * 60 * 24 * 1000,
         httpOnly: false,
         secure: secure,
-        sameSite: 'none',
+        sameSite: 'none'
         // domain: process.env.DOMAIN
       })
       res.status(200).json({ message: 'Login successful', accessToken, user })
@@ -109,15 +109,13 @@ export const LoginUser = async (req: Request, res: Response) => {
 }
 
 export const LogoutUser = async (req: Request, res: Response) => {
-  res.clearCookie('access-token')
   res.clearCookie('user-token')
   res.status(200).send({ message: 'Logged out successfully' })
 }
 
 export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
   try {
-    const { accessToken, displayName, email, firebaseUid, photoURL, refreshToken } =
-      req.body.firebaseGoogle
+    const { accessToken, displayName, email, firebaseUid, photoURL, refreshToken } = req.body.firebaseGoogle
 
     if (!firebaseUid) {
       return res.status(400).json({ message: 'Missing firebaseUid' })
@@ -143,7 +141,7 @@ export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
       })
       await user.save()
       const token = createGoogleAuthToken(user)
-      res.cookie('access-token', token, {
+      res.cookie('user-token', token, {
         maxAge: 60 * 60 * 24 * 1000,
         httpOnly: true,
         secure: true
@@ -159,7 +157,7 @@ export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
       })
     } else {
       const token = createGoogleAuthToken(user)
-      res.cookie('access-token', token, {
+      res.cookie('user-token', token, {
         maxAge: 60 * 60 * 24 * 1000,
         httpOnly: true
       })
@@ -170,7 +168,8 @@ export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
           firebaseUid: user.firebaseGoogle.firebaseUid,
           email,
           provider: user.provider
-        }
+        },
+        message: 'Google user logged in'
       })
     }
   } catch (error) {
@@ -183,8 +182,9 @@ export const UpdateUserById = async (req: Request, res: Response) => {
   try {
     const id = req.params.id
     const update = req.body
+
     // Find the user by ID and update its properties
-    const updatedUser = updateUser(id, update)
+    const updatedUser = await updateUserById(id, update)
     if (!updatedUser) {
       return res.status(404).send({ error: 'User not found' })
     } else {
@@ -219,7 +219,7 @@ export const UploadProfilePictureById = async (req: Request, res: Response) => {
 export const DeleteUserByEmail = async (req: Request, res: Response) => {
   const email = req.params.email
   try {
-    const deletedUser = await deleteUser(email)
+    const deletedUser = await deleteUserByEmail(email)
     if (!deletedUser) {
       return res.status(404).send(`User with email ${email} not found`)
     }
@@ -230,29 +230,39 @@ export const DeleteUserByEmail = async (req: Request, res: Response) => {
   }
 }
 
+export const DeleteUserById = async (req: Request, res: Response) => {
+  const id = req.params.id
+  try {
+    const deletedUser = await deleteUserById(id)
+    if (!deletedUser) {
+      return res.status(404).send(`User not found`)
+    }
+    return res.send(`Deleted user: ${deletedUser}`)
+  } catch (err) {
+    console.error(`Error deleting user with id ${id}:`, err)
+    return res.status(500).send('Error deleting user')
+  }
+}
+
 export const ValidateAccountCreation = async (req: Request, res: Response) => {
   try {
     const { confirmed, token } = req.query
     if (confirmed === 'true' && typeof token === 'string') {
-      res.send('Your account has been successfully created and confirmed.')
       await confirmUser(token)
+      res.status(200).json({ message: 'Your account has been successfully created and confirmed.' })
     } else {
-      res.send('Your account has been created. Please check your email to confirm your account.')
+      res.status(201).json({ message: 'Your account has been created. Please check your email to confirm your account.' })
     }
   } catch (error) {
     console.error(error)
-    res.status(500).send('An error occurred while validating your account creation.')
+    res.status(500).json({ message: 'An error occurred while validating your account creation.' })
   }
 }
 
 export const ChangePassword = async (req: Request, res: Response) => {
   const { oldPassword, newPassword, email } = req.body
-  // console.log(req)
-  console.log(req.body)
 
-  // const user = await User.findOne({ where: { username: req.user.username }})
   const user = await User.findOne({ 'local.email': email })
-  console.log(user)
 
   bcrypt.compare(oldPassword, user.local.password).then(async (match) => {
     if (!match) res.json({ error: 'Wrong Password Entered!' })
@@ -260,7 +270,7 @@ export const ChangePassword = async (req: Request, res: Response) => {
     bcrypt.hash(newPassword, 10).then(async (hash) => {
       user.local.password = hash
       await user.save()
-      res.status(200).send({ message: 'Pasword successfully reset' })
+      res.status(200).send({ message: 'Password successfully reset' })
     })
   })
 }
@@ -269,7 +279,6 @@ export const ResetPassword = async (req: Request, res: Response) => {
   const { password, recipientEmail } = req.body
 
   const user = await User.findOne({ 'local.email': recipientEmail })
-  console.log(user)
   bcrypt.hash(password, 10).then(async (hash) => {
     user.local.password = hash
     await user.save()

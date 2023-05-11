@@ -1,78 +1,337 @@
-import { expect } from 'chai';
-import request from 'supertest';
-import express, { Express } from 'express';
-import { userRouter } from '../../src/routes/user.routes';
-import mongoose, { Model } from 'mongoose';
-import sinon from 'sinon';
+import { expect } from 'chai'
+import cors from 'cors'
+import cookieParser from 'cookie-parser'
+import request from 'supertest'
+import express, { Express } from 'express'
+import { userRouter } from '../../src/routes/user.routes'
+import mongoose, { Model } from 'mongoose'
+import sinon from 'sinon'
+import path from 'path'
+import supertest from 'supertest'
+import chai from 'chai'
+import chaiHttp from 'chai-http'
 import { User } from '../../src/models/user.model'
+import { connectToDatabase } from '../../src/connections/mongodb'
 
-const app: Express = express();
-app.use(express.json());
-app.use('/', userRouter);
+const FRONT_END_URL: string = process.env.FRONT_END_URL
+chai.use(chaiHttp)
+const app: Express = express()
+app.use(express.json())
+app.use(
+  cors({
+    origin: FRONT_END_URL,
+    credentials: true
+  })
+)
+app.use(cookieParser())
+app.use('/', userRouter)
+const testDbUri: string = process.env.TEST_DB_URI!
 
-describe('User Controller', () => {
+describe('User Controller', function () {
+  const agent = supertest.agent(app) // Create an agent instance
+  this.timeout(5000)
+  let userId: string
+  let confirmationCode
+  const imageFilePath = path.join(__dirname, 'uploads', '1682955817554.jpg')
 
-    const testDbUrl = 'mongodb+srv://root:IhvkxnDwROpiDZpd@jsx.nwqtn5o.mongodb.net/test';
-    let UserModel: Model<Document & typeof User> = mongoose.model('User');
-    const userData = new UserModel({
-        userName: 'testuser',
-        email: 'testuser@example.com',
-        password: 'testpassword12334343!',
-        firstName: 'John',
-        lastName: 'Doe',
-        mobileNumber: 4443334343
-    });
-    before(async () => {
-        await mongoose.connect(testDbUrl as string);
-        await UserModel.deleteOne({ _id: userData._id });
-        await userData.save();
-    });
+  before(async () => {
+    try {
+      await connectToDatabase(testDbUri as string)
+    } catch (error) {
+      console.log('Error in before hook: ' + error)
+    }
+  })
 
-    after(async () => {
-        // Delete the test user from the database
-        await mongoose.disconnect();
-    });
+  after(async () => {
+    // Empty database
+    try {
+      await User.deleteMany({})
+      console.log('USERS DELETED')
+      await mongoose.disconnect()
+    } catch (error) {
+      console.log('Error in after hook: ' + error)
+    }
+  })
 
-    describe('signup', () => {
-        it('should return 201 status code and user data if user is successfully created', async () => {
- 
-            const res = await request(app).post('/signup').send(userData);
-            //expect(res.status).to.equal(201);
-            //expect(res.body).to.have.property('message').to.equal('User created');
-            //expect(res.body).to.have.property('data');
-            //expect(res.body.data).to.have.property('userName').to.equal(userData);
-            //expect(res.body.data).to.have.property('email').to.equal(userData);
-        });
+  it('should add 2 newsletter users and return 201 status code for both', async () => {
+    const res = await request(app)
+      .post('/signup')
+      .send({
+        local: {
+          email: 'testuser@example.com',
+          password: 'testpassword12334343!',
+          firstName: 'John',
+          lastName: 'Doe'
+        },
+        provider: 'local'
+      })
+    expect(res.status).to.equal(201)
+    const res2 = await request(app)
+      .post('/signup')
+      .send({
+        local: {
+          email: 'testuser2@example.com',
+          password: 'testpassword12334343!',
+          firstName: 'Elon',
+          lastName: 'Musk'
+        },
+        provider: 'local'
+      })
+    userId = res.body.user._id
+    confirmationCode = res.body.user.local.confirmationCode
+    expect(res2.status).to.equal(201)
+  })
 
-        it('should return 500 status code and error message if there is an error creating the user', async () => {
-            const userData = { name: 'Test User', email: 'testuser@example.com', password: 'password' };
-            const checkIfUserExistsStub = sinon.stub().resolves(false);
-            const createUserStub = sinon.stub().rejects(new Error('Internal Server Error'));
-            const router = express.Router();
-            router.post('/signup', async (req, res) => {
-              checkIfUserExistsStub(req.body.email).then((result: any) => {
-                if (result) {
-                  res.status(400).json({ message: 'User already exists' });
-                } else {
-                  createUserStub(req.body).then((result: any) => {
-                    console.log('User created successfully: ', result);
-                    res.status(201).json({ message: 'User created', data: req.body });
-                  }).catch((error: any) => {
-                    console.log('Error creating user: ', error);
-                    res.status(500).json({ message: 'Error creating user', error });
-                  });
-                }
-              }).catch((error: any) => {
-                console.log('Error checking if user exists: ', error);
-                res.status(500).json({ message: 'Error checking if user exists', error });
-              });
-            });
-            app.use('/', router);
-            const res = await request(app).post('/signup').send(userData);
-            //expect(res.status).to.equal(500);
-            //expect(res.body).to.have.property('message').to.equal('Error creating user');
-            //expect(res.body).to.have.property('error');
-          });
+  it('should not add duplicate local user and return 400 status code for both', async () => {
+    const res = await request(app)
+      .post('/signup')
+      .send({
+        local: {
+          email: 'testuser@example.com',
+          password: 'testpassword12334343!',
+          firstName: 'John',
+          lastName: 'Doe'
+        },
+        provider: 'local'
+      })
 
-    });
-});
+    expect(res.status).to.equal(400)
+  })
+
+  it('should not add duplicate google user and return 400 status code for both', async () => {
+    const res = await request(app)
+      .post('/signup')
+      .send({
+        local: {
+          email: 'testuser@example.com',
+          password: 'testpassword12334343!',
+          firstName: 'John',
+          lastName: 'Doe'
+        },
+        provider: 'local'
+      })
+
+    expect(res.status).to.equal(400)
+  })
+
+  it('should validate account creation and return 201 status code', async () => {
+    const res = await request(app).get(`/validate-account-creation/${userId}`)
+
+    expect(res.status).to.equal(201)
+    expect(res.body.message).to.equal('Your account has been created. Please check your email to confirm your account.')
+  })
+
+  it('should validate account creation and return 200 status code', async () => {
+    const res = await request(app).get(`/validate-account-creation/${userId}?confirmed=true&token=${confirmationCode}`)
+
+    expect(res.status).to.equal(200)
+    expect(res.body.message).to.equal('Your account has been successfully created and confirmed.')
+  })
+
+  it('should validate account creation and return 500 status code', async () => {
+    const res = await request(app).get(`/validate-account-creation/badid?confirmed=true&token=sometoken`)
+
+    expect(res.status).to.equal(500)
+    expect(res.body.message).to.equal('An error occurred while validating your account creation.')
+  })
+
+  it('should add a google user and return 200 status code', async () => {
+    const id = 'a'.repeat(28)
+    const res = await request(app)
+      .post('/auth/firebase/google')
+      .send({
+        firebaseGoogle: {
+          accessToken: '',
+          displayName: 'Elon Musk',
+          email: 'elonmusk@gmail.com',
+          firebaseUid: id,
+          photoUrl: '',
+          refreshToken: ''
+        }
+      })
+
+    expect(res.status).to.equal(200)
+
+    expect(res.headers['set-cookie']).to.be.an('array')
+    const cookie = res.headers['set-cookie'][0].split(';')[0]
+    expect(cookie.startsWith('user-token=')).to.be.true
+  })
+
+  it('should login a google user and return 200 status code', async () => {
+    const id = 'a'.repeat(28)
+    const res = await request(app)
+      .post('/auth/firebase/google')
+      .send({
+        firebaseGoogle: {
+          accessToken: '',
+          displayName: 'Elon Musk',
+          email: 'elonmusk@gmail.com',
+          firebaseUid: id,
+          photoUrl: '',
+          refreshToken: ''
+        }
+      })
+
+    expect(res.status).to.equal(200)
+    expect(res.body.message).to.equal('Google user logged in')
+  })
+
+  it('should not add duplicate google user and return 400 status code for both', async () => {
+    const res = await request(app)
+      .post('/signup')
+      .send({
+        local: {
+          email: 'elonmusk@gmail.com',
+          password: 'testpassword12334343!',
+          firstName: 'John',
+          lastName: 'Doe'
+        },
+        provider: 'local'
+      })
+    console.log(res)
+    expect(res.status).to.equal(400)
+  })
+
+  it('should login a user within 200 status code', async () => {
+    const res = await request(app).post('/login').send({
+      email: 'testuser@example.com',
+      password: 'testpassword12334343!'
+    })
+    expect(res.status).to.equal(200)
+  })
+
+  it('should login a user within 200 status code and set the access token cookie', async () => {
+    const res = await agent.post('/login').send({
+      email: 'testuser@example.com',
+      password: 'testpassword12334343!'
+    })
+    expect(res.status).to.equal(200)
+
+    // Make sure the cookie is set
+    expect(res.headers['set-cookie']).to.be.an('array')
+    const cookie = res.headers['set-cookie'][0].split(';')[0]
+    expect(cookie.startsWith('user-token=')).to.be.true
+
+    const profileRes = await agent // Use agent instead of request
+      .get(`/profile/${userId}`)
+      .withCredentials(true)
+
+    expect(profileRes.status).to.equal(200)
+    expect(profileRes.body.user.local.email).to.equal('testuser@example.com')
+  })
+
+  it('should logout a user with 200 status code', async () => {
+    const res = await agent.post('/login').send({
+      email: 'testuser@example.com',
+      password: 'testpassword12334343!'
+    })
+    expect(res.status).to.equal(200)
+
+    // Make sure the cookie is set
+    expect(res.headers['set-cookie']).to.be.an('array')
+    const cookie = res.headers['set-cookie'][0].split(';')[0]
+    expect(cookie.startsWith('user-token=')).to.be.true
+
+    const logoutRes = await agent // Use agent instead of request
+      .post('/logout')
+
+    expect(logoutRes.status).to.equal(200)
+
+    // Check if the 'set-cookie' header is present and if it contains the expired 'user-token' cookie
+    expect(logoutRes.headers['set-cookie']).to.be.an('array')
+    const logoutCookie = logoutRes.headers['set-cookie'][0].split(';')[0]
+    expect(logoutCookie).to.equal('user-token=')
+  })
+
+  it('should update a users first name to Achilles with 200 status code', async () => {
+    const res = await agent.post('/login').send({
+      email: 'testuser@example.com',
+      password: 'testpassword12334343!'
+    })
+    expect(res.status).to.equal(200)
+
+    expect(res.headers['set-cookie']).to.be.an('array')
+    const cookie = res.headers['set-cookie'][0].split(';')[0]
+    expect(cookie.startsWith('user-token=')).to.be.true
+
+    const updateRes = await agent.put(`/update/${userId}`).send({
+      'local.firstName': 'Achilles'
+    })
+
+    expect(updateRes.status).to.equal(200)
+    expect(updateRes.body.updatedUser.local.firstName).to.equal('Achilles')
+  })
+
+  it('should upload a profile picture with status code 200', async () => {
+    const res = await agent.post('/login').send({
+      email: 'testuser@example.com',
+      password: 'testpassword12334343!'
+    })
+    expect(res.status).to.equal(200)
+
+    expect(res.headers['set-cookie']).to.be.an('array')
+    const cookie = res.headers['set-cookie'][0].split(';')[0]
+    expect(cookie.startsWith('user-token=')).to.be.true
+
+    const uploadRes = await agent.post(`/upload-profile-picture/${userId}`).attach('image', imageFilePath)
+
+    expect(uploadRes.status).to.equal(200)
+    expect(uploadRes.body.message).to.equal('Profile picture uploaded successfully.')
+  })
+
+  it('should change users passcode with status code 200', async () => {
+    const res = await agent.post('/login').send({
+      email: 'testuser@example.com',
+      password: 'testpassword12334343!'
+    })
+    expect(res.status).to.equal(200)
+
+    expect(res.headers['set-cookie']).to.be.an('array')
+    const cookie = res.headers['set-cookie'][0].split(';')[0]
+    expect(cookie.startsWith('user-token=')).to.be.true
+
+    const changePassRes = await agent.put('/changePassword').send({
+      email: 'testuser@example.com',
+      oldPassword: 'testpassword12334343!',
+      newPassword: 'Heyachilles123!'
+    })
+
+    expect(changePassRes.status).to.equal(200)
+    expect(changePassRes.body.message).to.equal('Password successfully reset')
+  })
+
+  it('should reset users password via email OTP with status code 200', async () => {
+    const res = await agent.post('/login').send({
+      email: 'testuser@example.com',
+      password: 'Heyachilles123!'
+    })
+    expect(res.status).to.equal(200)
+
+    expect(res.headers['set-cookie']).to.be.an('array')
+    const cookie = res.headers['set-cookie'][0].split(';')[0]
+    expect(cookie.startsWith('user-token=')).to.be.true
+
+    const resetPassRes = await agent.put('/resetpassword').send({
+      recipientEmail: 'testuser@example.com',
+      password: 'Heyachilles123!'
+    })
+
+    expect(resetPassRes.status).to.equal(200)
+  })
+
+  it('should delete a user by id with status code 200', async () => {
+    const res = await agent.post('/login').send({
+      email: 'testuser@example.com',
+      password: 'Heyachilles123!'
+    })
+    expect(res.status).to.equal(200)
+
+    expect(res.headers['set-cookie']).to.be.an('array')
+    const cookie = res.headers['set-cookie'][0].split(';')[0]
+    expect(cookie.startsWith('user-token=')).to.be.true
+
+    const deleteRes = await agent.delete(`/delete/${userId}`)
+
+    expect(deleteRes.status).to.equal(200)
+  })
+})

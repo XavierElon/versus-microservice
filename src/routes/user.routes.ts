@@ -4,6 +4,7 @@ import {
   ChangePassword,
   CreateUser,
   DeleteUserByEmail,
+  DeleteUserById,
   GetUser,
   GoogleAuthLoginAndSignup,
   LoginUser,
@@ -36,14 +37,11 @@ userRouter.post('/auth/firebase/google', GoogleAuthLoginAndSignup)
 // Update a user by ID
 userRouter.put('/update/:id', validateToken, UpdateUserById)
 
-// Get user local user profile picture
-userRouter.get('/profile-picture/:id', async (req, res) => {})
-
 // Update local  user profile pic by ID
-userRouter.post('/upload-profile-picture/:id', upload.single('image'), UploadProfilePictureById)
+userRouter.post('/upload-profile-picture/:id', validateToken, upload.single('image'), UploadProfilePictureById)
 
-// Delete user by email endpoint
-userRouter.delete('/delete/:email', validateToken, DeleteUserByEmail)
+// Delete user by id endpoint
+userRouter.delete('/delete/:id', validateToken, DeleteUserById)
 
 //Confirm the user has created an account
 userRouter.get('/validate-account-creation/:userID', ValidateAccountCreation)
