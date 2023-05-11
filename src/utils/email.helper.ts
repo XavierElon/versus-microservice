@@ -14,17 +14,22 @@ const GMAIL_PORT: number = parseInt(process.env.GMAIL_PORT)
 SEND GMAIL CONFIRMATION
 */
 export const sendConfirmationGmail = async (endUserEmail: string, confirmationLink: string): Promise<void> => {
-  const GmailTransporter = new CustomTransporter(GMAIL_SMTP, GMAIL_PORT, true, GMAIL_ACCOUNT, GMAIL_APP_PASSWORD)
+  try {
+    const GmailTransporter = new CustomTransporter(GMAIL_SMTP, GMAIL_PORT, true, GMAIL_ACCOUNT, GMAIL_APP_PASSWORD)
 
-  const mailOptions = new MailOptions(GMAIL_ACCOUNT, endUserEmail, confirmationLink)
+    const mailOptions = new MailOptions(GMAIL_ACCOUNT, endUserEmail, confirmationLink)
 
-  await GmailTransporter.sendMail(mailOptions)
+    await GmailTransporter.sendMail(mailOptions)
+  } catch (error) {
+    console.error('Failed to send confirmation email: ', error)
+    throw new Error(error)
+  }
 }
 
 /*
 CREATE CONFIRMATION LINK
 */
-export const createConfirmationLink = async (userData: typeof User, baseUrl: string): Promise<string> => {
+export const createConfirmationLink = (userData: typeof User, baseUrl: string): string => {
   const user = new User(userData)
   const confirmationPath = `/validate-account-creation/${user.id}?confirmed=true&token=${user.local.confirmationCode}`
   const confirmationUrl = new URL(confirmationPath, baseUrl)

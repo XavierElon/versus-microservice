@@ -4,8 +4,7 @@ import cookieParser from 'cookie-parser'
 import request from 'supertest'
 import express, { Express } from 'express'
 import { userRouter } from '../../src/routes/user.routes'
-import mongoose, { Model } from 'mongoose'
-import sinon from 'sinon'
+import mongoose from 'mongoose'
 import path from 'path'
 import supertest from 'supertest'
 import chai from 'chai'
@@ -13,7 +12,7 @@ import chaiHttp from 'chai-http'
 import { User } from '../../src/models/user.model'
 import { connectToDatabase } from '../../src/connections/mongodb'
 
-const FRONT_END_URL: string = process.env.FRONT_END_URL
+const FRONT_END_URL: string = process.env.FRONT_END_URL!
 chai.use(chaiHttp)
 const app: Express = express()
 app.use(express.json())
