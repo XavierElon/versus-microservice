@@ -6,7 +6,7 @@ import sinon from 'sinon'
 import { mockReq, mockRes } from 'sinon-express-mock'
 import nodemailer from 'nodemailer'
 import { User } from '../../src/models/user.model'
-import { DeleteUserById, GetUser, SendOTPEmail } from '../../src/controllers/user.controllers'
+import { DeleteUserByEmail, DeleteUserById, GetUser, SendOTPEmail } from '../../src/controllers/user.controllers'
 import * as userServices from '../../src/services/user.service'
 import { connectToDatabase } from '../../src/connections/mongodb'
 import sinonChai from 'sinon-chai'
@@ -82,7 +82,7 @@ describe('User service test suite', function () {
     expect(mockResponse.json.calledWith({ error: 'No user found' })).to.be.true
   })
 
-  it('should handle errors in DeleteUserById', async () => {
+  it('should handle errors in DeleteUserByEmail', async () => {
     const errorMessage = 'Database error'
 
     // Stub deleteUserById to throw an error
@@ -98,14 +98,11 @@ describe('User service test suite', function () {
     const res = mockRes()
 
     // Call the function with test data
-    await DeleteUserById(req, res)
+    await DeleteUserByEmail(req, res)
 
     // Assert that correct status was set and correct message was sent
     expect(res.status).to.have.been.calledWith(500)
-    expect(res.send).to.have.been.calledWith('Error deleting user')
-
-    // Restore the stub
-    deleteUserStub.restore()
+    expect(res.send).to.have.been.calledWith('Error deleting user by email')
   })
 
   it('should handle errors in DeleteUserById', async () => {
@@ -128,10 +125,7 @@ describe('User service test suite', function () {
 
     // Assert that correct status was set and correct message was sent
     expect(res.status).to.have.been.calledWith(500)
-    expect(res.send).to.have.been.calledWith('Error deleting user')
-
-    // Restore the stub
-    deleteUserStub.restore()
+    expect(res.send).to.have.been.calledWith('Error deleting user by id')
   })
 
   it('should respond with success when email is sent', async () => {

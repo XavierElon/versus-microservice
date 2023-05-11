@@ -43,6 +43,9 @@ userRouter.post('/upload-profile-picture/:id', validateToken, upload.single('ima
 // Delete user by id endpoint
 userRouter.delete('/delete/:id', validateToken, DeleteUserById)
 
+// Delete user by id endpoint
+userRouter.delete('/deletebyemail/:email', validateToken, DeleteUserByEmail)
+
 //Confirm the user has created an account
 userRouter.get('/validate-account-creation/:userID', ValidateAccountCreation)
 

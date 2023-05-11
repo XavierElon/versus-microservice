@@ -27,11 +27,13 @@ app.use(cookieParser())
 app.use('/', userRouter)
 const testDbUri: string = process.env.TEST_DB_URI!
 
-describe('User Controller', function () {
+describe('User Routes test suite', function () {
   const agent = supertest.agent(app) // Create an agent instance
   this.timeout(5000)
   let userId: string
   let confirmationCode
+  const badid: string = 'a'.repeat(28)
+  let email: string = 'testuser2@example.com'
   const imageFilePath = path.join(__dirname, 'uploads', '1682955817554.jpg')
 
   before(async () => {
@@ -53,7 +55,7 @@ describe('User Controller', function () {
     }
   })
 
-  it('should add 2 newsletter users and return 201 status code for both', async () => {
+  it('should add 2 users and return 201 status code for both', async () => {
     const res = await request(app)
       .post('/signup')
       .send({
@@ -160,6 +162,23 @@ describe('User Controller', function () {
     expect(res.body.message).to.equal('Google user logged in')
   })
 
+  it('should not login a google user due to missing firebaseUid and return 400 status code', async () => {
+    const res = await request(app)
+      .post('/auth/firebase/google')
+      .send({
+        firebaseGoogle: {
+          accessToken: '',
+          displayName: 'Elon Musk',
+          email: 'elonmusk@gmail.com',
+          photoUrl: '',
+          refreshToken: ''
+        }
+      })
+
+    expect(res.status).to.equal(400)
+    expect(res.body.message).to.equal('Missing firebaseUid')
+  })
+
   it('should get google user and return a user', async () => {
     const id = 'a'.repeat(28)
     const response = await getGoogleUser(id)
@@ -178,6 +197,30 @@ describe('User Controller', function () {
         },
         provider: 'local'
       })
+    expect(res.status).to.equal(400)
+  })
+
+  it('should login a user within 200 status code', async () => {
+    const res = await request(app).post('/login').send({
+      email: 'testuser@example.com',
+      password: 'testpassword12334343!'
+    })
+    expect(res.status).to.equal(200)
+  })
+
+  it('should not login a user due to bad email within 401 status code', async () => {
+    const res = await request(app).post('/login').send({
+      email: 'testuse3r@example.com',
+      password: 'testpassword12334343!'
+    })
+    expect(res.status).to.equal(401)
+  })
+
+  it('should not login a user due to bad password within 400 status code', async () => {
+    const res = await request(app).post('/login').send({
+      email: 'testuser@example.com',
+      password: 'tespassword12334343!'
+    })
     expect(res.status).to.equal(400)
   })
 
@@ -249,6 +292,24 @@ describe('User Controller', function () {
     expect(updateRes.body.updatedUser.local.firstName).to.equal('Achilles')
   })
 
+  it('should not update because user id does not exist with 500 status code', async () => {
+    const res = await agent.post('/login').send({
+      email: 'testuser@example.com',
+      password: 'testpassword12334343!'
+    })
+    expect(res.status).to.equal(200)
+
+    expect(res.headers['set-cookie']).to.be.an('array')
+    const cookie = res.headers['set-cookie'][0].split(';')[0]
+    expect(cookie.startsWith('user-token=')).to.be.true
+
+    const updateRes = await agent.put(`/update/${badid}`).send({
+      'local.firstName': 'Achilles'
+    })
+
+    expect(updateRes.status).to.equal(500)
+  })
+
   it('should upload a profile picture with status code 200', async () => {
     const res = await agent.post('/login').send({
       email: 'testuser@example.com',
@@ -306,6 +367,22 @@ describe('User Controller', function () {
     expect(resetPassRes.status).to.equal(200)
   })
 
+  it('should not delete a user by email with status code 404', async () => {
+    const res = await agent.post('/login').send({
+      email: 'testuser@example.com',
+      password: 'Heyachilles123!'
+    })
+    expect(res.status).to.equal(200)
+
+    expect(res.headers['set-cookie']).to.be.an('array')
+    const cookie = res.headers['set-cookie'][0].split(';')[0]
+    expect(cookie.startsWith('user-token=')).to.be.true
+
+    const deleteRes = await agent.delete(`/deletebyemail/bademail`)
+
+    expect(deleteRes.status).to.equal(404)
+  })
+
   it('should delete a user by id with status code 200', async () => {
     const res = await agent.post('/login').send({
       email: 'testuser@example.com',
@@ -318,6 +395,22 @@ describe('User Controller', function () {
     expect(cookie.startsWith('user-token=')).to.be.true
 
     const deleteRes = await agent.delete(`/delete/${userId}`)
+
+    expect(deleteRes.status).to.equal(200)
+  })
+
+  it('should delete a user by email with status code 200', async () => {
+    const res = await agent.post('/login').send({
+      email: 'testuser2@example.com',
+      password: 'testpassword12334343!'
+    })
+    expect(res.status).to.equal(200)
+
+    expect(res.headers['set-cookie']).to.be.an('array')
+    const cookie = res.headers['set-cookie'][0].split(';')[0]
+    expect(cookie.startsWith('user-token=')).to.be.true
+
+    const deleteRes = await agent.delete(`/deletebyemail/${email}`)
 
     expect(deleteRes.status).to.equal(200)
   })

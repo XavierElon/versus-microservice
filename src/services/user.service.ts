@@ -123,7 +123,7 @@ export const updateUserById = async (id: string, update: Partial<>): Promise<typ
     return updatedUser
   } catch (error) {
     console.error(`Error updating user: ${error}`)
-    return null
+    throw new Error('Error updating user by id')
   }
 }
 

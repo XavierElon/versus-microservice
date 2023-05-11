@@ -44,11 +44,9 @@ export const CreateUser = async (req: Request, res: Response) => {
   let googleFirebaseUserExists: any = await checkIfGoogleFirebaseUserExists(localEmail)
 
   if (userExists) {
-    res.status(400).json({ error: 'Local user with that email already exists' })
-    return
+    return res.status(400).json({ error: 'Local user with that email already exists' })
   } else if (googleFirebaseUserExists) {
-    res.status(400).json({ error: 'Google auth user already exists with that email' })
-    return
+    return res.status(400).json({ error: 'Google auth user already exists with that email' })
   } else {
     createUser(userData)
       .then((result) => {
@@ -68,8 +66,7 @@ export const CreateUser = async (req: Request, res: Response) => {
       })
       .catch((error) => {
         console.log('Error creating user: ', error)
-        res.status(500).json({ message: 'Error creating user', error })
-        return
+        return res.status(500).json({ message: 'Error creating user', error })
       })
   }
 }
@@ -80,8 +77,7 @@ export const LoginUser = async (req: Request, res: Response) => {
 
   if (!user) {
     console.log('Email does not exist')
-    res.status(401).json({ error: 'Email does not exist.' })
-    return
+    return res.status(401).json({ error: 'Email does not exist.' })
   }
 
   const hashedPassword = user?.local.password
@@ -185,11 +181,7 @@ export const UpdateUserById = async (req: Request, res: Response) => {
 
     // Find the user by ID and update its properties
     const updatedUser = await updateUserById(id, update)
-    if (!updatedUser) {
-      return res.status(404).send({ error: 'User not found' })
-    } else {
-      return res.status(200).send({ updatedUser, message: 'User updated' })
-    }
+    return res.status(200).send({ updatedUser, message: 'User updated' })
   } catch (error) {
     console.error(`Error updating user: ${error}`)
     return res.status(500).send({ error: 'Server error' })
@@ -198,10 +190,6 @@ export const UpdateUserById = async (req: Request, res: Response) => {
 
 export const UploadProfilePictureById = async (req: Request, res: Response) => {
   const user = await User.findById(req.params.id)
-
-  if (!user) {
-    return res.status(404).json({ error: 'User not found' })
-  }
   const data = fs.readFileSync(req.file.path)
   const contentType = req.file.mimetype
 
@@ -220,13 +208,13 @@ export const DeleteUserByEmail = async (req: Request, res: Response) => {
   const email = req.params.email
   try {
     const deletedUser = await deleteUserByEmail(email)
-    if (!deletedUser) {
+    if (!deletedUser || Object.keys(deletedUser).length === 0) {
       return res.status(404).send(`User with email ${email} not found`)
     }
     return res.send(`Deleted user: ${deletedUser}`)
   } catch (err) {
     console.error(`Error deleting user with email ${email}:`, err)
-    return res.status(500).send('Error deleting user')
+    return res.status(500).send('Error deleting user by email')
   }
 }
 
@@ -234,13 +222,10 @@ export const DeleteUserById = async (req: Request, res: Response) => {
   const id = req.params.id
   try {
     const deletedUser = await deleteUserById(id)
-    if (!deletedUser) {
-      return res.status(404).send(`User not found`)
-    }
     return res.send(`Deleted user: ${deletedUser}`)
   } catch (err) {
     console.error(`Error deleting user with id ${id}:`, err)
-    return res.status(500).send('Error deleting user')
+    return res.status(500).send('Error deleting user by id')
   }
 }
 

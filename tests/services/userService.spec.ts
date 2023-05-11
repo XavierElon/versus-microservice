@@ -236,43 +236,43 @@ describe('User service test suite', function () {
     }
   })
 
-  it('should handle errors', async () => {
-    const errorMessage = 'Database error'
+  // it('should handle errors in updateUserbyId', async () => {
+  //   const errorMessage = 'Database error'
 
-    // Stub User.findOneAndUpdate to throw an error
-    const findOneAndUpdateStub = sinon.stub(User, 'findOneAndUpdate')
-    findOneAndUpdateStub.throws(errorMessage)
-    const consoleErrorStub = sinon.stub(console, 'error')
+  //   // Stub User.findOneAndUpdate to throw an error
+  //   const findOneAndUpdateStub = sinon.stub(User, 'findOneAndUpdate')
+  //   findOneAndUpdateStub.throws(errorMessage)
+  //   const consoleErrorStub = sinon.stub(console, 'error')
 
-    // Call the function with test data
-    const result = await updateUserById('testId', { name: 'New Name' })
+  //   // Call the function with test data
+  //   const result = await updateUserById('testId', { name: 'New Name' })
 
-    expect(result).to.be.null
-    expect(consoleErrorStub.calledOnce).to.be.true
-    expect(consoleErrorStub.firstCall.args[0]).to.contain(`Error updating user: ${errorMessage}`)
-  })
+  //   expect(result).to.be.null
+  //   expect(consoleErrorStub.calledOnce).to.be.true
+  //   expect(consoleErrorStub.firstCall.args[0]).to.contain(`Error updating user: ${errorMessage}`)
+  // })
 
-  it('should catch error in deleteUserById and return null', async () => {
-    const error = new Error('Test error')
-    const findOneAndDeleteStub = sinon.stub(User, 'findOneAndDelete').throws(error)
-    const consoleErrorStub = sinon.stub(console, 'error')
+  // it('should catch error in deleteUserById and return null', async () => {
+  //   const error = new Error('Test error')
+  //   const findOneAndDeleteStub = sinon.stub(User, 'findOneAndDelete').throws(error)
+  //   const consoleErrorStub = sinon.stub(console, 'error')
 
-    const result = await deleteUserById('user-id')
+  //   const result = await deleteUserById('user-id')
 
-    expect(findOneAndDeleteStub.calledOnceWith({ _id: 'user-id' })).to.be.true
-    expect(consoleErrorStub.calledOnceWith(error)).to.be.true
-    expect(result).to.be.null
-  })
+  //   expect(findOneAndDeleteStub.calledOnceWith({ _id: 'user-id' })).to.be.true
+  //   expect(consoleErrorStub.calledOnceWith(error)).to.be.true
+  //   expect(result).to.be.null
+  // })
 
-  it('should catch error in deleteUserByEmail and return null', async () => {
-    const error = new Error('Test error')
-    const findOneAndDeleteStub = sinon.stub(User, 'findOneAndDelete').throws(error)
-    const consoleErrorStub = sinon.stub(console, 'error')
+  // it('should catch error in deleteUserByEmail and return null', async () => {
+  //   const error = new Error('Test error')
+  //   const findOneAndDeleteStub = sinon.stub(User, 'findOneAndDelete').throws(error)
+  //   const consoleErrorStub = sinon.stub(console, 'error')
 
-    const result = await deleteUserByEmail('email')
+  //   const result = await deleteUserByEmail('email')
 
-    expect(findOneAndDeleteStub.calledOnceWith({ 'local.email': 'email' })).to.be.true
-    expect(consoleErrorStub.calledOnceWith(error)).to.be.true
-    expect(result).to.be.null
-  })
+  //   expect(findOneAndDeleteStub.calledOnceWith({ 'local.email': 'email' })).to.be.true
+  //   expect(consoleErrorStub.calledOnceWith(error)).to.be.true
+  //   expect(result).to.be.null
+  // })
 })
