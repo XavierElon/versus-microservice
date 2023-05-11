@@ -142,7 +142,7 @@ export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
       })
       await user.save()
       const token = createGoogleAuthToken(user)
-      res.cookie('access-token', token, {
+      res.cookie('user-token', token, {
         maxAge: 60 * 60 * 24 * 1000,
         httpOnly: true,
         secure: true
@@ -157,8 +157,9 @@ export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
         }
       })
     } else {
+      console.log('here')
       const token = createGoogleAuthToken(user)
-      res.cookie('access-token', token, {
+      res.cookie('user-token', token, {
         maxAge: 60 * 60 * 24 * 1000,
         httpOnly: true
       })
@@ -169,7 +170,8 @@ export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
           firebaseUid: user.firebaseGoogle.firebaseUid,
           email,
           provider: user.provider
-        }
+        },
+        message: 'Google user logged in'
       })
     }
   } catch (error) {

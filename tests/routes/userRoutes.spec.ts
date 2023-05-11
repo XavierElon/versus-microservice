@@ -52,6 +52,7 @@ describe('User Controller', function () {
       console.log('Error in after hook: ' + error)
     }
   })
+
   it('should add 2 newsletter users and return 201 status code for both', async () => {
     const res = await request(app)
       .post('/signup')
@@ -77,8 +78,49 @@ describe('User Controller', function () {
         provider: 'local'
       })
     userId = res.body.user._id
-    console.log(userId)
     expect(res2.status).to.equal(201)
+  })
+
+  it('should add a google user and return 200 status code', async () => {
+    const id = 'a'.repeat(28)
+    const res = await request(app)
+      .post('/auth/firebase/google')
+      .send({
+        firebaseGoogle: {
+          accessToken: '',
+          displayName: 'Elon Musk',
+          email: 'elonmusk@gmail.com',
+          firebaseUid: id,
+          photoUrl: '',
+          refreshToken: ''
+        }
+      })
+
+    expect(res.status).to.equal(200)
+
+    expect(res.headers['set-cookie']).to.be.an('array')
+    const cookie = res.headers['set-cookie'][0].split(';')[0]
+    expect(cookie.startsWith('user-token=')).to.be.true
+  })
+
+  it('should login a google user and return 200 status code', async () => {
+    const id = 'a'.repeat(28)
+    const res = await request(app)
+      .post('/auth/firebase/google')
+      .send({
+        firebaseGoogle: {
+          accessToken: '',
+          displayName: 'Elon Musk',
+          email: 'elonmusk@gmail.com',
+          firebaseUid: id,
+          photoUrl: '',
+          refreshToken: ''
+        }
+      })
+
+    expect(res.status).to.equal(200)
+    console.log(res)
+    expect(res.body.message).to.equal('Google user logged in')
   })
 
   it('should login a user within 200 status code', async () => {
@@ -139,7 +181,6 @@ describe('User Controller', function () {
     })
     expect(res.status).to.equal(200)
 
-    // Make sure the cookie is set
     expect(res.headers['set-cookie']).to.be.an('array')
     const cookie = res.headers['set-cookie'][0].split(';')[0]
     expect(cookie.startsWith('user-token=')).to.be.true
@@ -159,7 +200,6 @@ describe('User Controller', function () {
     })
     expect(res.status).to.equal(200)
 
-    // Make sure the cookie is set
     expect(res.headers['set-cookie']).to.be.an('array')
     const cookie = res.headers['set-cookie'][0].split(';')[0]
     expect(cookie.startsWith('user-token=')).to.be.true
@@ -177,7 +217,6 @@ describe('User Controller', function () {
     })
     expect(res.status).to.equal(200)
 
-    // Make sure the cookie is set
     expect(res.headers['set-cookie']).to.be.an('array')
     const cookie = res.headers['set-cookie'][0].split(';')[0]
     expect(cookie.startsWith('user-token=')).to.be.true
@@ -199,7 +238,6 @@ describe('User Controller', function () {
     })
     expect(res.status).to.equal(200)
 
-    // Make sure the cookie is set
     expect(res.headers['set-cookie']).to.be.an('array')
     const cookie = res.headers['set-cookie'][0].split(';')[0]
     expect(cookie.startsWith('user-token=')).to.be.true
@@ -219,7 +257,6 @@ describe('User Controller', function () {
     })
     expect(res.status).to.equal(200)
 
-    // Make sure the cookie is set
     expect(res.headers['set-cookie']).to.be.an('array')
     const cookie = res.headers['set-cookie'][0].split(';')[0]
     expect(cookie.startsWith('user-token=')).to.be.true

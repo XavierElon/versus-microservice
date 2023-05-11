@@ -5,7 +5,6 @@ import * as jwtWrapper from '../middleware/jwtWrapper'
 dotenv.config()
 
 export const createLocalToken = (user) => {
-  console.log(user)
   if (!user || Object.keys(user).length === 0) {
     return null
   }

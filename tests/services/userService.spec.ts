@@ -24,8 +24,10 @@ import { connectToDatabase } from '../../src/connections/mongodb'
 const testDbUri: string = process.env.TEST_DB_URI!
 
 describe('User service test suite', function () {
-  let UserModel: Model<Document & typeof User> = mongoose.model('User')
-  let testUser = new UserModel({
+  const UserModel: Model<Document & typeof User> = mongoose.model('User')
+  const dateString = '2023-05-08T00:00:00.000Z'
+  const date = new Date(dateString)
+  const testUser = new UserModel({
     local: {
       email: 'testuser@gmail.com',
       password: 'Testpassword123!',
@@ -35,7 +37,7 @@ describe('User service test suite', function () {
     provider: 'local'
   })
 
-  let testUser2 = new UserModel({
+  const testUser2 = new UserModel({
     local: {
       email: 'testuser2@gmail.com',
       password: 'Testpassword123!',
@@ -44,10 +46,7 @@ describe('User service test suite', function () {
     },
     provider: 'local'
   })
-  const dateString = '2023-05-08T00:00:00.000Z'
-  const date = new Date(dateString)
-
-  let testUser3 = new UserModel({
+  const testUser3 = new UserModel({
     local: {
       email: 'testuser3@gmail.com',
       password: 'Testpassword123!',
@@ -57,6 +56,7 @@ describe('User service test suite', function () {
     },
     provider: 'local'
   })
+
   const userEmail: string = 'testuser@gmail.com'
   let userId: string
   let confirmationCode
@@ -84,23 +84,19 @@ describe('User service test suite', function () {
 
   it('should create 2 new users and expect first name to equal John adn email to equal testuser2@gmail.com', async () => {
     const result = await createUser(testUser)
-    console.log(result)
     confirmationCode = result.local.confirmationCode
     expect(result.local.firstName).to.equal('John')
     const result2 = await createUser(testUser2)
-    console.log(result2)
     expect(result2.local.email).to.equal('testuser2@gmail.com')
   })
 
   it('should return all newsletter users (2)', async () => {
     const result = await getAllUsers()
-    console.log(result)
     expect(result.length).to.equal(2)
   })
 
   it('should return a single user by email', async () => {
     const res = await getUserByEmail(userEmail)
-    console.log(res)
     userId = res._id
     expect(res.local.email).to.equal(userEmail)
   })
@@ -132,13 +128,11 @@ describe('User service test suite', function () {
 
   it('should update a user by id last name to Musk', async () => {
     const res = await updateUserById(userId, { 'local.lastName': 'Musk' })
-    console.log(res.local.lastName)
     expect(res.local.lastName).to.equal('Musk')
   })
 
   it('should update a user by id first name to Achilles', async () => {
     const res = await updateUserById(userId, { 'local.firstName': 'Achilles' })
-    console.log(res.local.firstName)
     expect(res.local.firstName).to.equal('Achilles')
   })
 

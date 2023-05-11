@@ -44,7 +44,7 @@ This function gets a local user using the mongo id
 */
 export const getLocalUser = async (id: any) => {
   const user = await User.findOne({ _id: id })
-  return user
+  return user || null
 }
 
 /*
@@ -53,7 +53,7 @@ This function gets a Google auth user using the firebase id
 */
 export const getGoogleUser = async (id: any) => {
   const user = await User.findOne({ 'firebaseGoogle.firebaseUid': id })
-  return user
+  return user || null
 }
 
 /*
@@ -61,7 +61,6 @@ CREATE USER
 This function creates a new user using the userSchema and saves it to the database
 */
 export const createUser = async (userData: typeof User): Promise<any> => {
-  console.log(userData)
   const { password } = userData.local
 
   const hash = await bcrypt.hash(password, 10)
