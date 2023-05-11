@@ -82,6 +82,10 @@ describe('User service test suite', function () {
     }
   })
 
+  afterEach(() => {
+    sinon.restore()
+  })
+
   it('should create 2 new users and expect first name to equal John adn email to equal testuser2@gmail.com', async () => {
     const result = await createUser(testUser)
     confirmationCode = result.local.confirmationCode
@@ -166,9 +170,6 @@ describe('User service test suite', function () {
       expect(consoleErrorStub.calledOnce).to.be.true
       expect(err.message).to.equal('No users found')
     }
-
-    findStub.restore()
-    consoleErrorStub.restore()
   })
 
   it('should catch error in getUserByEmail and throw an error', async () => {
@@ -185,9 +186,6 @@ describe('User service test suite', function () {
       expect(consoleErrorStub.calledOnce).to.be.true
       expect(err.message).to.equal('No user found with that email')
     }
-
-    findOneStub.restore()
-    consoleErrorStub.restore()
   })
 
   it('should catch error in getUserByID and throw an error', async () => {
@@ -204,9 +202,6 @@ describe('User service test suite', function () {
       expect(consoleErrorStub.calledOnce).to.be.true
       expect(err.message).to.equal('No user found with that id')
     }
-
-    findByIdStub.restore()
-    consoleErrorStub.restore()
   })
 
   it('should catch error in getLocalUser and throw an error', async () => {
@@ -223,9 +218,6 @@ describe('User service test suite', function () {
       expect(consoleErrorStub.calledOnce).to.be.true
       expect(err.message).to.equal('No local user found with that id')
     }
-
-    findOneStub.restore()
-    consoleErrorStub.restore()
   })
 
   it('should catch error in getGoogleUser and throw an error', async () => {
@@ -242,9 +234,22 @@ describe('User service test suite', function () {
       expect(consoleErrorStub.calledOnce).to.be.true
       expect(err.message).to.equal('No google auth user found with that id')
     }
+  })
 
-    findOneStub.restore()
-    consoleErrorStub.restore()
+  it('should handle errors', async () => {
+    const errorMessage = 'Database error'
+
+    // Stub User.findOneAndUpdate to throw an error
+    const findOneAndUpdateStub = sinon.stub(User, 'findOneAndUpdate')
+    findOneAndUpdateStub.throws(errorMessage)
+    const consoleErrorStub = sinon.stub(console, 'error')
+
+    // Call the function with test data
+    const result = await updateUserById('testId', { name: 'New Name' })
+
+    expect(result).to.be.null
+    expect(consoleErrorStub.calledOnce).to.be.true
+    expect(consoleErrorStub.firstCall.args[0]).to.contain(`Error updating user: ${errorMessage}`)
   })
 
   it('should catch error in deleteUserById and return null', async () => {
@@ -257,9 +262,6 @@ describe('User service test suite', function () {
     expect(findOneAndDeleteStub.calledOnceWith({ _id: 'user-id' })).to.be.true
     expect(consoleErrorStub.calledOnceWith(error)).to.be.true
     expect(result).to.be.null
-
-    findOneAndDeleteStub.restore()
-    consoleErrorStub.restore()
   })
 
   it('should catch error in deleteUserByEmail and return null', async () => {
@@ -272,8 +274,5 @@ describe('User service test suite', function () {
     expect(findOneAndDeleteStub.calledOnceWith({ 'local.email': 'email' })).to.be.true
     expect(consoleErrorStub.calledOnceWith(error)).to.be.true
     expect(result).to.be.null
-
-    findOneAndDeleteStub.restore()
-    consoleErrorStub.restore()
   })
 })

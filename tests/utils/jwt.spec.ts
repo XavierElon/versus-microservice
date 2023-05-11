@@ -116,6 +116,8 @@ describe('JWT utils suite', function () {
     expect(mockResponse.status.calledOnceWith(400)).to.be.true
     expect(mockResponse.json.calledOnceWith({ error: 'User not authenticated' })).to.be.true
     expect(mockNext.called).to.be.false
+
+    sinon.restore()
   })
 
   it('should handle the case where the token is invalid', async () => {
