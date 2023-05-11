@@ -83,22 +83,9 @@ export const createUser = async (userData: typeof User): Promise<any> => {
     if (user._id) {
       await User.deleteOne({ _id: user._id }) // Rollback by deleting the saved user if it was because the email
     }
-    throw error
+    throw new Error('Error creating new user')
   }
 }
-
-/*
-// VERIFY USER
-// check the username 
-// */
-// export const verifyUser = async (email: string) => {
-//   const existingUser = await User.findOne({ 'local.email': email })
-//   console.log(existingUser)
-//   if (existingUser && existingUser.active === true) {
-//     return true
-//   }
-//   return false
-// }
 
 /*
 CHECK IF USER EXISTS 
@@ -118,16 +105,6 @@ export const checkIfGoogleFirebaseUserExists = async (email: string) => {
     return true
   }
   return false
-}
-
-export const updateUserByEmail = async (email: string, update: Partial<any>): Promise<any | null> => {
-  try {
-    const updatedUser = await User.findOneAndUpdate({ 'local.email': email }, update, { new: true })
-    return updatedUser
-  } catch (error) {
-    console.error(`Error updating user: ${error}`)
-    return null
-  }
 }
 
 export const updateUserById = async (id: string, update: Partial<>): Promise<typeof any | null> => {

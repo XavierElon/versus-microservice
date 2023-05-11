@@ -5,7 +5,6 @@ import { User } from '../models/user.model'
 import {
   createUser,
   checkIfUserExists,
-  updateUserByEmail,
   updateUserById,
   deleteUserByEmail,
   confirmUser,

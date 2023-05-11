@@ -82,6 +82,38 @@ describe('User Controller', function () {
     expect(res2.status).to.equal(201)
   })
 
+  it('should not add duplicate local user and return 400 status code for both', async () => {
+    const res = await request(app)
+      .post('/signup')
+      .send({
+        local: {
+          email: 'testuser@example.com',
+          password: 'testpassword12334343!',
+          firstName: 'John',
+          lastName: 'Doe'
+        },
+        provider: 'local'
+      })
+
+    expect(res.status).to.equal(400)
+  })
+
+  it('should not add duplicate google user and return 400 status code for both', async () => {
+    const res = await request(app)
+      .post('/signup')
+      .send({
+        local: {
+          email: 'testuser@example.com',
+          password: 'testpassword12334343!',
+          firstName: 'John',
+          lastName: 'Doe'
+        },
+        provider: 'local'
+      })
+
+    expect(res.status).to.equal(400)
+  })
+
   it('should validate account creation and return 201 status code', async () => {
     const res = await request(app).get(`/validate-account-creation/${userId}`)
 
@@ -142,6 +174,22 @@ describe('User Controller', function () {
 
     expect(res.status).to.equal(200)
     expect(res.body.message).to.equal('Google user logged in')
+  })
+
+  it('should not add duplicate google user and return 400 status code for both', async () => {
+    const res = await request(app)
+      .post('/signup')
+      .send({
+        local: {
+          email: 'elonmusk@gmail.com',
+          password: 'testpassword12334343!',
+          firstName: 'John',
+          lastName: 'Doe'
+        },
+        provider: 'local'
+      })
+    console.log(res)
+    expect(res.status).to.equal(400)
   })
 
   it('should login a user within 200 status code', async () => {
