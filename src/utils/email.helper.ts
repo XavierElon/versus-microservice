@@ -85,7 +85,6 @@ export const sendOTPEmail = (OTP, recipientEmail) => {
     }
     transporter.sendMail(mail_configs, (error, info) => {
       if (error) {
-        console.log(error)
         return reject({ message: 'An error has occurred' })
       }
       return resolve({ message: 'Email sent successfully' })

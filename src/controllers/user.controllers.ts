@@ -289,6 +289,11 @@ export const ResetPassword = async (req: Request, res: Response) => {
 export const SendOTPEmail = async (req: Request, res: Response) => {
   const { OTP, recipientEmail } = req.body
   sendOTPEmail(OTP, recipientEmail)
-    .then((response: any) => res.status(200).send({ message: 'Email successfully sent.' }))
-    .catch((error) => res.status(500).send(error.message))
+    .then((response: any) => {
+      res.status(200)
+      res.send({ message: 'Email successfully sent.' })
+    })
+    .catch((error) => {
+      res.status(500).send(error.message)
+    })
 }

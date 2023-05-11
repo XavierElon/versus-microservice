@@ -21,6 +21,10 @@ describe('JWT utils suite', function () {
     }
   }
 
+  afterEach(() => {
+    sinon.restore()
+  })
+
   it('should return a local access token', () => {
     const accessToken = createLocalToken(localUser)
     expect(accessToken.length).to.equal(164)
@@ -66,8 +70,6 @@ describe('JWT utils suite', function () {
     expect(mockNext.calledOnce).to.be.true
     expect(mockRequest.user).to.deep.equal(validToken)
     expect(mockRequest.authenticated).to.be.true
-
-    sinon.restore()
   })
 
   it('should respond with an error when the token is invalid', async () => {
@@ -88,13 +90,10 @@ describe('JWT utils suite', function () {
 
     sinon.stub(jwtWrapper, 'verify').throws(new Error('Invalid token'))
 
-    const res = await validateToken(mockRequest, mockResponse, mockNext)
-    console.log(res)
+    await validateToken(mockRequest, mockResponse, mockNext)
 
     expect(mockResponse.status.calledOnceWith(400)).to.be.true
     expect(mockNext.called).to.be.false
-
-    sinon.restore()
   })
 
   it('should respond with an error when the user-token cookie is not present', async () => {
@@ -116,8 +115,6 @@ describe('JWT utils suite', function () {
     expect(mockResponse.status.calledOnceWith(400)).to.be.true
     expect(mockResponse.json.calledOnceWith({ error: 'User not authenticated' })).to.be.true
     expect(mockNext.called).to.be.false
-
-    sinon.restore()
   })
 
   it('should handle the case where the token is invalid', async () => {
@@ -142,10 +139,8 @@ describe('JWT utils suite', function () {
 
     await validateToken(mockRequest, mockResponse, mockNext)
 
-    expect(mockNext.called).to.be.false // Ensure next middleware is not called
-    expect(mockResponse.status.calledWith(400)).to.be.true // Check for the correct status
-    expect(mockResponse.json.calledWith({ error: 'Invalid token' })).to.be.true // Check for the correct error message
-
-    sinon.restore() // Restore the original function
+    expect(mockNext.called).to.be.false
+    expect(mockResponse.status.calledWith(400)).to.be.true
+    expect(mockResponse.json.calledWith({ error: 'Invalid token' })).to.be.true
   })
 })

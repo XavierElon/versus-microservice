@@ -127,16 +127,12 @@ export const updateUserById = async (id: string, update: Partial<>): Promise<typ
   }
 }
 
-/*
-DELETE USER
-*/
 export const deleteUserByEmail = async (email: string): Promise<typeof any | null> => {
   try {
     const deletedUser = await User.findOneAndDelete({ 'local.email': email })
     return deletedUser
   } catch (err) {
-    console.error(err)
-    return null
+    throw new Error('Error deletig user by email in services')
   }
 }
 
@@ -145,8 +141,7 @@ export const deleteUserById = async (id: string): Promise<typeof any | null> => 
     const deletedUser = await User.findOneAndDelete({ _id: id })
     return deletedUser
   } catch (err) {
-    console.error(err)
-    return null
+    throw new Error('Error deletig user by Id in services')
   }
 }
 
