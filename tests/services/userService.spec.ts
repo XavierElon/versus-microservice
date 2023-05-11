@@ -151,7 +151,26 @@ describe('User service test suite', function () {
     expect(allUsers.length).to.equal(0)
   })
 
-  it('should catch error in deleUserById and return null', async () => {
+  it('should catch error in getAllUsers and throw an error', async () => {
+    const error = new Error('Test error')
+    const findStub = sinon.stub(User, 'find').throws(error)
+    const consoleErrorStub = sinon.stub(console, 'error')
+
+    try {
+      await getAllUsers()
+      // If the function doesn't throw an error, fail the test
+      expect.fail('No error thrown')
+    } catch (err) {
+      expect(findStub.calledOnce).to.be.true
+      expect(consoleErrorStub.calledOnce).to.be.true
+      expect(err.message).to.equal('No users found')
+    }
+
+    findStub.restore()
+    consoleErrorStub.restore()
+  })
+
+  it('should catch error in deleteUserById and return null', async () => {
     const error = new Error('Test error')
     const findOneAndDeleteStub = sinon.stub(User, 'findOneAndDelete').throws(error)
     const consoleErrorStub = sinon.stub(console, 'error')
