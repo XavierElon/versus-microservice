@@ -69,4 +69,81 @@ describe('JWT utils suite', function () {
 
     sinon.restore()
   })
+
+  it('should respond with an error when the token is invalid', async () => {
+    const mockRequest = {
+      cookies: {
+        'user-token': 'testToken'
+      },
+      authenticated: false,
+      user: ''
+    }
+
+    const mockResponse = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub().returnsThis()
+    }
+
+    const mockNext = sinon.stub()
+
+    sinon.stub(jwtWrapper, 'verify').throws(new Error('Invalid token'))
+
+    const res = await validateToken(mockRequest, mockResponse, mockNext)
+    console.log(res)
+
+    expect(mockResponse.status.calledOnceWith(400)).to.be.true
+    expect(mockNext.called).to.be.false
+
+    sinon.restore()
+  })
+
+  it('should respond with an error when the user-token cookie is not present', async () => {
+    const mockRequest = {
+      cookies: {},
+      authenticated: false,
+      user: ''
+    }
+
+    const mockResponse = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub().returnsThis()
+    }
+
+    const mockNext = sinon.stub()
+
+    await validateToken(mockRequest, mockResponse, mockNext)
+
+    expect(mockResponse.status.calledOnceWith(400)).to.be.true
+    expect(mockResponse.json.calledOnceWith({ error: 'User not authenticated' })).to.be.true
+    expect(mockNext.called).to.be.false
+  })
+
+  it('should handle the case where the token is invalid', async () => {
+    const invalidToken = null
+
+    const mockRequest = {
+      cookies: {
+        'user-token': 'testToken'
+      },
+      authenticated: false,
+      user: ''
+    }
+
+    const mockResponse = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.stub().returnsThis()
+    }
+
+    const mockNext = sinon.stub()
+
+    sinon.stub(jwtWrapper, 'verify').returns(invalidToken)
+
+    await validateToken(mockRequest, mockResponse, mockNext)
+
+    expect(mockNext.called).to.be.false // Ensure next middleware is not called
+    expect(mockResponse.status.calledWith(400)).to.be.true // Check for the correct status
+    expect(mockResponse.json.calledWith({ error: 'Invalid token' })).to.be.true // Check for the correct error message
+
+    sinon.restore() // Restore the original function
+  })
 })

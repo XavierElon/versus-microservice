@@ -28,12 +28,13 @@ export const validateToken = (req, res, next) => {
   if (!accessToken) return res.status(400).json({ error: 'User not authenticated' })
   try {
     const validToken = jwtWrapper.verify(accessToken, process.env.JWT_SECRET)
-    console.log(validToken)
 
     if (validToken) {
       req.user = validToken
       req.authenticated = true
       return next()
+    } else {
+      return res.status(400).json({ error: 'Invalid token' })
     }
   } catch (err) {
     console.log('Error in validateToken: ' + err)
