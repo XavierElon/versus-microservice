@@ -188,9 +188,9 @@ export const deleteUnconfirmedUsers = async (): Promise<void> => {
 /*  Find the user with the provided confirmation code */
 export const confirmUser = async (confirmationCode: string) => {
   const user = await User.findOne({ 'local.confirmationCode': confirmationCode }).exec()
-  if (!user) {
+  if (!user || Object.keys(user).length === 0) {
     console.log('No user found')
-    return null
+    throw new Error('No user found')
   }
   user.local.active = true
   user.local.confirmationTokenExpirationTime = undefined

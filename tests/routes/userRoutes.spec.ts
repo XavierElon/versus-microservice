@@ -31,8 +31,8 @@ describe('User Controller', function () {
   const agent = supertest.agent(app) // Create an agent instance
   this.timeout(5000)
   let userId: string
+  let confirmationCode
   const imageFilePath = path.join(__dirname, 'uploads', '1682955817554.jpg')
-  console.log(imageFilePath)
 
   before(async () => {
     try {
@@ -78,7 +78,29 @@ describe('User Controller', function () {
         provider: 'local'
       })
     userId = res.body.user._id
+    confirmationCode = res.body.user.local.confirmationCode
     expect(res2.status).to.equal(201)
+  })
+
+  it('should validate account creation and return 201 status code', async () => {
+    const res = await request(app).get(`/validate-account-creation/${userId}`)
+
+    expect(res.status).to.equal(201)
+    expect(res.body.message).to.equal('Your account has been created. Please check your email to confirm your account.')
+  })
+
+  it('should validate account creation and return 200 status code', async () => {
+    const res = await request(app).get(`/validate-account-creation/${userId}?confirmed=true&token=${confirmationCode}`)
+
+    expect(res.status).to.equal(200)
+    expect(res.body.message).to.equal('Your account has been successfully created and confirmed.')
+  })
+
+  it('should validate account creation and return 500 status code', async () => {
+    const res = await request(app).get(`/validate-account-creation/badid?confirmed=true&token=sometoken`)
+
+    expect(res.status).to.equal(500)
+    expect(res.body.message).to.equal('An error occurred while validating your account creation.')
   })
 
   it('should add a google user and return 200 status code', async () => {
@@ -119,7 +141,6 @@ describe('User Controller', function () {
       })
 
     expect(res.status).to.equal(200)
-    console.log(res)
     expect(res.body.message).to.equal('Google user logged in')
   })
 

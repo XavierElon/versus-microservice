@@ -157,7 +157,6 @@ export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
         }
       })
     } else {
-      console.log('here')
       const token = createGoogleAuthToken(user)
       res.cookie('user-token', token, {
         maxAge: 60 * 60 * 24 * 1000,
@@ -250,14 +249,14 @@ export const ValidateAccountCreation = async (req: Request, res: Response) => {
   try {
     const { confirmed, token } = req.query
     if (confirmed === 'true' && typeof token === 'string') {
-      res.send('Your account has been successfully created and confirmed.')
       await confirmUser(token)
+      res.status(200).json({ message: 'Your account has been successfully created and confirmed.' })
     } else {
-      res.send('Your account has been created. Please check your email to confirm your account.')
+      res.status(201).json({ message: 'Your account has been created. Please check your email to confirm your account.' })
     }
   } catch (error) {
     console.error(error)
-    res.status(500).send('An error occurred while validating your account creation.')
+    res.status(500).json({ message: 'An error occurred while validating your account creation.' })
   }
 }
 
