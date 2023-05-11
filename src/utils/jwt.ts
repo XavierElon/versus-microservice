@@ -1,5 +1,6 @@
 import { sign, verify } from 'jsonwebtoken'
 import dotenv from 'dotenv'
+import * as jwtWrapper from '../middleware/jwtWrapper'
 
 dotenv.config()
 
@@ -26,9 +27,11 @@ export const validateToken = (req, res, next) => {
   const accessToken = req.cookies['user-token']
   if (!accessToken) return res.status(400).json({ error: 'User not authenticated' })
   try {
-    const validToken = verify(accessToken, process.env.JWT_SECRET)
-    req.user = validToken
+    const validToken = jwtWrapper.verify(accessToken, process.env.JWT_SECRET)
+    console.log(validToken)
+
     if (validToken) {
+      req.user = validToken
       req.authenticated = true
       return next()
     }

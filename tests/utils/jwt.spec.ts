@@ -1,7 +1,8 @@
 import { expect } from 'chai'
 import sinon from 'sinon'
 import chai from 'chai'
-import * as jwt from 'jsonwebtoken'
+import jest from 'jest'
+import * as jwtWrapper from '../../src/middleware/jwtWrapper'
 import proxyquire from 'proxyquire'
 import { createLocalToken, createGoogleAuthToken, validateToken } from '../../src/utils/jwt'
 
@@ -58,9 +59,7 @@ describe('JWT utils suite', function () {
 
     const mockNext = sinon.stub()
 
-    sinon.stub(jwt, 'verify').returns(validToken)
-
-    const { validateToken } = proxyquire('../middleware', { jsonwebtoken: jwt })
+    sinon.stub(jwtWrapper, 'verify').returns(validToken)
 
     await validateToken(mockRequest, mockResponse, mockNext)
 
@@ -68,6 +67,6 @@ describe('JWT utils suite', function () {
     expect(mockRequest.user).to.deep.equal(validToken)
     expect(mockRequest.authenticated).to.be.true
 
-    jwt.verify.restore()
+    sinon.restore()
   })
 })
