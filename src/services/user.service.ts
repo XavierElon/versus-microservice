@@ -84,8 +84,8 @@ export const createUser = async (userData: typeof User): Promise<any> => {
     user.confirmationTokenExpirationTime = new Date(Date.now())
     const savedUser = await user.save()
 
-    // const confirmationLink = await createConfirmationLink(userData, baseUrl)
-    // await sendConfirmationGmail(user.local.email, confirmationLink)
+    const confirmationLink = await createConfirmationLink(userData, baseUrl)
+    await sendConfirmationGmail(user.local.email, confirmationLink)
     console.log(`Sent email to user ${user.email}`)
     return savedUser
   } catch (error) {
@@ -95,6 +95,26 @@ export const createUser = async (userData: typeof User): Promise<any> => {
     }
     throw new Error('Error creating new user')
   }
+}
+
+export const createGoogleAuthUser = async (userData: any): Promise<any> => {
+  const { accessToken, displayName, email, firebaseUid, photoURL, refreshToken } = userData
+  let user = new User({
+    local: {
+      active: true
+    },
+    firebaseGoogle: {
+      firebaseUid: firebaseUid,
+      accessToken: accessToken,
+      email: email,
+      displayName: displayName,
+      photoURL: photoURL,
+      refreshToken: refreshToken
+    },
+    provider: 'firebaseGoogle'
+  })
+  user = await user.save()
+  return user
 }
 
 /*

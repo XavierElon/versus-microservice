@@ -11,7 +11,8 @@ import {
   checkIfGoogleFirebaseUserExists,
   getLocalUser,
   getGoogleUser,
-  deleteUserById
+  deleteUserById,
+  createGoogleAuthUser
 } from '../services/user.service'
 import { createGoogleAuthToken, createLocalToken } from '../utils/jwt'
 import { sendOTPEmail } from '../utils/email.helper'
@@ -119,31 +120,17 @@ export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
 
     let user = await User.findOne({ 'firebaseGoogle.email': email })
 
+    // Create new Google auth user
     if (!user || user === null) {
-      console.log('saving new user')
-      user = new User({
-        local: {
-          active: true
-        },
-        firebaseGoogle: {
-          firebaseUid: firebaseUid,
-          accessToken: accessToken,
-          email: email,
-          displayName: displayName,
-          photoURL: photoURL,
-          refreshToken: refreshToken
-        },
-        provider: 'firebaseGoogle'
-      })
-      await user.save()
-      const token = createGoogleAuthToken(user)
-      res.cookie('user-token', token, {
+      user = await createGoogleAuthUser(req.body.firebaseGoogle)
+      // const token = createGoogleAuthToken(user)
+      res.cookie('user-token', accessToken, {
         maxAge: 60 * 60 * 24 * 1000,
         httpOnly: true,
         secure: true
       })
-      res.status(200).json({
-        token,
+      return res.status(200).json({
+        accessToken,
         user: {
           _id: user.id,
           firebaseUid: user.firebaseGoogle.firebaseUid,
@@ -152,13 +139,13 @@ export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
         }
       })
     } else {
-      const token = createGoogleAuthToken(user)
-      res.cookie('user-token', token, {
+      // const token = createGoogleAuthToken(user)
+      res.cookie('user-token', accessToken, {
         maxAge: 60 * 60 * 24 * 1000,
         httpOnly: true
       })
-      res.status(200).json({
-        token,
+      return res.status(200).json({
+        accessToken,
         user: {
           _id: user.id,
           firebaseUid: user.firebaseGoogle.firebaseUid,
