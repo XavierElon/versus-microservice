@@ -97,6 +97,26 @@ export const createUser = async (userData: typeof User): Promise<any> => {
   }
 }
 
+export const createGoogleAuthUser = async (userData: any): Promise<any> => {
+  const { accessToken, displayName, email, firebaseUid, photoURL, refreshToken } = userData
+  let user = new User({
+    local: {
+      active: true
+    },
+    firebaseGoogle: {
+      firebaseUid: firebaseUid,
+      accessToken: accessToken,
+      email: email,
+      displayName: displayName,
+      photoURL: photoURL,
+      refreshToken: refreshToken
+    },
+    provider: 'firebaseGoogle'
+  })
+  user = await user.save()
+  return user
+}
+
 /*
 CHECK IF USER EXISTS 
 check the username against the database for duplicates before proceeding with creation of new user
