@@ -156,6 +156,28 @@ describe('User service test suite', function () {
     expect(allUsers.length).to.equal(0)
   })
 
+  // it('should handle errors when saving user', async function () {
+  //   // Arrange
+  //   const mockUserData = {
+  //     local: {
+  //       password: 'password123',
+  //       email: 'test@test.com'
+  //     }
+  //   }
+
+  //   // Set up the stub to force an error when User.save is called
+  //   const saveStub = sinon.stub(User.prototype, 'save')
+  //   saveStub.throws(new Error('forced error'))
+
+  //   // Act & Assert
+  //   try {
+  //     await createUser(mockUserData)
+  //   } catch (err) {
+  //     expect(err).to.exist
+  //     expect(err.message).to.equal('Error creating new user')
+  //   }
+  // })
+
   it('should catch error in getAllUsers and throw an error', async () => {
     const error = new Error('Test error')
     const findStub = sinon.stub(User, 'find').throws(error)

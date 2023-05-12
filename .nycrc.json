@@ -11,7 +11,6 @@
         "src/routes/store.routes.ts",
         "src/structures/*",
         "src/controllers/store.controllers.ts",
-        "src/middleware/*.ts",
         "src/utils/email.helper.ts"
     ],
     "reporter": [

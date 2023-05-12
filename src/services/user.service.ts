@@ -84,8 +84,8 @@ export const createUser = async (userData: typeof User): Promise<any> => {
     user.confirmationTokenExpirationTime = new Date(Date.now())
     const savedUser = await user.save()
 
-    const confirmationLink = await createConfirmationLink(userData, baseUrl)
-    await sendConfirmationGmail(user.local.email, confirmationLink)
+    // const confirmationLink = await createConfirmationLink(userData, baseUrl)
+    // await sendConfirmationGmail(user.local.email, confirmationLink)
     console.log(`Sent email to user ${user.email}`)
     return savedUser
   } catch (error) {

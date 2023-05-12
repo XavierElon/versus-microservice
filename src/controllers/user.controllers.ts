@@ -66,7 +66,7 @@ export const CreateUser = async (req: Request, res: Response) => {
       })
       .catch((error) => {
         console.log('Error creating user: ', error)
-        return res.status(500).json({ message: 'Error creating user', error })
+        return res.status(500).json({ message: 'Error creating new user' })
       })
   }
 }

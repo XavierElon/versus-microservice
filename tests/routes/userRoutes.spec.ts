@@ -7,6 +7,7 @@ import { userRouter } from '../../src/routes/user.routes'
 import mongoose from 'mongoose'
 import path from 'path'
 import supertest from 'supertest'
+import sinon from 'sinon'
 import chai from 'chai'
 import chaiHttp from 'chai-http'
 import { User } from '../../src/models/user.model'
@@ -98,6 +99,28 @@ describe('User Routes test suite', function () {
       })
 
     expect(res.status).to.equal(400)
+  })
+
+  it('should not add user due to forced stub error and return 500 status code', async () => {
+    const saveStub = sinon.stub(User.prototype, 'save')
+    saveStub.throws(new Error('forced error'))
+
+    const res = await request(app)
+      .post('/signup')
+      .send({
+        local: {
+          email: 'testuser4@example.com',
+          password: 'testpassword12334343!',
+          firstName: 'John',
+          lastName: 'Doe'
+        },
+        provider: 'local'
+      })
+
+    expect(res.status).to.equal(500)
+    expect(res.body.message).to.equal('Error creating new user')
+
+    saveStub.restore()
   })
 
   it('should validate account creation and return 201 status code', async () => {
