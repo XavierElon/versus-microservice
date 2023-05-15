@@ -30,7 +30,7 @@ export const GetUser = async (req: Request, res: Response) => {
 
   let accessToken: string
   if (user) {
-    accessToken = req.cookies['access-token']
+    accessToken = req.cookies['user-token']
     res.status(200).json({ user: user, authToken: accessToken })
   } else {
     console.log('No user found')
@@ -55,14 +55,23 @@ export const CreateUser = async (req: Request, res: Response) => {
         let secure = true
         if (process.env.NODE_ENV === 'dev') {
           secure = false
+          res.cookie('user-token', accessToken, {
+            maxAge: 60 * 60 * 24 * 1000
+            // httpOnly: true,
+            // secure: secure,
+            // sameSite: 'none'
+            // domain: process.env.DOMAIN
+          })
+        } else {
+          res.cookie('user-token', accessToken, {
+            maxAge: 60 * 60 * 24 * 1000,
+            httpOnly: true,
+            secure: secure,
+            sameSite: 'none'
+            // domain: process.env.DOMAIN
+          })
         }
-        res.cookie('access-token', accessToken, {
-          maxAge: 60 * 60 * 24 * 1000,
-          httpOnly: true,
-          secure: secure,
-          sameSite: 'none'
-          // domain: process.env.DOMAIN
-        })
+
         res.status(201).json({ message: 'User created', accessToken, user: result })
       })
       .catch((error) => {
@@ -88,18 +97,27 @@ export const LoginUser = async (req: Request, res: Response) => {
       return
     } else {
       const accessToken = createLocalToken(user)
-
+      console.log(accessToken)
       let secure = true
       if (process.env.NODE_ENV === 'dev') {
         secure = false
+        res.cookie('user-token', accessToken, {
+          maxAge: 60 * 60 * 24 * 1000
+          // httpOnly: false,
+          // secure: secure,
+          // sameSite: 'none'
+          // domain: process.env.DOMAIN
+        })
+      } else {
+        res.cookie('user-token', accessToken, {
+          maxAge: 60 * 60 * 24 * 1000,
+          httpOnly: false,
+          secure: secure,
+          sameSite: 'none'
+          // domain: process.env.DOMAIN
+        })
       }
-      res.cookie('user-token', accessToken, {
-        maxAge: 60 * 60 * 24 * 1000,
-        httpOnly: false,
-        secure: secure,
-        sameSite: 'none'
-        // domain: process.env.DOMAIN
-      })
+
       res.status(200).json({ message: 'Login successful', accessToken, user })
     }
   })
