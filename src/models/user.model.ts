@@ -52,7 +52,8 @@ const userSchema = new mongoose.Schema({
       default: uuidv4()
     },
     confirmationTokenExpirationTime: {
-      type: Date, default: Date.now
+      type: Date,
+      default: Date.now
     },
     active: { type: Boolean, default: false }
   },
@@ -63,6 +64,10 @@ const userSchema = new mongoose.Schema({
     firebaseUid: String,
     photoURL: String,
     refreshToken: String
+  },
+  userName: {
+    type: String,
+    unique: true
   },
   provider: {
     type: String,

@@ -2,18 +2,7 @@ import { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
 import fs from 'fs'
 import { User } from '../models/user.model'
-import {
-  createUser,
-  checkIfUserExists,
-  updateUserById,
-  deleteUserByEmail,
-  confirmUser,
-  checkIfGoogleFirebaseUserExists,
-  getLocalUser,
-  getGoogleUser,
-  deleteUserById,
-  createGoogleAuthUser
-} from '../services/user.service'
+import { createUser, checkIfUserExists, updateUserById, deleteUserByEmail, confirmUser, checkIfGoogleFirebaseUserExists, getLocalUser, getGoogleUser, deleteUserById, createGoogleAuthUser, getAllUsers } from '../services/user.service'
 import { createGoogleAuthToken, createLocalToken } from '../utils/jwt'
 import { sendOTPEmail } from '../utils/email.helper'
 
@@ -36,6 +25,12 @@ export const GetUser = async (req: Request, res: Response) => {
     console.log('No user found')
     res.status(400).json({ error: 'No user found' })
   }
+}
+
+export const GetAllUsers = async (req: Request, res: Response) => {
+  res.setHeader('Access-Control-Allow-Credentials', 'true')
+  const users: (typeof User)[] = await getAllUsers()
+  console.log(users)
 }
 
 export const CreateUser = async (req: Request, res: Response) => {
@@ -141,8 +136,8 @@ export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
     // Create new Google auth user
     if (!user || user === null) {
       user = await createGoogleAuthUser(req.body.firebaseGoogle)
-      // const token = createGoogleAuthToken(user)
-      res.cookie('user-token', accessToken, {
+      const token = createGoogleAuthToken(user)
+      res.cookie('user-token', token, {
         maxAge: 60 * 60 * 24 * 1000,
         httpOnly: true,
         secure: true
@@ -157,8 +152,8 @@ export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
         }
       })
     } else {
-      // const token = createGoogleAuthToken(user)
-      res.cookie('user-token', accessToken, {
+      const token = createGoogleAuthToken(user)
+      res.cookie('user-token', token, {
         maxAge: 60 * 60 * 24 * 1000,
         httpOnly: true
       })
