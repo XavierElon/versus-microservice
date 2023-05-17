@@ -2,18 +2,7 @@ import { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
 import fs from 'fs'
 import { User } from '../models/user.model'
-import {
-  createUser,
-  checkIfUserExists,
-  updateUserById,
-  deleteUserByEmail,
-  confirmUser,
-  checkIfGoogleFirebaseUserExists,
-  getLocalUser,
-  getGoogleUser,
-  deleteUserById,
-  createGoogleAuthUser
-} from '../services/user.service'
+import { createUser, checkIfUserExists, updateUserById, deleteUserByEmail, confirmUser, checkIfGoogleFirebaseUserExists, getLocalUser, getGoogleUser, deleteUserById, createGoogleAuthUser, getAllUsers } from '../services/user.service'
 import { createGoogleAuthToken, createLocalToken } from '../utils/jwt'
 import { sendOTPEmail } from '../utils/email.helper'
 
@@ -38,8 +27,47 @@ export const GetUser = async (req: Request, res: Response) => {
   }
 }
 
+export const GetAllUsers = async (req: Request, res: Response) => {
+  res.setHeader('Access-Control-Allow-Credentials', 'true')
+  const users: any = await getAllUsers()
+  console.log(users)
+  const simplifiedUsers = users.map((user: typeof User) => {
+    console.log(user)
+    const userId = (user as any)._id.toString()
+    console.log(userId)
+    let username
+    let profilePicture
+
+    if ((user as any).provider === 'local') {
+      console.log('here')
+      username = `${(user as any).local.firstName} ${(user as any).local.lastName}`
+      profilePicture = (user as any).local.profilePicture.url || '' // assuming profilePicture is an object with a url property
+    } else if ((user as any).provider === 'firebaseGoogle') {
+      console.log('firebase')
+      username = (user as any).firebaseGoogle.displayName
+      profilePicture = (user as any).firebaseGoogle.photoURL
+    } else {
+      console.log('eklse')
+      // Handle other providers as needed
+    }
+
+    return {
+      id: userId,
+      username: username,
+      profilePicture: profilePicture
+    }
+  })
+  console.log(simplifiedUsers)
+  if (simplifiedUsers.length === 0) {
+    return res.status(400).json({ message: 'No users found' })
+  } else {
+    return res.status(200).json({ users: simplifiedUsers, message: 'Users found' })
+  }
+}
+
 export const CreateUser = async (req: Request, res: Response) => {
   const userData = req.body
+  console.log(userData)
   const localEmail: string = userData?.local?.email || ''
   let userExists: any = await checkIfUserExists(localEmail)
   let googleFirebaseUserExists: any = await checkIfGoogleFirebaseUserExists(localEmail)
@@ -141,8 +169,8 @@ export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
     // Create new Google auth user
     if (!user || user === null) {
       user = await createGoogleAuthUser(req.body.firebaseGoogle)
-      // const token = createGoogleAuthToken(user)
-      res.cookie('user-token', accessToken, {
+      const token = createGoogleAuthToken(user)
+      res.cookie('user-token', token, {
         maxAge: 60 * 60 * 24 * 1000,
         httpOnly: true,
         secure: true
@@ -157,8 +185,8 @@ export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
         }
       })
     } else {
-      // const token = createGoogleAuthToken(user)
-      res.cookie('user-token', accessToken, {
+      const token = createGoogleAuthToken(user)
+      res.cookie('user-token', token, {
         maxAge: 60 * 60 * 24 * 1000,
         httpOnly: true
       })

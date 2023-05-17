@@ -5,6 +5,7 @@ import {
   CreateUser,
   DeleteUserByEmail,
   DeleteUserById,
+  GetAllUsers,
   GetUser,
   GoogleAuthLoginAndSignup,
   LoginUser,
@@ -21,6 +22,9 @@ export const userRouter: Router = express.Router()
 
 // Get Single User's data by id
 userRouter.get('/profile/:id', validateToken, GetUser)
+
+// Get all users for messenger
+userRouter.get('/users', validateToken, GetAllUsers)
 
 // Create a User
 userRouter.post('/signup', CreateUser)
