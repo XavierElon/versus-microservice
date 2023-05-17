@@ -29,10 +29,39 @@ export const GetUser = async (req: Request, res: Response) => {
 
 export const GetAllUsers = async (req: Request, res: Response) => {
   res.setHeader('Access-Control-Allow-Credentials', 'true')
-  const users: (typeof User)[] = await getAllUsers()
+  const users: any = await getAllUsers()
   console.log(users)
-  const simplifiedUsers = users.map((user) => {})
-  if (users.length !== 0) {
+  const simplifiedUsers = users.map((user: typeof User) => {
+    console.log(user)
+    const userId = (user as any)._id.toString()
+    console.log(userId)
+    let username
+    let profilePicture
+
+    if ((user as any).provider === 'local') {
+      console.log('here')
+      username = `${(user as any).local.firstName} ${(user as any).local.lastName}`
+      profilePicture = (user as any).local.profilePicture.url || '' // assuming profilePicture is an object with a url property
+    } else if ((user as any).provider === 'firebaseGoogle') {
+      console.log('firebase')
+      username = (user as any).firebaseGoogle.displayName
+      profilePicture = (user as any).firebaseGoogle.photoURL
+    } else {
+      console.log('eklse')
+      // Handle other providers as needed
+    }
+
+    return {
+      id: userId,
+      username: username,
+      profilePicture: profilePicture
+    }
+  })
+  console.log(simplifiedUsers)
+  if (simplifiedUsers.length === 0) {
+    return res.status(400).json({ message: 'No users found' })
+  } else {
+    return res.status(200).json({ users: simplifiedUsers, message: 'Users found' })
   }
 }
 
