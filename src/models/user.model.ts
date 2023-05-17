@@ -65,9 +65,10 @@ const userSchema = new mongoose.Schema({
     photoURL: String,
     refreshToken: String
   },
-  userName: {
+  username: {
     type: String,
-    unique: true
+    unique: true,
+    required: true
   },
   provider: {
     type: String,

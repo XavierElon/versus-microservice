@@ -31,10 +31,14 @@ export const GetAllUsers = async (req: Request, res: Response) => {
   res.setHeader('Access-Control-Allow-Credentials', 'true')
   const users: (typeof User)[] = await getAllUsers()
   console.log(users)
+  const simplifiedUsers = users.map((user) => {})
+  if (users.length !== 0) {
+  }
 }
 
 export const CreateUser = async (req: Request, res: Response) => {
   const userData = req.body
+  console.log(userData)
   const localEmail: string = userData?.local?.email || ''
   let userExists: any = await checkIfUserExists(localEmail)
   let googleFirebaseUserExists: any = await checkIfGoogleFirebaseUserExists(localEmail)

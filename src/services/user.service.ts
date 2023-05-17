@@ -111,6 +111,7 @@ export const createGoogleAuthUser = async (userData: any): Promise<any> => {
       photoURL: photoURL,
       refreshToken: refreshToken
     },
+    username: displayName,
     provider: 'firebaseGoogle'
   })
   user = await user.save()
