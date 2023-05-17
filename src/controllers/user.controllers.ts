@@ -41,7 +41,7 @@ export const GetAllUsers = async (req: Request, res: Response) => {
     if ((user as any).provider === 'local') {
       console.log('here')
       username = `${(user as any).local.firstName} ${(user as any).local.lastName}`
-      profilePicture = (user as any).local.profilePicture.url || '' // assuming profilePicture is an object with a url property
+      profilePicture = (user as any).local.profilePicture.url || ''
     } else if ((user as any).provider === 'firebaseGoogle') {
       console.log('firebase')
       username = (user as any).firebaseGoogle.displayName
