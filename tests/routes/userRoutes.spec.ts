@@ -13,8 +13,13 @@ import chaiHttp from 'chai-http'
 import { User } from '../../src/models/user.model'
 import { connectToDatabase } from '../../src/connections/mongodb'
 import { getGoogleUser } from '../../src/services/user.service'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const FRONT_END_URL: string = process.env.FRONT_END_URL!
+const testDbUri: string = process.env.TEST_DB_URI!
+
 chai.use(chaiHttp)
 const app: Express = express()
 app.use(express.json())
@@ -26,7 +31,6 @@ app.use(
 )
 app.use(cookieParser())
 app.use('/', userRouter)
-const testDbUri: string = process.env.TEST_DB_URI!
 
 describe('User Routes test suite', function () {
   const agent = supertest.agent(app) // Create an agent instance
@@ -66,6 +70,7 @@ describe('User Routes test suite', function () {
           firstName: 'John',
           lastName: 'Doe'
         },
+        username: 'elonmusk',
         provider: 'local'
       })
     expect(res.status).to.equal(201)
@@ -78,6 +83,7 @@ describe('User Routes test suite', function () {
           firstName: 'Elon',
           lastName: 'Musk'
         },
+        username: 'xxxtentacion',
         provider: 'local'
       })
     userId = res.body.user._id
@@ -95,6 +101,7 @@ describe('User Routes test suite', function () {
           firstName: 'John',
           lastName: 'Doe'
         },
+        username: 'achilles',
         provider: 'local'
       })
 
@@ -114,6 +121,7 @@ describe('User Routes test suite', function () {
           firstName: 'John',
           lastName: 'Doe'
         },
+        username: 'flocka',
         provider: 'local'
       })
 
@@ -121,6 +129,23 @@ describe('User Routes test suite', function () {
     expect(res.body.message).to.equal('Error creating new user')
 
     saveStub.restore()
+  })
+
+  it('should return all users and return 200 status code', async () => {
+    const res = await agent.post('/login').send({
+      email: 'testuser@example.com',
+      password: 'testpassword12334343!'
+    })
+    expect(res.status).to.equal(200)
+
+    // Make sure the cookie is set
+    expect(res.headers['set-cookie']).to.be.an('array')
+    const cookie = res.headers['set-cookie'][0].split(';')[0]
+    expect(cookie.startsWith('user-token=')).to.be.true
+
+    const usersRes = await agent.get('/users')
+    expect(usersRes.body.users.length).to.equal(2)
+    expect(usersRes.status).to.equal(200)
   })
 
   it('should validate account creation and return 201 status code', async () => {
@@ -151,7 +176,7 @@ describe('User Routes test suite', function () {
       .send({
         firebaseGoogle: {
           accessToken: '',
-          displayName: 'Elon Musk',
+          displayName: 'ElonMusk',
           email: 'elonmusk@gmail.com',
           firebaseUid: id,
           photoUrl: '',
@@ -178,7 +203,8 @@ describe('User Routes test suite', function () {
           firebaseUid: id,
           photoUrl: '',
           refreshToken: ''
-        }
+        },
+        username: 'xxx'
       })
 
     expect(res.status).to.equal(200)
@@ -195,7 +221,8 @@ describe('User Routes test suite', function () {
           email: 'elonmusk@gmail.com',
           photoUrl: '',
           refreshToken: ''
-        }
+        },
+        username: 'xxxten'
       })
 
     expect(res.status).to.equal(400)
@@ -218,6 +245,7 @@ describe('User Routes test suite', function () {
           firstName: 'John',
           lastName: 'Doe'
         },
+        username: 'achillesmusk',
         provider: 'local'
       })
     expect(res.status).to.equal(400)

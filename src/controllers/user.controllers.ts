@@ -30,25 +30,20 @@ export const GetUser = async (req: Request, res: Response) => {
 export const GetAllUsers = async (req: Request, res: Response) => {
   res.setHeader('Access-Control-Allow-Credentials', 'true')
   const users: any = await getAllUsers()
-  console.log(users)
+
   const simplifiedUsers = users.map((user: typeof User) => {
-    console.log(user)
     const userId = (user as any)._id.toString()
-    console.log(userId)
     let username
     let profilePicture
 
     if ((user as any).provider === 'local') {
-      console.log('here')
       username = `${(user as any).local.firstName} ${(user as any).local.lastName}`
       profilePicture = (user as any).local.profilePicture.url || ''
     } else if ((user as any).provider === 'firebaseGoogle') {
-      console.log('firebase')
       username = (user as any).firebaseGoogle.displayName
       profilePicture = (user as any).firebaseGoogle.photoURL
     } else {
-      console.log('eklse')
-      // Handle other providers as needed
+      throw new Error('No provider found')
     }
 
     return {
@@ -57,7 +52,6 @@ export const GetAllUsers = async (req: Request, res: Response) => {
       profilePicture: profilePicture
     }
   })
-  console.log(simplifiedUsers)
   if (simplifiedUsers.length === 0) {
     return res.status(400).json({ message: 'No users found' })
   } else {
@@ -125,7 +119,7 @@ export const LoginUser = async (req: Request, res: Response) => {
       return
     } else {
       const accessToken = createLocalToken(user)
-      console.log(accessToken)
+
       let secure = true
       if (process.env.NODE_ENV === 'dev') {
         secure = false

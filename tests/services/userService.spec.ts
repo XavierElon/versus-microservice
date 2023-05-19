@@ -5,21 +5,11 @@ import mongoose, { Model } from 'mongoose'
 import sinon from 'sinon'
 import jest, { spyOn } from 'jest'
 import { User } from '../../src/models/user.model'
-import {
-  createUser,
-  checkIfUserExists,
-  getUserByEmail,
-  deleteUserByEmail,
-  deleteUserById,
-  getAllUsers,
-  getUserById,
-  getGoogleUser,
-  getLocalUser,
-  updateUserById,
-  confirmUser,
-  deleteUnconfirmedUsers
-} from '../../src/services/user.service'
+import { createUser, checkIfUserExists, getUserByEmail, deleteUserByEmail, deleteUserById, getAllUsers, getUserById, getGoogleUser, getLocalUser, updateUserById, confirmUser, deleteUnconfirmedUsers } from '../../src/services/user.service'
 import { connectToDatabase } from '../../src/connections/mongodb'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const testDbUri: string = process.env.TEST_DB_URI!
 
@@ -34,6 +24,7 @@ describe('User service test suite', function () {
       firstName: 'John',
       lastName: 'Doe'
     },
+    username: 'elonmusk',
     provider: 'local'
   })
 
@@ -44,6 +35,7 @@ describe('User service test suite', function () {
       firstName: 'Elon',
       lastName: 'Musk'
     },
+    username: 'xxxtentacion',
     provider: 'local'
   })
   const testUser3 = new UserModel({
@@ -54,6 +46,7 @@ describe('User service test suite', function () {
       lastName: 'Musk',
       confirmationTokenExpirationTime: date
     },
+    username: 'xavierelon',
     provider: 'local'
   })
 
