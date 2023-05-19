@@ -1,9 +1,6 @@
 import nodemailer from 'nodemailer'
-import dotenv from 'dotenv'
 import { MailOptions, CustomTransporter } from '../structures/types'
 import { User } from '../models/user.model'
-
-dotenv.config()
 
 const GMAIL_SMTP = process.env.GMAIL_SMTP
 const GMAIL_ACCOUNT = process.env.GMAIL_ACCOUNT

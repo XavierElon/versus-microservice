@@ -1,8 +1,5 @@
 import { sign, verify } from 'jsonwebtoken'
-import dotenv from 'dotenv'
 import * as jwtWrapper from '../middleware/jwtWrapper'
-
-dotenv.config()
 
 export const createLocalToken = (user) => {
   if (!user || Object.keys(user).length === 0) {

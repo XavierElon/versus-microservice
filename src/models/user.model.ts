@@ -1,12 +1,6 @@
 import * as mongoose from 'mongoose'
 import { ErrorMessage } from '../structures/types'
-import {
-  validatePassword,
-  validateEmail,
-  validatePhone,
-  // validateUsername,
-  validateName
-} from '../utils/verification.helper'
+import { validatePassword, validateEmail, validatePhone, validateUsername, validateName } from '../utils/verification.helper'
 import { v4 as uuidv4 } from 'uuid'
 
 const error = new ErrorMessage()
@@ -68,7 +62,11 @@ const userSchema = new mongoose.Schema({
   username: {
     type: String,
     unique: true,
-    required: true
+    required: true,
+    validate: {
+      validator: validateUsername,
+      message: error.username
+    }
   },
   provider: {
     type: String,

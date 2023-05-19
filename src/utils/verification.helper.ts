@@ -25,8 +25,7 @@ EMAIL VALIDATION
 - must end in .com
 */
 export const validateEmail = (value: string): boolean => {
-  const regex =
-    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.com$/
+  const regex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.com$/
   // const regex = /^\S+@\S+\.com$/
   return regex.test(value)
 }
@@ -37,10 +36,10 @@ The regular expression used in the usernameRegex variable checks for a string th
 letters (uppercase or lowercase) and numbers. 
 Additionally, the length of the username must be between 3 and 20 characters.
 */
-// export const validateUsername = (value: string): boolean => {
-//   const regex = /^[a-zA-Z0-9_]{3,20}$/
-//   return regex.test(value)
-// }
+export const validateUsername = (value: string): boolean => {
+  const regex = /^[a-zA-Z0-9_]{3,20}$/
+  return regex.test(value)
+}
 
 /*
 NAME VALIDATION (FIRSTNAME OR LASTNAME)
