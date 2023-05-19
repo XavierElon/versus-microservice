@@ -1,11 +1,7 @@
 // @ts-nocheck
 import { User } from '../models/user.model'
-import mongoose, { Model } from 'mongoose'
-import dotenv from 'dotenv'
 import bcrypt from 'bcrypt'
 import { sendConfirmationGmail, createConfirmationLink } from '../utils/email.helper'
-
-dotenv.config()
 
 // GET All users
 export const getAllUsers = async (): Promise<any | null> => {
