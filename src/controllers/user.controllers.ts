@@ -35,10 +35,11 @@ export const GetAllUsers = async (req: Request, res: Response) => {
     const userId = (user as any)._id.toString()
     let username
     let profilePicture
+    let provider = (user as any).provider
 
     if ((user as any).provider === 'local') {
       username = `${(user as any).local.firstName} ${(user as any).local.lastName}`
-      profilePicture = (user as any).local.profilePicture.url || ''
+      profilePicture = (user as any).local.profilePicture || ''
     } else if ((user as any).provider === 'firebaseGoogle') {
       username = (user as any).firebaseGoogle.displayName
       profilePicture = (user as any).firebaseGoogle.photoURL
@@ -49,7 +50,8 @@ export const GetAllUsers = async (req: Request, res: Response) => {
     return {
       id: userId,
       username: username,
-      profilePicture: profilePicture
+      profilePicture: profilePicture,
+      provider: provider
     }
   })
   if (simplifiedUsers.length === 0) {
@@ -219,10 +221,13 @@ export const UploadProfilePictureById = async (req: Request, res: Response) => {
   const user = await User.findById(req.params.id)
   const data = fs.readFileSync(req.file.path)
   const contentType = req.file.mimetype
+  const base64String = Buffer.from(data).toString('base64')
+  const url = `data:${contentType};base64,${base64String}`
 
   user.local.profilePicture = {
     data: data,
-    contentType: contentType
+    contentType: contentType,
+    url: url
   }
   await user.save()
 
