@@ -48,16 +48,17 @@ try {
 
 connectToDatabase(DB_URI + DB_NAME + URI_QUERY_PARAM)
 
+export let openai
 const fetchEngines = async () => {
   const configuration = new Configuration({
     organization: 'org-5BC7ZnXiuRLcD8SLa4uZXQ4p',
     apiKey: process.env.OPEN_AI_API_KEY
   })
 
-  const openai = new OpenAIApi(configuration)
+  openai = new OpenAIApi(configuration)
   const response = await openai.listEngines()
   const res = await openai.listModels()
-  console.log(res.data)
+  // console.log(res.data)
 
   // console.log(response)
   if (response.status === 200) {
@@ -66,6 +67,7 @@ const fetchEngines = async () => {
     console.log('Error connecting to Open AI API')
   }
 }
+
 // @ts-ignore
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
+// process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 fetchEngines()

@@ -1,7 +1,7 @@
 import express, { Router } from 'express'
 import { validateToken } from '../utils/jwt'
-import { Checkout } from '../controllers/store.controllers'
+import { ChatGPT } from '../controllers/chatGPT.controllers'
 
 export const chatGPTRouter: Router = express.Router()
 
-chatGPTRouter.post('/chatgpt', validateToken, ChatGPT)
+chatGPTRouter.get('/chatgpt', ChatGPT)
