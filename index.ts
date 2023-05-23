@@ -56,6 +56,8 @@ const fetchEngines = async () => {
 
   const openai = new OpenAIApi(configuration)
   const response = await openai.listEngines()
+  const res = await openai.listModels()
+  console.log(res.data)
 
   // console.log(response)
   if (response.status === 200) {
