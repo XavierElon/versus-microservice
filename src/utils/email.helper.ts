@@ -1,6 +1,9 @@
 import nodemailer from 'nodemailer'
 import { MailOptions, CustomTransporter } from '../structures/types'
 import { User } from '../models/user.model'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const GMAIL_SMTP = process.env.GMAIL_SMTP
 const GMAIL_ACCOUNT = process.env.GMAIL_ACCOUNT
@@ -37,7 +40,6 @@ export const createConfirmationLink = (userData: typeof User, baseUrl: string): 
 Send OTP Email for password recovery
 */
 export const sendOTPEmail = (OTP, recipientEmail) => {
-  console.log(OTP)
   return new Promise((resolve, reject) => {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
@@ -82,6 +84,7 @@ export const sendOTPEmail = (OTP, recipientEmail) => {
     }
     transporter.sendMail(mail_configs, (error, info) => {
       if (error) {
+        console.log(error)
         return reject({ message: 'An error has occurred' })
       }
       return resolve({ message: 'Email sent successfully' })

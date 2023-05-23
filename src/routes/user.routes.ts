@@ -7,6 +7,7 @@ import {
   DeleteUserById,
   GetAllUsers,
   GetUser,
+  GetUserMessageInfo,
   GoogleAuthLoginAndSignup,
   LoginUser,
   LogoutUser,
@@ -25,6 +26,9 @@ userRouter.get('/profile/:id', validateToken, GetUser)
 
 // Get all users for messenger
 userRouter.get('/users', validateToken, GetAllUsers)
+
+// Get user profile picture url
+userRouter.get('/user/:id', validateToken, GetUserMessageInfo)
 
 // Create a User
 userRouter.post('/signup', CreateUser)

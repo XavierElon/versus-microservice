@@ -61,6 +61,35 @@ export const GetAllUsers = async (req: Request, res: Response) => {
   }
 }
 
+// Gets display name and profile Pic url for messages
+export const GetUserMessageInfo = async (req: Request, res: Response) => {
+  res.setHeader('Access-Control-Allow-Credentials', 'true')
+  const id = req.params.id
+  let user
+  let localUser: boolean = false
+  if (id.length == 28) {
+    user = await getGoogleUser(req.params.id)
+  } else {
+    user = await getLocalUser(req.params.id)
+    localUser = true
+  }
+
+  let imageUrl: string
+  let username: string = user.username
+
+  if (localUser && user.local.profilePicture.url) {
+    imageUrl = user.local.profilePicture.url
+  } else if (!localUser && user.firebaseGoogle.photoURL) {
+    imageUrl = user.firebaseGoogle.photoURL
+  }
+
+  if (imageUrl) {
+    return res.status(200).json({ photoURL: imageUrl, username: username })
+  } else {
+    return res.status(201).json({ message: 'User does not have profile picture' })
+  }
+}
+
 export const CreateUser = async (req: Request, res: Response) => {
   const userData = req.body
   console.log(userData)

@@ -1,6 +1,7 @@
 import cors from 'cors'
 import express, { Express, Request, Response } from 'express'
 import dotenv from 'dotenv'
+import { Configuration, OpenAIApi } from 'openai'
 import cookieParser from 'cookie-parser'
 import { connectToDatabase } from './src/connections/mongodb'
 import { userRouter } from './src/routes/user.routes'
@@ -30,6 +31,22 @@ app.use(cookieParser())
 //Router middleware
 app.use(userRouter)
 app.use(storeRouter)
+
+const fetchEngines = async () => {
+  const configuration = new Configuration({
+    organization: 'org-5BC7ZnXiuRLcD8SLa4uZXQ4p',
+    apiKey: process.env.OPENAI_API_KEY
+  })
+
+  const openai = new OpenAIApi(configuration)
+  console.log(openai)
+  const response = await openai.listEngines()
+
+  // Process the response
+  console.log(response)
+}
+
+fetchEngines()
 
 app.get('/', async (req: Request, res: Response): Promise<Response> => {
   return res.status(200).send({ message: 'Typescript node server running!' })
