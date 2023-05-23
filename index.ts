@@ -32,22 +32,6 @@ app.use(cookieParser())
 app.use(userRouter)
 app.use(storeRouter)
 
-const fetchEngines = async () => {
-  const configuration = new Configuration({
-    organization: 'org-5BC7ZnXiuRLcD8SLa4uZXQ4p',
-    apiKey: process.env.OPENAI_API_KEY
-  })
-
-  const openai = new OpenAIApi(configuration)
-  console.log(openai)
-  const response = await openai.listEngines()
-
-  // Process the response
-  console.log(response)
-}
-
-fetchEngines()
-
 app.get('/', async (req: Request, res: Response): Promise<Response> => {
   return res.status(200).send({ message: 'Typescript node server running!' })
 })
@@ -63,3 +47,23 @@ try {
 }
 
 connectToDatabase(DB_URI + DB_NAME + URI_QUERY_PARAM)
+
+const fetchEngines = async () => {
+  const configuration = new Configuration({
+    organization: 'org-5BC7ZnXiuRLcD8SLa4uZXQ4p',
+    apiKey: process.env.OPEN_AI_API_KEY
+  })
+
+  const openai = new OpenAIApi(configuration)
+  const response = await openai.listEngines()
+
+  // console.log(response)
+  if (response.status === 200) {
+    console.log('Successfully connected to Open AI API')
+  } else {
+    console.log('Error connecting to Open AI API')
+  }
+}
+// @ts-ignore
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
+fetchEngines()
