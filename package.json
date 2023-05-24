@@ -2,7 +2,7 @@
   "name": "xsj-users-microservice",
   "version": "1.0.0",
   "description": "",
-  "main": "main.ts",
+  "main": "index.ts",
   "scripts": {
     "env-setup-local": "./src/config/deploy/local.sh",
     "env-setup-prod": "./src/config/deploy/prod.sh",
@@ -50,6 +50,7 @@
     "node-cron": "^3.0.2",
     "nodemailer": "^6.9.1",
     "nodemon": "^2.0.20",
+    "openai": "^3.2.1",
     "proxyquire": "^2.1.3",
     "stripe": "^12.3.0",
     "uuidv4": "^6.2.13"

@@ -35,10 +35,11 @@ export const GetAllUsers = async (req: Request, res: Response) => {
     const userId = (user as any)._id.toString()
     let username
     let profilePicture
+    let provider = (user as any).provider
 
     if ((user as any).provider === 'local') {
       username = `${(user as any).local.firstName} ${(user as any).local.lastName}`
-      profilePicture = (user as any).local.profilePicture.url || ''
+      profilePicture = (user as any).local.profilePicture || ''
     } else if ((user as any).provider === 'firebaseGoogle') {
       username = (user as any).firebaseGoogle.displayName
       profilePicture = (user as any).firebaseGoogle.photoURL
@@ -49,13 +50,43 @@ export const GetAllUsers = async (req: Request, res: Response) => {
     return {
       id: userId,
       username: username,
-      profilePicture: profilePicture
+      profilePicture: profilePicture,
+      provider: provider
     }
   })
   if (simplifiedUsers.length === 0) {
     return res.status(400).json({ message: 'No users found' })
   } else {
     return res.status(200).json({ users: simplifiedUsers, message: 'Users found' })
+  }
+}
+
+// Gets display name and profile Pic url for messages
+export const GetUserMessageInfo = async (req: Request, res: Response) => {
+  res.setHeader('Access-Control-Allow-Credentials', 'true')
+  const id = req.params.id
+  let user
+  let localUser: boolean = false
+  if (id.length == 28) {
+    user = await getGoogleUser(req.params.id)
+  } else {
+    user = await getLocalUser(req.params.id)
+    localUser = true
+  }
+
+  let imageUrl: string
+  let username: string = user.username
+
+  if (localUser && user.local.profilePicture.url) {
+    imageUrl = user.local.profilePicture.url
+  } else if (!localUser && user.firebaseGoogle.photoURL) {
+    imageUrl = user.firebaseGoogle.photoURL
+  }
+
+  if (imageUrl) {
+    return res.status(200).json({ photoURL: imageUrl, username: username })
+  } else {
+    return res.status(201).json({ message: 'User does not have profile picture' })
   }
 }
 
@@ -219,10 +250,13 @@ export const UploadProfilePictureById = async (req: Request, res: Response) => {
   const user = await User.findById(req.params.id)
   const data = fs.readFileSync(req.file.path)
   const contentType = req.file.mimetype
+  const base64String = Buffer.from(data).toString('base64')
+  const url = `data:${contentType};base64,${base64String}`
 
   user.local.profilePicture = {
     data: data,
-    contentType: contentType
+    contentType: contentType,
+    url: url
   }
   await user.save()
 

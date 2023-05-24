@@ -39,7 +39,8 @@ const userSchema = new mongoose.Schema({
     profilePicture: {
       name: String,
       data: Buffer,
-      contentType: String
+      contentType: String,
+      url: String
     },
     confirmationCode: {
       type: String,

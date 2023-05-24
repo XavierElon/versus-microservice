@@ -1,10 +1,10 @@
 import cors from 'cors'
 import express, { Express, Request, Response } from 'express'
 import dotenv from 'dotenv'
+import { Configuration, OpenAIApi } from 'openai'
 import cookieParser from 'cookie-parser'
 import { connectToDatabase } from './src/connections/mongodb'
-import { userRouter } from './src/routes/user.routes'
-import { storeRouter } from './src/routes/store.routes'
+import { chatGPTRouter, storeRouter, userRouter } from './src/routes'
 
 dotenv.config()
 
@@ -28,8 +28,9 @@ app.use(
 app.use(cookieParser())
 
 //Router middleware
-app.use(userRouter)
+app.use(chatGPTRouter)
 app.use(storeRouter)
+app.use(userRouter)
 
 app.get('/', async (req: Request, res: Response): Promise<Response> => {
   return res.status(200).send({ message: 'Typescript node server running!' })
@@ -46,3 +47,27 @@ try {
 }
 
 connectToDatabase(DB_URI + DB_NAME + URI_QUERY_PARAM)
+
+export let openai
+const fetchEngines = async () => {
+  const configuration = new Configuration({
+    organization: 'org-5BC7ZnXiuRLcD8SLa4uZXQ4p',
+    apiKey: process.env.OPEN_AI_API_KEY
+  })
+
+  openai = new OpenAIApi(configuration)
+  const response = await openai.listEngines()
+  const res = await openai.listModels()
+  // console.log(res.data)
+
+  // console.log(response)
+  if (response.status === 200) {
+    console.log('Successfully connected to Open AI API')
+  } else {
+    console.log('Error connecting to Open AI API')
+  }
+}
+
+// @ts-ignore
+// process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
+fetchEngines()
