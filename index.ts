@@ -17,6 +17,7 @@ const URI_QUERY_PARAM: string = process.env.QUERY_PARAMETERS
 const FRONT_END_URL: string = process.env.FRONT_END_URL
 
 console.log(FRONT_END_URL)
+console.log('test')
 
 // Body parsing Middleware
 app.use(express.json({ limit: '25mb' }))
