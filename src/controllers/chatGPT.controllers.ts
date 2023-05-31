@@ -20,3 +20,5 @@ export const ChatGPT = async (req: Request, res: Response): Promise<any> => {
     res.status(500).json({ error: 'An error occurred with ChatGPT API' })
   }
 }
+
+export const ChatGPTConversation

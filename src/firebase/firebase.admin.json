@@ -1,0 +1,13 @@
+{
+    "type": "service_account",
+    "project_id": "xsj-consulting-ui-7c9e0",
+    "private_key_id": "53784decb81a237971275dd215cae0cc7902d269",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDFvUfH6FlRkike\nQ2VWhT/75x2AaRyoRI7AmhkD7tR9MjLdu1L6gVAtBBydCUzuZI7LLwhldNY/opSO\nvuAhD/wHROjrPqTeBn8HmB6aZGIeyDEBCEffZ7E4AebyGYgt/ZZoGvYKjoNInHqN\nDzx2KSl2V7945zRsgqzRJnkJ7NZkO2O2LPefgZawVj4jwW2A6o2tkOod0/NxMVLt\n74u59n/qVC2h+f95BWUizoOzgq0vEvzr42vE1K6oZCJXlNy6Q/YM1b+sjn/lSjK6\nCblHeT5S7PWt1vpKY1FNlVQnvzjT+6O2PqIdjk7TMIWt7e8kUsq1vdGDnCvJl/ip\nJB2Ggb1nAgMBAAECggEAAti7RFpgHsv0Cn3anUAQXtTku0kN6L1+Gg6d2ZMCDqNW\nLk5BU16bA/aFjdajKifDtcF18O/2jxOYoyqGGUsFbxG4KWZwMYWwPKUF+Nnt01ES\ndm9XiYkQymopr69El4NyJCGGgN0hE21AKggOTSGHSxfvMvwCi44VTbhmyyAl48g0\nNF6yRNdvvGF4Kd3VJorAj98pwxSJppZIDDEIdpwFKI4Mc0qFz9vH8u2VPQgfdyoh\nYwVGuhrXhgshlSK2ebGPh1mInz06zps+L/EuIvYe5dm7DRGvurTIghZt+jEbq6MV\n/O4spLOIpuRh6N3rWRxw0Y93Cjg+TztGE5mUYkYfAQKBgQD8zHh6ucrrBG6HPkdq\ntV8vUrLozR/LaWX5vBsgb0jIx0rhHKkwCtrDkJR0/yFn2xVBTOz14XI40n/f41oP\nq28I+Jl31OQ3I0BLT8KEGWd1POY8tQ/s8x1GaqKJIThy3F4nj6JFis2yA4Wa8SI6\noQVRyY/fD8Jx8JAqOlID2RNCwQKBgQDIPlEmowsGZinfiAlyu8iXBQygpqmyQiB6\nBa12yP5LFbvREOqu6ekqlG0GWSKg1zvLfZSMptHDMw5YYpYT8OAji2/X8CBUpJJy\nEhcu7OCWU/f5L7vusihob7Gajsqlf/g3IGZbTLKg/N+8EqLMHIunWL0NrCOVxzwk\nL90bPyESJwKBgFS89WWuAablxWbwKWBLi6yBPBdtKss0eUpNE4q7wtoKc78hrFS+\nTrZfMGRHYRs/BNDuyD9jYrZJWTPjMb0u6flH26mfYyBYYKTeB4XgPh2+XC7dQola\ntOV1uSXeTN2zoJwCOZK2BF03cQGO8rpUX0QbHG7ZCYTH7os5IWTIzvwBAoGAC8ge\n3jcZnvbD3/MRGz8RPlF9vLYRpfteDc/ntOV+kMxmkJZ+OGxq26aAA6+a6fu/+Oka\npGvsS5/laC3kxqeViIHbwsjOHizQsQV/d7NYQ4ANRwwX8qNo3Tw1JvLf2Xz+DcBK\nRXTtzasTPu2ZxoinbuE5vmQyc82VLEvkpoXAXGECgYAdq7AbY4ky9QG49qUdBTVM\naiLDbgO3gMAmQYDyCHYcr4HYZlKNBvFxzuuNiEVjDy8VxVnf2Eod3H4jNw7yMoHZ\nXh/wLIXtmxbSOv93frL09NrUxvuLNY5O6Dwm06GzmhNGSpZg7YsFt8VTh22vEn47\nmxCmPsesDrkxrbx4Xh4Wlw==\n-----END PRIVATE KEY-----\n",
+    "client_email": "firebase-adminsdk-sw3bv@xsj-consulting-ui-7c9e0.iam.gserviceaccount.com",
+    "client_id": "113406829280779120504",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-sw3bv%40xsj-consulting-ui-7c9e0.iam.gserviceaccount.com",
+    "universe_domain": "googleapis.com"
+  }
