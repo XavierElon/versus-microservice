@@ -6,4 +6,4 @@ export const chatGPTRouter: Router = express.Router()
 
 chatGPTRouter.post('/chatgpt', ChatGPT)
 
-chatGPTRouter.post('/chatGPT/:id/chat/:id', ChatGPTConverstation)
+// chatGPTRouter.post('/chatGPT/:id/chat/:id', ChatGPTConverstation)
