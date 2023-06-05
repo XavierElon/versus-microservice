@@ -95,6 +95,7 @@ export const createUser = async (userData: typeof User): Promise<any> => {
 
 export const createGoogleAuthUser = async (userData: any): Promise<any> => {
   const { accessToken, displayName, email, firebaseUid, photoURL, refreshToken } = userData
+  console.log(displayName)
   let user = new User({
     local: {
       active: true

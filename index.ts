@@ -73,5 +73,6 @@ const fetchEngines = async () => {
 
 // This is needed for when you aren't on a Wifi with secure settings or on a VPN
 // @ts-ignore
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
+
+// process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 fetchEngines()
