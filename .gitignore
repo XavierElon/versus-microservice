@@ -112,3 +112,6 @@ uploads
 
 # Build
 build
+
+# Firebase
+serviceAccount.json

@@ -16,10 +16,8 @@ const DB_URI: string = process.env.MONGO_ATLAS_URI
 const URI_QUERY_PARAM: string = process.env.QUERY_PARAMETERS
 const FRONT_END_URL: string = process.env.FRONT_END_URL
 
-console.log(FRONT_END_URL)
-console.log('test')
-
 // Body parsing Middleware
+// Allows images to be upoloaded
 app.use(express.json({ limit: '25mb' }))
 app.use(express.urlencoded({ extended: true, limit: '25mb' }))
 app.use(
@@ -28,6 +26,8 @@ app.use(
     credentials: true
   })
 )
+
+// Cookie parsing middleware
 app.use(cookieParser())
 
 //Router middleware
@@ -35,6 +35,7 @@ app.use(chatGPTRouter)
 app.use(storeRouter)
 app.use(userRouter)
 
+// Test route
 app.get('/', async (req: Request, res: Response): Promise<Response> => {
   return res.status(200).send({ message: 'Typescript node server running!' })
 })
@@ -51,6 +52,7 @@ try {
 
 connectToDatabase(DB_URI + DB_NAME + URI_QUERY_PARAM)
 
+// Connect to OpenAPI ChatGPT-3.5Turbo
 export let openai
 const fetchEngines = async () => {
   const configuration = new Configuration({
@@ -60,10 +62,8 @@ const fetchEngines = async () => {
 
   openai = new OpenAIApi(configuration)
   const response = await openai.listEngines()
-  const res = await openai.listModels()
-  // console.log(res.data)
+  await openai.listModels()
 
-  // console.log(response)
   if (response.status === 200) {
     console.log('Successfully connected to Open AI API')
   } else {
@@ -73,6 +73,5 @@ const fetchEngines = async () => {
 
 // This is needed for when you aren't on a Wifi with secure settings or on a VPN
 // @ts-ignore
-
 // process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
 fetchEngines()

@@ -82,7 +82,7 @@ export const createUser = async (userData: typeof User): Promise<any> => {
 
     const confirmationLink = await createConfirmationLink(userData, baseUrl)
     await sendConfirmationGmail(user.local.email, confirmationLink)
-    console.log(`Sent email to user ${user.email}`)
+    console.log(`Sent email to user ${user.local.email}`)
     return savedUser
   } catch (error) {
     console.log(`Error creating user or sending confirmation email to user ${user.email}`, error)
