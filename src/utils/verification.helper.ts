@@ -36,9 +36,16 @@ The regular expression used in the usernameRegex variable checks for a string th
 letters (uppercase or lowercase) and numbers. 
 Additionally, the length of the username must be between 3 and 20 characters.
 */
+// export const validateUsername = (value: string): boolean => {
+//   const regex = /^[a-zA-Z0-9_]{3,20}$/
+//   return regex.test(value)
+// }
+
 export const validateUsername = (value: string): boolean => {
-  const regex = /^[a-zA-Z0-9_]{3,20}$/
-  return regex.test(value)
+  const validCharsRegex = /^[a-zA-Z0-9_ ]{3,20}$/
+  const consecutiveSpaceRegex = /  /
+
+  return validCharsRegex.test(value) && !consecutiveSpaceRegex.test(value)
 }
 
 /*
