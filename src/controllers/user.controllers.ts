@@ -38,7 +38,7 @@ export const GetAllUsers = async (req: Request, res: Response) => {
     let provider = (user as any).provider
 
     if ((user as any).provider === 'local') {
-      username = `${(user as any).local.firstName} ${(user as any).local.lastName}`
+      username = `${(user as any).username}`
       profilePicture = (user as any).local.profilePicture || ''
     } else if ((user as any).provider === 'firebaseGoogle') {
       username = (user as any).firebaseGoogle.displayName

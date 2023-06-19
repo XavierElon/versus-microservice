@@ -3,7 +3,7 @@ import { openai } from '../..'
 
 let conversation = [{ role: 'system', content: 'You are a helpful assistant' }]
 
-export const ChatGPT = async (req: Request, res: Response): Promise<any> => {
+export const CreateChatGPTConversation = async (req: Request, res: Response): Promise<any> => {
   const message: string = req.body.message
 
   try {
