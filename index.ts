@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import { Configuration, OpenAIApi } from 'openai'
 import cookieParser from 'cookie-parser'
 import { connectToDatabase } from './src/connections/mongodb'
+import { connectToPostgresDatabase } from './src/connections/postgres'
 import { chatGPTRouter, storeRouter, userRouter } from './src/routes'
 
 dotenv.config()
@@ -51,6 +52,7 @@ try {
 }
 
 connectToDatabase(DB_URI + DB_NAME + URI_QUERY_PARAM)
+connectToPostgresDatabase()
 
 // Connect to OpenAPI ChatGPT-3.5Turbo
 export let openai
