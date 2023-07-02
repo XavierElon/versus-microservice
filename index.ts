@@ -54,7 +54,7 @@ try {
 connectToDatabase(DB_URI + DB_NAME + URI_QUERY_PARAM)
 connectToPostgresDatabase()
 
-// Connect to OpenAPI ChatGPT-3.5Turbo
+// Connect to OpenAI API
 export let openai
 const fetchEngines = async () => {
   const configuration = new Configuration({
@@ -73,7 +73,8 @@ const fetchEngines = async () => {
   }
 }
 
+fetchEngines()
+
 // This is needed for when you aren't on a Wifi with secure settings or on a VPN
 // @ts-ignore
 // process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
-fetchEngines()
