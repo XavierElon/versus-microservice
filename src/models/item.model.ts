@@ -1,8 +1,13 @@
-import { Column, Model, Table } from 'sequelize-typescript'
+import { AutoIncrement, Column, Model, PrimaryKey, Table } from 'sequelize-typescript'
 
 @Table
 export class Item extends Model {
+  @PrimaryKey
+  @AutoIncrement
   @Column
+  id: number
+
+  @Column({ allowNull: false })
   name: string
 
   @Column
