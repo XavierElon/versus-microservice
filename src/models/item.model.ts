@@ -7,6 +7,9 @@ export class Item extends Model {
   @Column
   id: number
 
+  //   @Column({ allowNull: false })
+  //   userID: string
+
   @Column({ allowNull: false })
   name: string
 
