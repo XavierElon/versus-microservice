@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import Stripe from 'stripe'
+import { addItem } from '../services/item.service'
 
 const FRONT_END_URL: string = process.env.FRONT_END_URL
 
@@ -29,4 +30,18 @@ export const Checkout = async (req: Request, res: Response): Promise<any> => {
   })
 
   res.status(200).send(JSON.stringify({ url: session.url }))
+}
+
+export const AddItem = async (req: Request, res: Response): Promise<any> => {
+  console.log(req.body)
+  const { name, description, price, image_url } = req.body
+  addItem(name, description, price, image_url)
+    .then((result) => {
+      console.log(result)
+      res.status(201).json({ message: 'Item added successfully', data: result })
+    })
+    .catch((error) => {
+      console.error('Error adding item: ' + error)
+      return res.status(500).json({ error: 'Error creating new item' })
+    })
 }

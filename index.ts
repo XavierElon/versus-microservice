@@ -44,7 +44,7 @@ app.get('/', async (req: Request, res: Response): Promise<Response> => {
 try {
   app.listen(PORT, (): void => {
     /* eslint-disable no-console */
-    console.log(`Successfully connected to ${FRONT_END_URL}`)
+    console.log(`Successfully connected to http://localhost:${PORT}`)
   })
 } catch (error: any) {
   console.error(`Error occurred: ${error.message}`)
