@@ -34,6 +34,7 @@ export const Checkout = async (req: Request, res: Response): Promise<any> => {
 }
 
 export const GetAllItems = async (req: Request, res: Response): Promise<void> => {
+  console.log('here')
   getAllItems()
     .then((items) => {
       console.log(items)
