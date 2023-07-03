@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import Stripe from 'stripe'
-import { addItem } from '../services/item.service'
+import { Item } from '../models/item.model'
+import { addItem, getAllItems } from '../services/item.service'
 
 const FRONT_END_URL: string = process.env.FRONT_END_URL
 
@@ -32,7 +33,19 @@ export const Checkout = async (req: Request, res: Response): Promise<any> => {
   res.status(200).send(JSON.stringify({ url: session.url }))
 }
 
-export const AddItem = async (req: Request, res: Response): Promise<any> => {
+export const GetAllItems = async (req: Request, res: Response): Promise<void> => {
+  getAllItems()
+    .then((items) => {
+      console.log(items)
+      res.status(200).json({ message: 'Items retrieved', data: items })
+    })
+    .catch((error) => {
+      console.error(error)
+      res.status(500).json({ error: 'Error retrieving iteems: ' + error })
+    })
+}
+
+export const AddItem = async (req: Request, res: Response): Promise<void> => {
   console.log(req.body)
   const { name, description, price, image_url } = req.body
   addItem(name, description, price, image_url)
