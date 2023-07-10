@@ -11,10 +11,20 @@ export const getAllItems = async (): Promise<Item[]> => {
   }
 }
 
-export const addItem = async (name: string, description: string = '', price: number, image_url: string = ''): Promise<Item> => {
+export const getItem = async (id: number): Promise<Item | null> => {
   try {
-    console.log('trying to add item')
+    const item = await Item.findByPk(id)
+    return item
+  } catch (error) {
+    console.error('Error retrieving item: ' + error)
+    throw error
+  }
+}
+
+export const addItem = async (userID: string, name: string, description: string = '', price: number, image_url: string = ''): Promise<Item> => {
+  try {
     const item = await Item.create({
+      userID: userID,
       name: name,
       description: description,
       price: price,
@@ -24,6 +34,22 @@ export const addItem = async (name: string, description: string = '', price: num
     return item
   } catch (error) {
     console.error('Error creating item: ' + error)
+    throw error
+  }
+}
+
+export const deleteItem = async (id: number): Promise<void> => {
+  try {
+    const item = await Item.findByPk(id)
+
+    if (item) {
+      await item.destroy()
+      console.log(`Item with id ${id} deleted.`)
+    } else {
+      console.log('No item found to delete.')
+    }
+  } catch (error) {
+    console.error('Error deleting item:', error)
     throw error
   }
 }

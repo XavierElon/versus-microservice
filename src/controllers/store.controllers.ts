@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import Stripe from 'stripe'
 import { Item } from '../models/item.model'
-import { addItem, getAllItems } from '../services/item.service'
+import { addItem, getAllItems, getItem } from '../services/item.service'
 
 const FRONT_END_URL: string = process.env.FRONT_END_URL
 
@@ -46,10 +46,26 @@ export const GetAllItems = async (req: Request, res: Response): Promise<void> =>
     })
 }
 
+export const GetItem = async (req: Request, res: Response): Promise<void> => {
+  const id = parseInt(req.params.id)
+  getItem(id)
+    .then((item) => {
+      if (item) {
+        res.status(200).json({ message: 'Item retrieved', data: item })
+      } else {
+        res.status(404).json({ message: 'Item not found' })
+      }
+    })
+    .catch((error) => {
+      console.error(error)
+      res.status(500).json({ error: 'Error retrieving item: ' + error })
+    })
+}
+
 export const AddItem = async (req: Request, res: Response): Promise<void> => {
   console.log(req.body)
-  const { name, description, price, image_url } = req.body
-  addItem(name, description, price, image_url)
+  const { userID, name, description, price, image_url } = req.body
+  addItem(userID, name, description, price, image_url)
     .then((result) => {
       console.log(result)
       res.status(201).json({ message: 'Item added successfully', data: result })

@@ -21,7 +21,6 @@ sequelize
   .catch((err) => console.error('Error creating tables: ' + err))
 
 export const connectToPostgresDatabase = () => {
-  console.log(typeof process.env.POSTGRES_DB_PASSWORD)
   sequelize
     .authenticate()
     .then(() => {
