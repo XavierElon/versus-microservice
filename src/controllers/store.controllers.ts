@@ -78,9 +78,6 @@ export const AddItem = async (req: Request, res: Response): Promise<void> => {
 
 export const UpdateItem = async (req: Request, res: Response): Promise<void> => {
   const id = parseInt(req.params.id)
-  console.log(req.params.id)
-  console.log(id)
-  // const id = req.params.id
   const data = req.body
 
   updateItem(id, data)
