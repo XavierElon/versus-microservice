@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import { Configuration, OpenAIApi } from 'openai'
 import cookieParser from 'cookie-parser'
 import { connectToDatabase } from './src/connections/mongodb'
+import { connectToPostgresDatabase } from './src/connections/postgres'
 import { chatGPTRouter, storeRouter, userRouter } from './src/routes'
 
 dotenv.config()
@@ -43,7 +44,7 @@ app.get('/', async (req: Request, res: Response): Promise<Response> => {
 try {
   app.listen(PORT, (): void => {
     /* eslint-disable no-console */
-    console.log(`Successfully connected to ${FRONT_END_URL}`)
+    console.log(`Successfully connected to http://localhost:${PORT}`)
   })
 } catch (error: any) {
   console.error(`Error occurred: ${error.message}`)
@@ -51,8 +52,9 @@ try {
 }
 
 connectToDatabase(DB_URI + DB_NAME + URI_QUERY_PARAM)
+connectToPostgresDatabase()
 
-// Connect to OpenAPI ChatGPT-3.5Turbo
+// Connect to OpenAI API
 export let openai
 const fetchEngines = async () => {
   const configuration = new Configuration({
@@ -71,7 +73,8 @@ const fetchEngines = async () => {
   }
 }
 
+fetchEngines()
+
 // This is needed for when you aren't on a Wifi with secure settings or on a VPN
 // @ts-ignore
 // process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
-fetchEngines()
