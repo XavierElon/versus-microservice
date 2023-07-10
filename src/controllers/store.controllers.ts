@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import Stripe from 'stripe'
 import { Item } from '../models/item.model'
-import { addItem, getAllItems, getItem } from '../services/item.service'
+import { addItem, deleteItem, getAllItems, getItem, updateItem } from '../services/item.service'
 
 const FRONT_END_URL: string = process.env.FRONT_END_URL
 
@@ -73,5 +73,39 @@ export const AddItem = async (req: Request, res: Response): Promise<void> => {
     .catch((error) => {
       console.error('Error adding item: ' + error)
       return res.status(500).json({ error: 'Error creating new item' })
+    })
+}
+
+export const UpdateItem = async (req: Request, res: Response): Promise<void> => {
+  const id = parseInt(req.params.id)
+  console.log(req.params.id)
+  console.log(id)
+  // const id = req.params.id
+  const data = req.body
+
+  updateItem(id, data)
+    .then((item) => {
+      if (item) {
+        res.status(200).json({ message: 'Item updated', data: item })
+      } else {
+        res.status(404).json({ message: 'Item not found' })
+      }
+    })
+    .catch((error) => {
+      console.error(error)
+      res.status(500).json({ error: 'Error updating item: ' + error })
+    })
+}
+
+export const DeleteItem = async (req: Request, res: Response): Promise<void> => {
+  const id = parseInt(req.params.id)
+
+  deleteItem(id)
+    .then(() => {
+      res.status(200).json({ message: `Item with id ${id} deleted.` })
+    })
+    .catch((error) => {
+      console.error(error)
+      res.status(500).json({ error: 'Error deleting item: ' + error })
     })
 }

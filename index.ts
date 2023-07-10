@@ -51,7 +51,7 @@ try {
   /* eslint-enable no-console */
 }
 
-connectToDatabase(DB_URI + DB_NAME + URI_QUERY_PARAM)
+// connectToDatabase(DB_URI + DB_NAME + URI_QUERY_PARAM)
 connectToPostgresDatabase()
 
 // Connect to OpenAI API

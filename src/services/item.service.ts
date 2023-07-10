@@ -38,6 +38,23 @@ export const addItem = async (userID: string, name: string, description: string 
   }
 }
 
+export const updateItem = async (id: number, data: Partial<Item>): Promise<Item | null> => {
+  try {
+    const item = await Item.findByPk(id)
+
+    if (item) {
+      const updatedItem = await item.update(data)
+      return updatedItem
+    } else {
+      console.log('No item found to update.')
+      return null
+    }
+  } catch (error) {
+    console.error('Error updating item:', error)
+    throw error
+  }
+}
+
 export const deleteItem = async (id: number): Promise<void> => {
   try {
     const item = await Item.findByPk(id)
