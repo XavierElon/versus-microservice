@@ -16,6 +16,7 @@ const DB_NAME: string = process.env.DB_NAME
 const DB_URI: string = process.env.MONGO_ATLAS_URI
 const URI_QUERY_PARAM: string = process.env.QUERY_PARAMETERS
 const FRONT_END_URL: string = process.env.FRONT_END_URL
+const BACK_END_URL: string = process.env.BACK_END_URL
 
 // Body parsing Middleware
 // Allows images to be upoloaded
@@ -24,6 +25,7 @@ app.use(express.urlencoded({ extended: true, limit: '25mb' }))
 app.use(
   cors({
     origin: FRONT_END_URL,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
   })
 )
@@ -44,7 +46,7 @@ app.get('/', async (req: Request, res: Response): Promise<Response> => {
 try {
   app.listen(PORT, (): void => {
     /* eslint-disable no-console */
-    console.log(`Successfully connected to http://localhost:${PORT}`)
+    console.log(`Successfully connected to ${BACK_END_URL}`)
   })
 } catch (error: any) {
   console.error(`Error occurred: ${error.message}`)
