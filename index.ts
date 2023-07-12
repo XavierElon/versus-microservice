@@ -52,7 +52,7 @@ try {
 }
 
 connectToDatabase(DB_URI + DB_NAME + URI_QUERY_PARAM)
-connectToPostgresDatabase()
+// connectToPostgresDatabase()
 
 // Connect to OpenAI API
 export let openai
