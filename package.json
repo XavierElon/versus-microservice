@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.ts",
+  "engines": {
+    "node": "20.4.0"
+  },
   "scripts": {
     "env-setup-local": "./src/config/deploy/local.sh",
     "env-setup-prod": "./src/config/deploy/prod.sh",
