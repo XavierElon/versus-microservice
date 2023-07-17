@@ -36,12 +36,13 @@ const userSchema = new mongoose.Schema({
     password: {
       type: String
     },
-    profilePicture: {
-      name: String,
-      data: Buffer,
-      contentType: String,
-      url: String
-    },
+    // profilePicture: {
+    //   name: String,
+    //   data: Buffer,
+    //   contentType: String,
+    //   url: String
+    // },
+
     confirmationCode: {
       type: String,
       default: uuidv4()
@@ -68,6 +69,10 @@ const userSchema = new mongoose.Schema({
       validator: validateUsername,
       message: error.username
     }
+  },
+  profilePicture: {
+    type: String,
+    required: false
   },
   provider: {
     type: String,
