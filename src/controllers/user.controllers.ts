@@ -37,12 +37,9 @@ export const GetAllUsers = async (req: Request, res: Response) => {
     let profilePicture
     let provider = (user as any).provider
 
-    if ((user as any).provider === 'local') {
+    if (user as any) {
       username = `${(user as any).username}`
-      profilePicture = (user as any).local.profilePicture || ''
-    } else if ((user as any).provider === 'firebaseGoogle') {
-      username = (user as any).firebaseGoogle.displayName
-      profilePicture = (user as any).firebaseGoogle.photoURL
+      profilePicture = (user as any).profilePicture || ''
     } else {
       throw new Error('No provider found')
     }
@@ -253,11 +250,13 @@ export const UploadProfilePictureById = async (req: Request, res: Response) => {
   const base64String = Buffer.from(data).toString('base64')
   const url = `data:${contentType};base64,${base64String}`
 
-  user.local.profilePicture = {
-    data: data,
-    contentType: contentType,
-    url: url
-  }
+  // user.local.profilePicture = {
+  //   data: data,
+  //   contentType: contentType,
+  //   url: url
+  // }
+  user.profilePicture = url
+
   await user.save()
 
   fs.unlinkSync(req.file.path)
