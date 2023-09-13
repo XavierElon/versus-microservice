@@ -5,7 +5,6 @@ import { User } from '../models/user.model'
 import { createUser, checkIfUserExists, updateUserById, deleteUserByEmail, confirmUser, checkIfGoogleFirebaseUserExists, getLocalUser, getGoogleUser, deleteUserById, createGoogleAuthUser, getAllUsers } from '../services/user.service'
 import { createGoogleAuthToken, createLocalToken } from '../utils/jwt'
 import { sendOTPEmail } from '../utils/email.helper'
-import e from 'cors'
 
 export const GetUser = async (req: Request, res: Response) => {
   res.setHeader('Access-Control-Allow-Credentials', 'true')
