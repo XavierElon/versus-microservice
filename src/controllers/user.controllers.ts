@@ -221,10 +221,8 @@ export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
       console.log(token)
       res.cookie('user-token', token, {
         maxAge: 60 * 60 * 24 * 1000,
-        httpOnly: true,
         secure: true
       })
-      console.log(req.cookies['user-token'])
       return res.status(200).json({
         accessToken,
         user: {
