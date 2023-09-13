@@ -161,10 +161,10 @@ export const LoginUser = async (req: Request, res: Response) => {
       if (process.env.NODE_ENV === 'dev') {
         secure = false
         res.cookie('user-token', accessToken, {
-          maxAge: 60 * 60 * 24 * 1000
-          // httpOnly: false,
-          // secure: secure,
-          // sameSite: 'none'
+          maxAge: 60 * 60 * 24 * 1000,
+          httpOnly: false,
+          secure: secure,
+          sameSite: 'none'
           // domain: process.env.DOMAIN
         })
       } else {
@@ -202,9 +202,10 @@ export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
       user = await createGoogleAuthUser(req.body.firebaseGoogle)
       const token = createGoogleAuthToken(user)
       res.cookie('user-token', token, {
-        maxAge: 60 * 60 * 24 * 1000
-        // httpOnly: true,
-        // secure: true
+        maxAge: 60 * 60 * 24 * 1000,
+        httpOnly: false,
+        secure: false,
+        sameSite: 'none'
       })
       return res.status(200).json({
         accessToken,
