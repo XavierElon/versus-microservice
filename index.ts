@@ -26,7 +26,8 @@ app.use(
   cors({
     origin: FRONT_END_URL,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true
+    credentials: true,
+    exposedHeaders: ['set-cookie']
   })
 )
 app.use(function (req, res, next) {

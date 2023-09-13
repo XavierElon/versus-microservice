@@ -5,6 +5,7 @@ import { User } from '../models/user.model'
 import { createUser, checkIfUserExists, updateUserById, deleteUserByEmail, confirmUser, checkIfGoogleFirebaseUserExists, getLocalUser, getGoogleUser, deleteUserById, createGoogleAuthUser, getAllUsers } from '../services/user.service'
 import { createGoogleAuthToken, createLocalToken } from '../utils/jwt'
 import { sendOTPEmail } from '../utils/email.helper'
+import e from 'cors'
 
 export const GetUser = async (req: Request, res: Response) => {
   res.setHeader('Access-Control-Allow-Credentials', 'true')
@@ -32,7 +33,13 @@ export const GetAllUsers = async (req: Request, res: Response) => {
   const users: any = await getAllUsers()
 
   const simplifiedUsers = users.map((user: typeof User) => {
-    const userId = (user as any)._id.toString()
+    let uid
+    if ((user as any).provider === 'firebaseGoogle') {
+      uid = (user as any).firebaseGoogle.firebaseUid
+    } else {
+      uid = (user as any)._id.toString()
+    }
+    // let userId = (user as any)._id.toString()
     let username
     let profilePicture
     let provider = (user as any).provider
@@ -45,7 +52,7 @@ export const GetAllUsers = async (req: Request, res: Response) => {
     }
 
     return {
-      id: userId,
+      id: uid,
       username: username,
       profilePicture: profilePicture,
       provider: provider
@@ -73,15 +80,18 @@ export const GetUserMessageInfo = async (req: Request, res: Response) => {
 
   let imageUrl: string
   let username: string = user.username
+  let uid: string
 
   if (localUser && user.local.profilePicture.url) {
     imageUrl = user.local.profilePicture.url
+    uid = req.params.id
   } else if (!localUser && user.firebaseGoogle.photoURL) {
     imageUrl = user.firebaseGoogle.photoURL
+    uid = user.firebaseUid
   }
 
   if (imageUrl) {
-    return res.status(200).json({ photoURL: imageUrl, username: username })
+    return res.status(200).json({ photoURL: imageUrl, username: username, uid: uid })
   } else {
     return res.status(201).json({ message: 'User does not have profile picture' })
   }
@@ -208,10 +218,13 @@ export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
       })
     } else {
       const token = createGoogleAuthToken(user)
+      console.log(token)
       res.cookie('user-token', token, {
         maxAge: 60 * 60 * 24 * 1000,
-        httpOnly: true
+        httpOnly: true,
+        secure: true
       })
+      console.log(req.cookies['user-token'])
       return res.status(200).json({
         accessToken,
         user: {
@@ -250,11 +263,6 @@ export const UploadProfilePictureById = async (req: Request, res: Response) => {
   const base64String = Buffer.from(data).toString('base64')
   const url = `data:${contentType};base64,${base64String}`
 
-  // user.local.profilePicture = {
-  //   data: data,
-  //   contentType: contentType,
-  //   url: url
-  // }
   user.profilePicture = url
 
   await user.save()

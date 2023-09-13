@@ -59,7 +59,8 @@ const userSchema = new mongoose.Schema({
     email: String,
     firebaseUid: String,
     photoURL: String,
-    refreshToken: String
+    refreshToken: String,
+    uid: String
   },
   username: {
     type: String,
