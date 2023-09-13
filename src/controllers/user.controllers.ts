@@ -203,9 +203,9 @@ export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
       user = await createGoogleAuthUser(req.body.firebaseGoogle)
       const token = createGoogleAuthToken(user)
       res.cookie('user-token', token, {
-        maxAge: 60 * 60 * 24 * 1000,
-        httpOnly: true,
-        secure: true
+        maxAge: 60 * 60 * 24 * 1000
+        // httpOnly: true,
+        // secure: true
       })
       return res.status(200).json({
         accessToken,
@@ -220,8 +220,8 @@ export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
       const token = createGoogleAuthToken(user)
       console.log(token)
       res.cookie('user-token', token, {
-        maxAge: 60 * 60 * 24 * 1000,
-        secure: true
+        maxAge: 60 * 60 * 24 * 1000
+        // secure: true
       })
       return res.status(200).json({
         accessToken,
