@@ -9,7 +9,7 @@ export const getAllUsers = async (): Promise<any | null> => {
     const all = await User.find()
     return all
   } catch (error) {
-    console.error(`Error retrieving all newsletter users: ${error}`)
+    console.error(`Error retrieving all users: ${error}`)
     throw new Error('No users found')
   }
 }
