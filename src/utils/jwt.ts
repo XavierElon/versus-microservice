@@ -31,6 +31,7 @@ export const createToken = (email: string, id: string) => {
 }
 
 export const setUserTokenCookie = (res: Response, accessToken: string) => {
+  console.log(accessToken)
   if (process.env.NODE_ENV === 'dev') {
     res.cookie('user-token', accessToken, {
       maxAge: 60 * 60 * 24 * 1000
@@ -39,10 +40,11 @@ export const setUserTokenCookie = (res: Response, accessToken: string) => {
     res.cookie('user-token', accessToken, {
       maxAge: 60 * 60 * 24 * 1000,
       httpOnly: true,
-      secure: true,
+      secure: false,
       sameSite: 'none'
     })
   }
+  console.log(res.cookie)
 }
 
 export const validateToken = (req, res, next) => {
