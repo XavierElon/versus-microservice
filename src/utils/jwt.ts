@@ -1,6 +1,7 @@
 import { sign } from 'jsonwebtoken'
 import { Response } from 'express'
 import * as jwtWrapper from '../middleware/jwtWrapper'
+import MobileDetect from 'mobile-detect'
 
 // export const createLocalToken = (user) => {
 //   if (!user || Object.keys(user).length === 0) {
@@ -51,11 +52,28 @@ export const setUserTokenCookie = (res: Response, accessToken: string) => {
   console.log('set user token')
 }
 
+export const isMobileUser = (req: Request): boolean => {
+  const md = new MobileDetect(req.headers['user-agent'])
+  console.log(md)
+  let isMobile: boolean = false
+  if (md.mobile()) {
+    isMobile = true
+  }
+  console.log(isMobile)
+  return isMobile
+}
+
 export const validateToken = (req, res, next) => {
+  const isMobile: boolean = isMobileUser(req)
   console.log('validate token')
   console.log(req.cookies)
   const accessToken = req.cookies['user-token']
   console.log(accessToken)
+  if (isMobile) {
+    req.authenticated = true
+    req.user = accessToken
+    return next()
+  }
   if (!accessToken) return res.status(400).json({ error: 'User not authenticated' })
 
   try {
