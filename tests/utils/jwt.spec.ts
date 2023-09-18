@@ -4,7 +4,7 @@ import chai from 'chai'
 import jest from 'jest'
 import * as jwtWrapper from '../../src/middleware/jwtWrapper'
 import proxyquire from 'proxyquire'
-import { createLocalToken, createGoogleAuthToken, validateToken } from '../../src/utils/jwt'
+import { createToken, validateToken } from '../../src/utils/jwt'
 
 describe('JWT utils suite', function () {
   const localUser: any = {
@@ -26,22 +26,22 @@ describe('JWT utils suite', function () {
   })
 
   it('should return a local access token', () => {
-    const accessToken = createLocalToken(localUser)
+    const accessToken = createToken(localUser.local.email, localUser.local.id)
     expect(accessToken.length).to.equal(164)
   })
 
   it('should try to create a local access token with an empty body and return null', () => {
-    const accessToken = createLocalToken({})
+    const accessToken = createToken(null, null)
     expect(accessToken).to.be.null
   })
 
   it('should return a google auth token', () => {
-    const accessToken = createGoogleAuthToken(googleUser)
+    const accessToken = createToken(googleUser.firebaseGoogle.email, googleUser.firebaseGoogle.firebaseUid)
     expect(accessToken.length).to.equal(164)
   })
 
   it('should try to create a google access token with an empty body and return null', () => {
-    const accessToken = createGoogleAuthToken({})
+    const accessToken = createToken(null, null)
     expect(accessToken).to.be.null
   })
 
