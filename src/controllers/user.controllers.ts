@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt'
 import fs from 'fs'
 import { User } from '../models/user.model'
 import { createUser, checkIfUserExists, updateUserById, deleteUserByEmail, confirmUser, checkIfGoogleFirebaseUserExists, getLocalUser, getGoogleUser, deleteUserById, createGoogleAuthUser, getAllUsers } from '../services/user.service'
-import { createToken, setUserTokenCookie } from '../utils/jwt'
+import { createToken, isMobileUser, setUserTokenCookie } from '../utils/jwt'
 import { sendOTPEmail } from '../utils/email.helper'
 import MobileDetect from 'mobile-detect'
 
@@ -11,6 +11,7 @@ export const GetUser = async (req: Request, res: Response) => {
   res.setHeader('Access-Control-Allow-Credentials', 'true')
   const id = req.params.id
   let user
+  const isMobile = isMobileUser(req)
 
   if (id.length == 28) {
     user = await getGoogleUser(req.params.id)
@@ -19,7 +20,14 @@ export const GetUser = async (req: Request, res: Response) => {
   }
 
   let accessToken: string
-  if (user) {
+  if (user && isMobile) {
+    res.send(`
+    <script>
+      sessionStorage.setItem('isAuthenticated', true);
+      document.body.textContent = 'sessionStorage value set!';
+    </script>
+    `)
+  } else if (user) {
     accessToken = req.cookies['user-token']
     res.status(200).json({ user: user, authToken: accessToken })
   } else {
