@@ -43,9 +43,9 @@ export const setUserTokenCookie = (res: Response, accessToken: string) => {
     console.log('$$$$$$$$$$$$')
     res.cookie('user-token', accessToken, {
       maxAge: 60 * 60 * 24 * 1000,
-      httpOnly: false,
-      secure: false
-      // sameSite: 'none'
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none'
     })
   }
   console.log('set user token')
