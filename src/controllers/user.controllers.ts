@@ -174,10 +174,15 @@ export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
     if (!user || user === null) {
       user = await createGoogleAuthUser(req.body.firebaseGoogle)
     }
-    const newAccessToken = createToken(user.firebaseGoogle.email, user._id.toString())
-    setUserTokenCookie(res, newAccessToken)
+
+    const accessToken = createToken(user.firebaseGoogle.email, user._id.toString())
+    if (isMobile) {
+      sessionStorage.setItem('user-token', accessToken)
+    } else {
+      setUserTokenCookie(res, accessToken)
+    }
     return res.status(200).json({
-      newAccessToken,
+      accessToken,
       user: {
         _id: user.id,
         firebaseUid: user.firebaseGoogle.firebaseUid,
