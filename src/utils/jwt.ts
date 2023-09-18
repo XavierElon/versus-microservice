@@ -1,22 +1,48 @@
-import { sign, verify } from 'jsonwebtoken'
+import { sign } from 'jsonwebtoken'
+import { Response } from 'express'
 import * as jwtWrapper from '../middleware/jwtWrapper'
 
-export const createLocalToken = (user) => {
-  if (!user || Object.keys(user).length === 0) {
-    return null
+// export const createLocalToken = (user) => {
+//   if (!user || Object.keys(user).length === 0) {
+//     return null
+//   }
+//   const accessToken = sign({ email: user.local.email, id: user._id }, process.env.JWT_SECRET, {
+//     expiresIn: '24h'
+//   })
+//   return accessToken
+// }
+
+// export const createGoogleAuthToken = (user) => {
+//   if (!user || Object.keys(user).length === 0) {
+//     return null
+//   }
+//   const accessToken = sign({ email: user.firebaseGoogle.email, id: user._id }, process.env.JWT_SECRET, { expiresIn: '24h' })
+//   return accessToken
+// }
+
+export const createToken = (email: string, id: string) => {
+  if (!email || !id) {
+    throw new Error('Token not created because email or id is empty')
   }
-  const accessToken = sign({ email: user.local.email, id: user._id }, process.env.JWT_SECRET, {
-    expiresIn: '24h'
-  })
+
+  const accessToken = sign({ email: email, id: id }, process.env.JWT_SECRET, { expiresIn: '24h' })
+  console.log(accessToken)
   return accessToken
 }
 
-export const createGoogleAuthToken = (user) => {
-  if (!user || Object.keys(user).length === 0) {
-    return null
+export const setUserTokenCookie = (res: Response, accessToken: string) => {
+  if (process.env.NODE_ENV === 'dev') {
+    res.cookie('user-token', accessToken, {
+      maxAge: 60 * 60 * 24 * 1000
+    })
+  } else {
+    res.cookie('user-token', accessToken, {
+      maxAge: 60 * 60 * 24 * 1000,
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none'
+    })
   }
-  const accessToken = sign({ email: user.firebaseGoogle.email, id: user._id }, process.env.JWT_SECRET, { expiresIn: '24h' })
-  return accessToken
 }
 
 export const validateToken = (req, res, next) => {

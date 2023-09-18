@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt'
 import fs from 'fs'
 import { User } from '../models/user.model'
 import { createUser, checkIfUserExists, updateUserById, deleteUserByEmail, confirmUser, checkIfGoogleFirebaseUserExists, getLocalUser, getGoogleUser, deleteUserById, createGoogleAuthUser, getAllUsers } from '../services/user.service'
-import { createGoogleAuthToken, createLocalToken } from '../utils/jwt'
+import { createToken, setUserTokenCookie } from '../utils/jwt'
 import { sendOTPEmail } from '../utils/email.helper'
 
 export const GetUser = async (req: Request, res: Response) => {
@@ -110,26 +110,9 @@ export const CreateUser = async (req: Request, res: Response) => {
   } else {
     createUser(userData)
       .then((result) => {
-        const accessToken = createLocalToken(userData)
-        let secure = true
-        if (process.env.NODE_ENV === 'dev') {
-          secure = false
-          res.cookie('user-token', accessToken, {
-            maxAge: 60 * 60 * 24 * 1000
-            // httpOnly: true,
-            // secure: secure,
-            // sameSite: 'none'
-            // domain: process.env.DOMAIN
-          })
-        } else {
-          res.cookie('user-token', accessToken, {
-            maxAge: 60 * 60 * 24 * 1000,
-            httpOnly: true,
-            secure: secure,
-            sameSite: 'none'
-            // domain: process.env.DOMAIN
-          })
-        }
+        const accessToken = createToken(userData.local.email, userData._id)
+        // const accessToken = createLocalToken(userData)
+        setUserTokenCookie(res, accessToken)
 
         res.status(201).json({ message: 'User created', accessToken, user: result })
       })
@@ -155,27 +138,8 @@ export const LoginUser = async (req: Request, res: Response) => {
       res.status(400).json({ error: 'Wrong username or password.' })
       return
     } else {
-      const accessToken = createLocalToken(user)
-
-      let secure = true
-      if (process.env.NODE_ENV === 'dev') {
-        secure = false
-        res.cookie('user-token', accessToken, {
-          maxAge: 60 * 60 * 24 * 1000,
-          httpOnly: false,
-          secure: secure,
-          sameSite: 'none'
-          // domain: process.env.DOMAIN
-        })
-      } else {
-        res.cookie('user-token', accessToken, {
-          maxAge: 60 * 60 * 24 * 1000,
-          httpOnly: false,
-          secure: secure,
-          sameSite: 'none'
-          // domain: process.env.DOMAIN
-        })
-      }
+      const accessToken = createToken(user.local.email, user._id.toString())
+      setUserTokenCookie(res, accessToken)
 
       res.status(200).json({ message: 'Login successful', accessToken, user })
     }
@@ -189,7 +153,7 @@ export const LogoutUser = async (req: Request, res: Response) => {
 
 export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
   try {
-    const { accessToken, displayName, email, firebaseUid, photoURL, refreshToken } = req.body.firebaseGoogle
+    const { email, firebaseUid } = req.body.firebaseGoogle
 
     if (!firebaseUid) {
       return res.status(400).json({ message: 'Missing firebaseUid' })
@@ -200,42 +164,19 @@ export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
     // Create new Google auth user
     if (!user || user === null) {
       user = await createGoogleAuthUser(req.body.firebaseGoogle)
-      const token = createGoogleAuthToken(user)
-      res.cookie('user-token', token, {
-        maxAge: 60 * 60 * 24 * 1000,
-        httpOnly: false,
-        secure: false,
-        sameSite: 'none'
-      })
-      return res.status(200).json({
-        accessToken,
-        user: {
-          _id: user.id,
-          firebaseUid: user.firebaseGoogle.firebaseUid,
-          email,
-          provider: user.provider
-        }
-      })
-    } else {
-      const token = createGoogleAuthToken(user)
-      console.log(token)
-      res.cookie('user-token', token, {
-        maxAge: 60 * 60 * 24 * 1000,
-        httpOnly: false,
-        secure: false,
-        sameSite: 'none'
-      })
-      return res.status(200).json({
-        accessToken,
-        user: {
-          _id: user.id,
-          firebaseUid: user.firebaseGoogle.firebaseUid,
-          email,
-          provider: user.provider
-        },
-        message: 'Google user logged in'
-      })
     }
+    const newAccessToken = createToken(user.firebaseGoogle.email, user._id.toString())
+    setUserTokenCookie(res, newAccessToken)
+    return res.status(200).json({
+      newAccessToken,
+      user: {
+        _id: user.id,
+        firebaseUid: user.firebaseGoogle.firebaseUid,
+        email,
+        provider: user.provider
+      },
+      message: 'Google user logged in'
+    })
   } catch (error) {
     console.error(error)
     res.status(500).json({ message: 'Internal server error' })
