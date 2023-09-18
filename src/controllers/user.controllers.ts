@@ -5,6 +5,7 @@ import { User } from '../models/user.model'
 import { createUser, checkIfUserExists, updateUserById, deleteUserByEmail, confirmUser, checkIfGoogleFirebaseUserExists, getLocalUser, getGoogleUser, deleteUserById, createGoogleAuthUser, getAllUsers } from '../services/user.service'
 import { createToken, setUserTokenCookie } from '../utils/jwt'
 import { sendOTPEmail } from '../utils/email.helper'
+import MobileDetect from 'mobile-detect'
 
 export const GetUser = async (req: Request, res: Response) => {
   res.setHeader('Access-Control-Allow-Credentials', 'true')
@@ -154,6 +155,13 @@ export const LogoutUser = async (req: Request, res: Response) => {
 export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
   try {
     const { email, firebaseUid } = req.body.firebaseGoogle
+    const md = new MobileDetect(req.headers['user-agent'])
+    console.log(md)
+    let isMobile: boolean = false
+    if (md.mobile()) {
+      isMobile = true
+    }
+    console.log(isMobile)
 
     if (!firebaseUid) {
       return res.status(400).json({ message: 'Missing firebaseUid' })
