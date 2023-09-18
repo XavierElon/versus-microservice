@@ -42,9 +42,9 @@ export const setUserTokenCookie = (res: Response, accessToken: string) => {
   } else {
     console.log('$$$$$$$$$$$$')
     res.cookie('user-token', accessToken, {
-      maxAge: 60 * 60 * 24 * 1000,
-      httpOnly: true,
-      secure: true
+      // maxAge: 60 * 60 * 24 * 1000,
+      // httpOnly: true,
+      // secure: true,
       // sameSite: 'none'
     })
   }
