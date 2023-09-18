@@ -1,5 +1,5 @@
 import { sign } from 'jsonwebtoken'
-import { Response } from 'express'
+import { Request, Response } from 'express'
 import * as jwtWrapper from '../middleware/jwtWrapper'
 import MobileDetect from 'mobile-detect'
 
