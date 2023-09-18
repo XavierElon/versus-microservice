@@ -184,9 +184,7 @@ export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
     }
 
     const accessToken = createToken(user.firebaseGoogle.email, user._id.toString())
-    if (isMobile) {
-      sessionStorage.setItem('user-token', accessToken)
-    } else {
+    if (user && !isMobile) {
       setUserTokenCookie(res, accessToken)
     }
     return res.status(200).json({
