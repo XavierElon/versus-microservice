@@ -21,12 +21,7 @@ export const GetUser = async (req: Request, res: Response) => {
 
   let accessToken: string
   if (user && isMobile) {
-    res.send(`
-    <script>
-      sessionStorage.setItem('isAuthenticated', true);
-      document.body.textContent = 'sessionStorage value set!';
-    </script>
-    `)
+    res.status(200).json({ user: user, isAuthenticated: true })
   } else if (user) {
     accessToken = req.cookies['user-token']
     res.status(200).json({ user: user, authToken: accessToken })
