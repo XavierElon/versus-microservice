@@ -27,6 +27,8 @@ export const createToken = (email: string, id: string) => {
 
   const accessToken = sign({ email: email, id: id }, process.env.JWT_SECRET, { expiresIn: '24h' })
   console.log(accessToken)
+  console.log(email)
+  console.log(id)
   return accessToken
 }
 
@@ -44,10 +46,11 @@ export const setUserTokenCookie = (res: Response, accessToken: string) => {
       sameSite: 'none'
     })
   }
-  console.log(res.cookie)
+  console.log('set user token')
 }
 
 export const validateToken = (req, res, next) => {
+  console.log('validate token')
   console.log(req.cookies)
   const accessToken = req.cookies['user-token']
   console.log(accessToken)
