@@ -157,15 +157,13 @@ export const LogoutUser = async (req: Request, res: Response) => {
 
 export const GoogleAuthLoginAndSignup = async (req: Request, res: Response) => {
   try {
-    console.log('google log in')
     const { email, firebaseUid } = req.body.firebaseGoogle
     const md = new MobileDetect(req.headers['user-agent'])
-    console.log(md)
+
     let isMobile: boolean = false
     if (md.mobile()) {
       isMobile = true
     }
-    console.log(isMobile)
 
     if (!firebaseUid) {
       return res.status(400).json({ message: 'Missing firebaseUid' })
